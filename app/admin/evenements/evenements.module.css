@@ -1,0 +1,696 @@
+.page {
+    min-height: 100vh;
+    padding: 32px 20px 56px;
+    background:
+        linear-gradient(rgba(17, 183, 229, 0.92), rgba(17, 183, 229, 0.92)),
+        url("/images/hero-terrain.jpg") center / cover no-repeat;
+}
+
+.shell {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.backLink {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    opacity: 0.95;
+}
+
+.primaryLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 14px;
+    background: #163040;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    border: none;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.97);
+    border: 4px solid #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+    padding: 28px;
+}
+
+.badge {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #d7c24b;
+    color: #163040;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.title {
+    margin: 0 0 8px;
+    color: #163040;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.text {
+    margin: 0;
+    color: #355060;
+    line-height: 1.6;
+}
+
+.empty {
+    margin-top: 24px;
+    padding: 18px;
+    border-radius: 18px;
+    background: #f5fbfe;
+    border: 1px solid #d8edf5;
+    color: #355060;
+}
+
+.tableWrap {
+    margin-top: 24px;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+.table th,
+.table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2edf2;
+    vertical-align: top;
+}
+
+.table th {
+    color: #163040;
+    font-size: 0.92rem;
+    font-weight: 800;
+}
+
+.table td {
+    color: #355060;
+    font-size: 0.96rem;
+    line-height: 1.45;
+}
+
+.nameCell {
+    font-weight: 700;
+    color: #163040;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.statusOn {
+    background: #dbf5df;
+    color: #16713a;
+}
+
+.statusOff {
+    background: #f7e2e2;
+    color: #9b1c1c;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.deleteButton {
+    min-height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 12px;
+    background: #b42318;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.formCard {
+    margin-top: 24px;
+    display: grid;
+    gap: 22px;
+}
+
+.section {
+    position: relative;
+    padding: 24px 24px 24px 32px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #e4eef4;
+    box-shadow: 0 6px 18px rgba(22, 48, 64, 0.05);
+    overflow: hidden;
+}
+
+.section::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16px;
+    bottom: 16px;
+    width: 5px;
+    border-radius: 0 6px 6px 0;
+    background: linear-gradient(180deg, #11b7e5, #0a8fb8);
+}
+
+.sectionTitle {
+    position: relative;
+    margin: 0 0 18px;
+    padding-left: 18px;
+    color: #163040;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.sectionTitle::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #11b7e5;
+    box-shadow: 0 0 0 4px rgba(17, 183, 229, 0.18);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.gridTwo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.field {
+    display: grid;
+    gap: 8px;
+}
+
+.fieldFull {
+    grid-column: 1 / -1;
+}
+
+.label {
+    color: #163040;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.input,
+.textarea,
+.select {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 16px;
+    border: 2px solid #e1ecf2;
+    border-radius: 14px;
+    outline: none;
+    font-size: 1rem;
+    color: #163040;
+    background: #f8fbfd;
+    transition: all 0.18s ease;
+}
+
+.input:hover,
+.textarea:hover,
+.select:hover {
+    border-color: #c9dfe8;
+    background: #ffffff;
+}
+
+.select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 44px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23163040' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    cursor: pointer;
+}
+
+.textarea {
+    min-height: 150px;
+    padding: 14px 16px;
+    resize: vertical;
+    line-height: 1.55;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+    border-color: #11b7e5;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(17, 183, 229, 0.14);
+}
+
+.imagePreview {
+    margin-top: 10px;
+    max-width: 260px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #d8edf5;
+    background: #f3f9fc;
+    position: relative;
+}
+
+.imagePreview img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+}
+
+.removeImageButton {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-top: 1px solid #d8edf5;
+    background: #f3f9fc;
+    color: #ef6b6b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.removeImageButton:hover {
+    background: #fdeaea;
+    color: #d94444;
+}
+
+.checkboxRow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: #f3f9fc;
+    border: 2px solid #d7ebf2;
+    color: #163040;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.checkboxRow:hover {
+    border-color: #11b7e5;
+    background: #eaf6fb;
+}
+
+.checkboxRow input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #11b7e5;
+    cursor: pointer;
+}
+
+.submitRow {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin: 8px -24px -24px;
+    padding: 18px 24px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #e4eef4;
+    border-radius: 0 0 20px 20px;
+    z-index: 5;
+}
+
+.submitButton,
+.secondaryLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.18s ease;
+}
+
+.submitButton {
+    border: none;
+    background: linear-gradient(135deg, #11b7e5, #0a8fb8);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(17, 183, 229, 0.32);
+}
+
+.submitButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(17, 183, 229, 0.4);
+}
+
+.secondaryLink {
+    background: #eaf5fa;
+    color: #163040;
+    border: 1px solid #cfe2ea;
+}
+
+.secondaryLink:hover {
+    background: #d8ecf4;
+}
+
+.errorBox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #fff1f1, #ffe3e3);
+    border: 1px solid #ffb8b8;
+    color: #9b1c1c;
+    font-size: 0.96rem;
+    font-weight: 600;
+}
+
+.errorBox::before {
+    content: "⚠";
+    font-size: 1.2rem;
+}
+
+/* Détail événement - format carte */
+.eventImage {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 18px;
+    margin-top: 20px;
+    display: block;
+}
+
+.eventDescription {
+    margin: 16px 0 0;
+    color: #355060;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.eventMeta {
+    margin: 18px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.eventMeta span {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #f3f9fc;
+    border: 1px solid #d7ebf2;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #163040;
+}
+
+.eventDeadlineText {
+    margin: 0 0 20px;
+    font-size: 0.92rem;
+    font-style: italic;
+    color: #555;
+}
+
+/* Slots (même format que côté adhérent) */
+.slotsList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px 16px;
+}
+
+.slotItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background: #f7f6f1;
+    border: 2px solid #e5e3dc;
+    border-radius: 999px;
+}
+
+.slotNumber {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #555;
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.slotName {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #163040;
+}
+
+.slotEmpty {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+/* Cartes inscriptions */
+.registrationSection {
+    margin-top: 28px;
+}
+
+.registrationTitle {
+    margin: 0 0 14px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #163040;
+}
+
+.registrationCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+}
+
+.registrationCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 18px;
+    background: #fff9e6;
+    border: 3px solid #1f1f1f;
+    box-shadow: 3px 3px 0 #1f1f1f;
+}
+
+.registrationCardRejected {
+    background: #fff1f1;
+}
+
+.registrationCardInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.registrationCardInitial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1cc8f5 0%, #0e9dc4 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.registrationCardName {
+    font-weight: 800;
+    color: #163040;
+    font-size: 0.95rem;
+}
+
+.registrationCardLevel {
+    font-size: 0.82rem;
+    color: #666;
+}
+
+.registrationCardActions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.approveButton {
+    display: inline-block;
+    background: #7dd87d;
+    color: #1f1f1f;
+    border: 3px solid #1f1f1f;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #1f1f1f;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.approveButton:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #1f1f1f;
+}
+
+.rejectButton {
+    display: inline-block;
+    background: #f8a0a0;
+    color: #1f1f1f;
+    border: 3px solid #1f1f1f;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #1f1f1f;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rejectButton:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #1f1f1f;
+}
+
+.rejectedLabel {
+    display: inline-block;
+    background: #f8a0a0;
+    color: #1f1f1f;
+    border: 3px solid #1f1f1f;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    box-shadow: 2px 2px 0 #1f1f1f;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gridTwo {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .primaryLink,
+    .submitButton,
+    .secondaryLink {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .page {
+        padding: 18px 14px 36px;
+    }
+
+    .card {
+        padding: 20px 16px;
+    }
+
+    .title {
+        font-size: 1.7rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        padding: 20px 18px 20px 26px;
+    }
+
+    .submitRow {
+        margin: 8px -16px -20px;
+        padding: 16px;
+        justify-content: stretch;
+    }
+
+    .submitButton,
+    .secondaryLink {
+        flex: 1;
+    }
+
+    .slotsList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .registrationCards {
+        grid-template-columns: 1fr;
+    }
+
+    .registrationCard {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .registrationCardActions {
+        justify-content: stretch;
+    }
+
+    .registrationCardActions form {
+        flex: 1;
+    }
+
+    .approveButton,
+    .rejectButton {
+        width: 100%;
+    }
+
+    .eventMeta {
+        flex-direction: column;
+    }
+}
