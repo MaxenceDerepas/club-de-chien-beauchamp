@@ -18,9 +18,11 @@ export type MemberRecord = {
 
     owner1Name: string;
     owner1BirthDate: Date | null;
+    owner1Email: string;
 
     owner2Name: string;
     owner2BirthDate: Date | null;
+    owner2Email: string;
 
     dogName: string;
     dogBreed: string;

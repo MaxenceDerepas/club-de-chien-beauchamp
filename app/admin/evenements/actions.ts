@@ -2,10 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-// TODO: Activer Cloudinary quand le compte sera créé
-// import { uploadImage, deleteImage, extractPublicId } from "@/lib/cloudinary";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { uploadImage, deleteImage, extractPublicId } from "@/lib/cloudinary";
 import { requireAdminSession } from "@/lib/admin-auth";
 import {
     createEvent,
@@ -25,17 +22,8 @@ async function saveImageFile(file: File | null) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    // TODO: Activer Cloudinary quand le compte sera créé
-    // const result = await uploadImage(buffer, "events");
-    // return result.url;
-
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "events");
-    await mkdir(uploadsDir, { recursive: true });
-    const safeName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-    const filePath = path.join(uploadsDir, safeName);
-    await writeFile(filePath, buffer);
-    return `/uploads/events/${safeName}`;
+    const result = await uploadImage(buffer, "events");
+    return result.url;
 }
 
 export async function createEventAction(formData: FormData) {
@@ -106,12 +94,11 @@ export async function deleteEventAction(formData: FormData) {
     const id = String(formData.get("id") || "");
     if (!id) return;
 
-    // TODO: Activer Cloudinary quand le compte sera créé
-    // const event = await getEventById(id);
-    // if (event?.imageUrl) {
-    //     const publicId = extractPublicId(event.imageUrl);
-    //     if (publicId) { await deleteImage(publicId); }
-    // }
+    const event = await getEventById(id);
+    if (event?.imageUrl) {
+        const publicId = extractPublicId(event.imageUrl);
+        if (publicId) { await deleteImage(publicId); }
+    }
 
     await deleteEventById(id);
     revalidatePath("/admin/evenements");

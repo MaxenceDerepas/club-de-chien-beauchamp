@@ -11,10 +11,7 @@ import {
     updateAlbumCover,
 } from "@/lib/gallery";
 import { getEventById } from "@/lib/events";
-// TODO: Activer Cloudinary quand le compte sera créé
-// import { uploadImage, deleteImage, extractPublicId } from "@/lib/cloudinary";
-import { writeFile, mkdir, unlink } from "node:fs/promises";
-import path from "node:path";
+import { uploadImage, deleteImage, extractPublicId } from "@/lib/cloudinary";
 
 function revalidateGallery() {
     revalidatePath("/admin/galerie");
@@ -73,18 +70,9 @@ export async function deleteAlbumAction(formData: FormData) {
 
     const album = await getAlbumById(albumId);
     if (album) {
-        // TODO: Activer Cloudinary quand le compte sera créé
-        // for (const photo of album.photos) {
-        //     const publicId = extractPublicId(photo.imageUrl);
-        //     if (publicId) { await deleteImage(publicId); }
-        // }
         for (const photo of album.photos) {
-            try {
-                const filePath = path.join(process.cwd(), "public", photo.imageUrl);
-                await unlink(filePath);
-            } catch (err: any) {
-                if (err?.code !== "ENOENT") console.error("Delete photo file error", err);
-            }
+            const publicId = extractPublicId(photo.imageUrl);
+            if (publicId) { await deleteImage(publicId); }
         }
     }
 
@@ -113,21 +101,10 @@ export async function uploadSinglePhotoAction(
     }
 
     try {
-        const uploadDir = path.join(process.cwd(), "public", "uploads", "gallery");
-        await mkdir(uploadDir, { recursive: true });
-
-        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
         const photoId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        const filename = `gallery-${photoId}.${ext}`;
-        const filePath = path.join(uploadDir, filename);
-
         const buffer = Buffer.from(await file.arrayBuffer());
-        await writeFile(filePath, buffer);
-
-        // TODO: Activer Cloudinary quand le compte sera créé
-        // const uploaded = await uploadImage(buffer, "gallery");
-        // const imageUrl = uploaded.url;
-        const imageUrl = `/uploads/gallery/${filename}`;
+        const uploaded = await uploadImage(buffer, "gallery");
+        const imageUrl = uploaded.url;
 
         await addPhotoToAlbum(albumId, {
             id: photoId,
@@ -158,18 +135,9 @@ export async function deletePhotoFromAlbumAction(formData: FormData) {
 
     if (!albumId || !photoId) return;
 
-    // TODO: Activer Cloudinary quand le compte sera créé
-    // if (imageUrl) {
-    //     const publicId = extractPublicId(imageUrl);
-    //     if (publicId) { await deleteImage(publicId); }
-    // }
     if (imageUrl) {
-        try {
-            const filePath = path.join(process.cwd(), "public", imageUrl);
-            await unlink(filePath);
-        } catch (err: any) {
-            if (err?.code !== "ENOENT") console.error("Delete photo file error", err);
-        }
+        const publicId = extractPublicId(imageUrl);
+        if (publicId) { await deleteImage(publicId); }
     }
 
     await removePhotoFromAlbum(albumId, photoId);

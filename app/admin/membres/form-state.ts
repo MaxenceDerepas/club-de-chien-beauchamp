@@ -58,9 +58,11 @@ export const initialCreateMemberState: CreateMemberFormState = {
 
         owner1Name: "",
         owner1BirthDate: "",
+        owner1Email: "",
 
         owner2Name: "",
         owner2BirthDate: "",
+        owner2Email: "",
 
         dogName: "",
         dogBreed: "",

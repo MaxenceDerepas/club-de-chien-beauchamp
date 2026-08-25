@@ -2,10 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-// TODO: Activer Cloudinary quand le compte sera créé
-// import { uploadImage, deleteImage, extractPublicId } from "@/lib/cloudinary";
-import { mkdir, writeFile, unlink } from "node:fs/promises";
-import path from "node:path";
+import { uploadImage, deleteImage, extractPublicId } from "@/lib/cloudinary";
 import {
     createMember as createMemberInDb,
     deleteMemberById,
@@ -30,9 +27,11 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
 
         owner1Name: String(formData.get("owner1Name") || "").trim(),
         owner1BirthDate: String(formData.get("owner1BirthDate") || "").trim(),
+        owner1Email: String(formData.get("owner1Email") || "").trim(),
 
         owner2Name: String(formData.get("owner2Name") || "").trim(),
         owner2BirthDate: String(formData.get("owner2BirthDate") || "").trim(),
+        owner2Email: String(formData.get("owner2Email") || "").trim(),
 
         dogName: String(formData.get("dogName") || "").trim(),
         dogBreed: String(formData.get("dogBreed") || "").trim(),
@@ -78,34 +77,14 @@ async function saveDogPhotoFile(file: File | null) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    // TODO: Activer Cloudinary quand le compte sera créé
-    // const result = await uploadImage(buffer, "members");
-    // return result.url;
-
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "members");
-    await mkdir(uploadsDir, { recursive: true });
-    const safeName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
-    const filePath = path.join(uploadsDir, safeName);
-    await writeFile(filePath, buffer);
-    return `/uploads/members/${safeName}`;
+    const result = await uploadImage(buffer, "members");
+    return result.url;
 }
 
 async function deletePhotoFile(photoUrl: string) {
     if (!photoUrl) return;
-
-    // TODO: Activer Cloudinary quand le compte sera créé
-    // const publicId = extractPublicId(photoUrl);
-    // if (publicId) { await deleteImage(publicId); }
-
-    try {
-        const filePath = path.join(process.cwd(), "public", photoUrl);
-        await unlink(filePath);
-    } catch (err: any) {
-        if (err?.code !== "ENOENT") {
-            console.error("Failed to delete photo file", err);
-        }
-    }
+    const publicId = extractPublicId(photoUrl);
+    if (publicId) { await deleteImage(publicId); }
 }
 
 export async function createMemberAction(
@@ -156,9 +135,11 @@ export async function createMemberAction(
 
             owner1Name: values.owner1Name,
             owner1BirthDate: optionalDate(values.owner1BirthDate),
+            owner1Email: values.owner1Email,
 
             owner2Name: values.owner2Name,
             owner2BirthDate: optionalDate(values.owner2BirthDate),
+            owner2Email: values.owner2Email,
 
             dogName: values.dogName,
             dogBreed: values.dogBreed,
@@ -253,11 +234,13 @@ export async function updateMemberAction(id: string, formData: FormData) {
         owner1BirthDate: optionalDate(
             String(formData.get("owner1BirthDate") || "").trim(),
         ),
+        owner1Email: String(formData.get("owner1Email") || "").trim(),
 
         owner2Name: String(formData.get("owner2Name") || "").trim(),
         owner2BirthDate: optionalDate(
             String(formData.get("owner2BirthDate") || "").trim(),
         ),
+        owner2Email: String(formData.get("owner2Email") || "").trim(),
 
         dogName,
         dogBreed: String(formData.get("dogBreed") || "").trim(),
