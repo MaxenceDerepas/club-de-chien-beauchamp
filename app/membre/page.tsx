@@ -276,29 +276,44 @@ export default async function MembrePage() {
                             )}
                         </div>
 
-                        {hasHealthCourse && (
+                        {isAdmin ? (
                             <span
-                                className={styles.avatarTagHealth}
-                                title="Parcours de santé"
+                                className={styles.avatarTagAdmin}
+                                title="Administrateur"
                             >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src="/images/Tag-Parcours-de-sante.png"
-                                    alt="Parcours de santé"
+                                    src="/images/logo-club.png"
+                                    alt="Administrateur"
                                 />
                             </span>
-                        )}
-                        {hasObedience && (
-                            <span
-                                className={styles.avatarTagObedience}
-                                title="Obéissance"
-                            >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src="/images/Tag-Obeissance.png"
-                                    alt="Obéissance"
-                                />
-                            </span>
+                        ) : (
+                            <>
+                                {hasHealthCourse && (
+                                    <span
+                                        className={styles.avatarTagHealth}
+                                        title="Parcours de santé"
+                                    >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src="/images/Tag-Parcours-de-sante.png"
+                                            alt="Parcours de santé"
+                                        />
+                                    </span>
+                                )}
+                                {hasObedience && (
+                                    <span
+                                        className={styles.avatarTagObedience}
+                                        title="Obéissance"
+                                    >
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src="/images/Tag-Obeissance.png"
+                                            alt="Obéissance"
+                                        />
+                                    </span>
+                                )}
+                            </>
                         )}
                     </div>
                     <h2 className={styles.memberName}>{displayName}</h2>
