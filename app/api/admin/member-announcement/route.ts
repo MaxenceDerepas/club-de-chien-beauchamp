@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { adminSession, verifySessionCookieValue } from "@/lib/admin-auth";
 import { getCurrentMember } from "@/lib/member-auth";
-import { saveHomepageAnnouncement } from "@/lib/content";
+import { saveMemberAnnouncement } from "@/lib/content";
 
 export async function POST(req: Request) {
     try {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         const text = String(body?.text || "").trim();
         const enabled = Boolean(body?.enabled);
 
-        await saveHomepageAnnouncement({ text, enabled });
+        await saveMemberAnnouncement({ text, enabled });
 
         return NextResponse.json({ success: true });
     } catch (error) {

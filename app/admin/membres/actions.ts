@@ -53,6 +53,7 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
         registrationDate: String(formData.get("registrationDate") || "").trim(),
         membershipActive: formData.get("membershipActive") === "on",
         siteAccessEnabled: formData.get("siteAccessEnabled") === "on",
+        isAdmin: formData.get("isAdmin") === "on",
         notes: String(formData.get("notes") || "").trim(),
         healthCourse: formData.get("healthCourse") === "on",
         obedience: formData.get("obedience") === "on",
@@ -152,6 +153,7 @@ export async function createMemberAction(
             registrationDate: optionalDate(values.registrationDate) || now,
             membershipActive: values.membershipActive,
             siteAccessEnabled: values.siteAccessEnabled,
+            isAdmin: values.isAdmin,
             healthCourse: values.healthCourse,
             obedience: values.obedience,
             dogPhotoUrl,
@@ -266,6 +268,7 @@ export async function updateMemberAction(id: string, formData: FormData) {
             ) || existingMember.registrationDate,
         membershipActive: formData.get("membershipActive") === "on",
         siteAccessEnabled: formData.get("siteAccessEnabled") === "on",
+        isAdmin: formData.get("isAdmin") === "on",
 
         username,
         usernameLower: username.toLowerCase(),

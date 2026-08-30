@@ -6,11 +6,21 @@ import styles from "./admin.module.css";
 type Props = {
     initialText: string;
     initialEnabled: boolean;
+    apiEndpoint?: string;
+    title?: string;
+    description?: string;
+    checkboxLabel?: string;
+    placeholder?: string;
 };
 
 export default function AnnouncementEditor({
     initialText,
     initialEnabled,
+    apiEndpoint = "/api/admin/announcement",
+    title = "Annonce d'accueil",
+    description = "Ce message s'affiche sur la page d'accueil lorsqu'il est activé.",
+    checkboxLabel = "Afficher l'annonce sur la page d'accueil",
+    placeholder = "Exemple : Les cours du samedi 23 mars sont annulés.",
 }: Props) {
     const [text, setText] = useState(initialText);
     const [enabled, setEnabled] = useState(initialEnabled);
@@ -24,7 +34,7 @@ export default function AnnouncementEditor({
             setMessage("");
             setIsError(false);
 
-            const res = await fetch("/api/admin/announcement", {
+            const res = await fetch(apiEndpoint, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -50,9 +60,9 @@ export default function AnnouncementEditor({
 
     return (
         <section className={styles.panel}>
-            <h2 className={styles.panelTitle}>Annonce d’accueil</h2>
+            <h2 className={styles.panelTitle}>{title}</h2>
             <p className={styles.text}>
-                Ce message s’affiche sur la page d’accueil lorsqu’il est activé.
+                {description}
             </p>
 
             <div className={styles.editorBlock}>
@@ -66,7 +76,7 @@ export default function AnnouncementEditor({
                     onChange={(e) => setText(e.target.value)}
                     rows={3}
                     className={styles.textarea}
-                    placeholder="Exemple : Les cours du samedi 23 mars sont annulés."
+                    placeholder={placeholder}
                 />
             </div>
 
@@ -76,7 +86,7 @@ export default function AnnouncementEditor({
                     checked={enabled}
                     onChange={(e) => setEnabled(e.target.checked)}
                 />
-                Afficher l’annonce sur la page d’accueil
+                {checkboxLabel}
             </label>
 
             <div className={styles.actionsRow}>

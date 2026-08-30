@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getCurrentMember } from "@/lib/member-auth";
 
 const SESSION_COOKIE_NAME = "club_admin_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30;
@@ -79,9 +80,13 @@ export async function isAdminAuthenticated() {
 
 export async function requireAdminSession() {
     const authenticated = await isAdminAuthenticated();
-    if (!authenticated) {
-        redirect("/admin");
-    }
+    if (authenticated) return;
+
+    // Also allow members with isAdmin flag
+    const member = await getCurrentMember();
+    if (member?.isAdmin) return;
+
+    redirect("/admin");
 }
 
 export const adminSession = {

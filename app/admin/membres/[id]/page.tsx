@@ -575,6 +575,17 @@ export default async function EditMemberPage({ params }: Props) {
                                         />
                                         Accès membre activé
                                     </label>
+
+                                    <label className={styles.checkboxRow}>
+                                        <input
+                                            type="checkbox"
+                                            name="isAdmin"
+                                            defaultChecked={
+                                                member.isAdmin
+                                            }
+                                        />
+                                        Administrateur
+                                    </label>
                                 </div>
 
                                 <div

@@ -134,6 +134,39 @@
     gap: 48px;
 }
 
+/* Annonce membre */
+.memberAnnouncementBox {
+    background: #f5d957;
+    border: 4px solid #e8c840;
+    border-radius: 20px;
+    padding: 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.memberAnnouncementBadge {
+    display: inline-block;
+    align-self: flex-start;
+    background: #1f1f1f;
+    color: #f5d957;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.memberAnnouncementText {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1f1f1f;
+    line-height: 1.5;
+}
+
 .sectionTitle {
     margin: 0 0 22px;
     font-size: 2.4rem;
@@ -857,4 +890,105 @@
         height: 40px;
         font-size: 1.6rem;
     }
+}
+
+/* Mon compte */
+.accountCard {
+    background: #ffffff;
+    border: 4px solid #ffffff;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    border-radius: 20px;
+    padding: 28px 32px;
+}
+
+.accountSubtitle {
+    margin: 0 0 20px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1f1f1f;
+}
+
+.passwordForm {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 400px;
+}
+
+.passwordFields {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.passwordFieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.passwordLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.passwordInput {
+    padding: 10px 14px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #f9f9f9;
+    transition: border-color 0.2s ease;
+}
+
+.passwordInput:focus {
+    outline: none;
+    border-color: #11b7e5;
+    background: #fff;
+}
+
+.passwordSubmit {
+    align-self: flex-start;
+    padding: 10px 24px;
+    background: #11b7e5;
+    color: #fff;
+    border: 3px solid #0e9dc4;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.passwordSubmit:hover {
+    background: #0ea5d0;
+}
+
+.passwordSubmit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.passwordSuccess {
+    margin: 0;
+    padding: 10px 14px;
+    background: #e6f9e6;
+    border: 2px solid #7dd87d;
+    border-radius: 10px;
+    color: #2f8f2f;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.passwordError {
+    margin: 0;
+    padding: 10px 14px;
+    background: #fde8e8;
+    border: 2px solid #f8a0a0;
+    border-radius: 10px;
+    color: #c22626;
+    font-weight: 600;
+    font-size: 0.95rem;
 }

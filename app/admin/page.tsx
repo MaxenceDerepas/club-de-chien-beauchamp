@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { adminSession, verifySessionCookieValue } from "@/lib/admin-auth";
-import { getHomepageAnnouncement } from "@/lib/content";
+import { getCurrentMember } from "@/lib/member-auth";
+import { getHomepageAnnouncement, getMemberAnnouncement } from "@/lib/content";
 import { listMembers } from "@/lib/members";
 import { listEvents } from "@/lib/events";
 import { listHealthCourses } from "@/lib/health-courses";
@@ -18,11 +19,17 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     const params = (await searchParams) || {};
     const cookieStore = await cookies();
     const sessionValue = cookieStore.get(adminSession.name)?.value;
-    const isAuthenticated = verifySessionCookieValue(sessionValue);
+    const isAdminSession = verifySessionCookieValue(sessionValue);
+
+    // Also check if logged-in member has isAdmin
+    const member = await getCurrentMember();
+    const isMemberAdmin = member?.isAdmin ?? false;
+    const isAuthenticated = isAdminSession || isMemberAdmin;
 
     if (isAuthenticated) {
-        const [announcement, members, events, healthCourses] = await Promise.all([
+        const [announcement, memberAnnouncement, members, events, healthCourses] = await Promise.all([
             getHomepageAnnouncement(),
+            getMemberAnnouncement(),
             listMembers(),
             listEvents(),
             listHealthCourses(),
@@ -100,17 +107,27 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                             </h1>
                         </div>
 
-                        <form
-                            action={logoutAdmin}
-                            className={styles.logoutTopForm}
-                        >
-                            <button
-                                type="submit"
-                                className={styles.logoutButton}
+                        <div className={styles.topbarActions}>
+                            {isMemberAdmin && (
+                                <Link
+                                    href="/membre"
+                                    className={styles.backToMemberLink}
+                                >
+                                    ← Espace membre
+                                </Link>
+                            )}
+                            <form
+                                action={logoutAdmin}
+                                className={styles.logoutTopForm}
                             >
-                                Se déconnecter
-                            </button>
-                        </form>
+                                <button
+                                    type="submit"
+                                    className={styles.logoutButton}
+                                >
+                                    Se déconnecter
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                     {/* Statistiques */}
@@ -274,6 +291,16 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                     <AnnouncementEditor
                         initialText={announcement.text}
                         initialEnabled={announcement.enabled}
+                    />
+
+                    <AnnouncementEditor
+                        initialText={memberAnnouncement.text}
+                        initialEnabled={memberAnnouncement.enabled}
+                        apiEndpoint="/api/admin/member-announcement"
+                        title="Annonce espace membre"
+                        description="Ce message s'affiche dans l'espace des adhérents connectés."
+                        checkboxLabel="Afficher l'annonce dans l'espace membre"
+                        placeholder="Exemple : Pensez à mettre à jour vos vaccinations."
                     />
                 </section>
             </main>

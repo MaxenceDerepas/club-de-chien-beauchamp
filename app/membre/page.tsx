@@ -10,8 +10,10 @@ import { listPublishedUpcomingEvents } from "@/lib/events";
 import { listPublishedUpcomingHealthCourses } from "@/lib/health-courses";
 import { listMembers } from "@/lib/members";
 import { listAlbums } from "@/lib/gallery";
+import { getMemberAnnouncement } from "@/lib/content";
 import { listEvents } from "@/lib/events";
 import MemberGallery from "./MemberGallery";
+import ChangePasswordForm from "./ChangePasswordForm";
 import EventCard, {
     type EventCardData,
     type EventCardMemberInfo,
@@ -26,7 +28,7 @@ import styles from "./membre.module.css";
 
 export const dynamic = "force-dynamic";
 
-function getNavItems(showHealthCourse: boolean) {
+function getNavItems(showHealthCourse: boolean, isAdmin: boolean) {
     const items = [
         { href: "#galerie", label: "Galerie", dotClass: "dotGreen" },
         { href: "#evenement", label: "Évènement", dotClass: "dotYellow" },
@@ -41,6 +43,10 @@ function getNavItems(showHealthCourse: boolean) {
             : []),
         { href: "#documentation", label: "Documentation", dotClass: "dotPurple" },
         { href: "#contacts", label: "Contacts", dotClass: "dotPurple" },
+        { href: "#compte", label: "Mon compte", dotClass: "dotWhite" },
+        ...(isAdmin
+            ? [{ href: "/admin", label: "Administration", dotClass: "dotYellow" }]
+            : []),
         { href: "/", label: "Page Visiteur", dotClass: "dotWhite" },
     ];
     return items;
@@ -91,11 +97,13 @@ export default async function MembrePage() {
     const memberId = member._id?.toString();
     const hasHealthCourse = member.healthCourse ?? false;
     const hasObedience = member.obedience ?? false;
+    const isAdmin = member.isAdmin ?? false;
 
-    const [allAlbums, allEvents, events] = await Promise.all([
+    const [allAlbums, allEvents, events, memberAnnouncement] = await Promise.all([
         listAlbums(),
         listEvents(),
         listPublishedUpcomingEvents(),
+        getMemberAnnouncement(),
     ]);
 
     // Filter albums: "all" visible to everyone, "event" only if member is registered
@@ -190,7 +198,7 @@ export default async function MembrePage() {
             <header className={homeStyles.header}>
                 <div className={`${homeStyles.headerInner} ${styles.headerInnerNoLogo}`}>
                     <nav className={homeStyles.nav}>
-                        {getNavItems(hasHealthCourse).map((item) => (
+                        {getNavItems(hasHealthCourse, isAdmin).map((item) => (
                             <a
                                 key={item.label}
                                 href={item.href}
@@ -231,7 +239,7 @@ export default async function MembrePage() {
                     </nav>
 
                     <MobileNav items={[
-                        ...getNavItems(hasHealthCourse),
+                        ...getNavItems(hasHealthCourse, isAdmin),
                         { href: "/login", label: "Se déconnecter", dotClass: "dotWhite" },
                     ]} />
                 </div>
@@ -297,6 +305,17 @@ export default async function MembrePage() {
                 </aside>
 
                 <div className={styles.main}>
+                    {memberAnnouncement.enabled && memberAnnouncement.text.trim() && (
+                        <div className={styles.memberAnnouncementBox}>
+                            <span className={styles.memberAnnouncementBadge}>
+                                Info club
+                            </span>
+                            <p className={styles.memberAnnouncementText}>
+                                {memberAnnouncement.text}
+                            </p>
+                        </div>
+                    )}
+
                     <section id="galerie" className={styles.gallerySection}>
                         <h1 className={styles.sectionTitle}>GALERIE</h1>
                         <MemberGallery albums={visibleAlbums} />
@@ -484,6 +503,14 @@ export default async function MembrePage() {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                    </section>
+
+                    <section id="compte" className={styles.eventSection}>
+                        <h1 className={styles.sectionTitle}>MON COMPTE</h1>
+                        <div className={styles.accountCard}>
+                            <h3 className={styles.accountSubtitle}>Modifier mon mot de passe</h3>
+                            <ChangePasswordForm />
                         </div>
                     </section>
                 </div>

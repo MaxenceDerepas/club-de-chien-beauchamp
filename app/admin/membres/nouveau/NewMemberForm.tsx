@@ -12,6 +12,16 @@ export default function NewMemberForm() {
         initialCreateMemberState,
     );
     const [showPassword, setShowPassword] = useState(false);
+    const [generatedPassword, setGeneratedPassword] = useState(() => generatePassword());
+
+    function generatePassword() {
+        const chars = "abcdefghjkmnpqrstuvwxyz23456789";
+        let pwd = "";
+        for (let i = 0; i < 8; i++) {
+            pwd += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return pwd;
+    }
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
     function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -357,27 +367,25 @@ export default function NewMemberForm() {
                             <input
                                 id="password"
                                 name="password"
-                                type={showPassword ? "text" : "password"}
+                                type="text"
                                 className={styles.input}
                                 required
+                                value={generatedPassword}
+                                onChange={(e) => setGeneratedPassword(e.target.value)}
+                                style={{ fontFamily: "monospace", fontSize: "1.1rem", letterSpacing: "0.1em" }}
                             />
 
                             <button
                                 type="button"
                                 className={styles.passwordToggle}
-                                onClick={() => setShowPassword((prev) => !prev)}
-                                aria-label={
-                                    showPassword
-                                        ? "Masquer le mot de passe"
-                                        : "Afficher le mot de passe"
-                                }
+                                onClick={() => setGeneratedPassword(generatePassword())}
                             >
-                                {showPassword ? "Masquer" : "Afficher"}
+                                Regénérer
                             </button>
                         </div>
 
                         <p className={styles.hint}>
-                            Mot de passe communiqué à l’adhérent.
+                            Mot de passe généré automatiquement. Notez-le pour le communiquer à l’adhérent.
                         </p>
                     </div>
 
@@ -460,6 +468,15 @@ export default function NewMemberForm() {
                                 defaultChecked={v.siteAccessEnabled}
                             />
                             Accès membre activé
+                        </label>
+
+                        <label className={styles.checkboxRow}>
+                            <input
+                                type="checkbox"
+                                name="isAdmin"
+                                defaultChecked={v.isAdmin}
+                            />
+                            Administrateur
                         </label>
                     </div>
 

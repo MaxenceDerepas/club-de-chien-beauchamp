@@ -1,7 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireMemberSession } from "@/lib/member-auth";
+import {
+    requireMemberSession,
+    hashMemberPassword,
+    verifyMemberPassword,
+} from "@/lib/member-auth";
+import { updateMember } from "@/lib/members";
 import { getEventById, requestEventRegistration } from "@/lib/events";
 import {
     requestHealthCourseRegistration,
@@ -111,4 +116,42 @@ export async function cancelHealthCourseRegistrationAction(
 
     revalidatePath("/membre");
     revalidatePath("/admin/parcours-sante");
+}
+
+export async function changePasswordAction(
+    formData: FormData,
+): Promise<{ success: boolean; error?: string }> {
+    const member = await requireMemberSession();
+    if (!member._id) return { success: false, error: "Session invalide." };
+
+    const currentPassword = String(formData.get("currentPassword") || "");
+    const newPassword = String(formData.get("newPassword") || "");
+
+    if (!currentPassword || !newPassword) {
+        return { success: false, error: "Veuillez remplir tous les champs." };
+    }
+
+    if (newPassword.length < 4) {
+        return {
+            success: false,
+            error: "Le nouveau mot de passe doit contenir au moins 4 caractères.",
+        };
+    }
+
+    const ok = verifyMemberPassword(
+        currentPassword,
+        member.passwordSalt,
+        member.passwordHash,
+    );
+    if (!ok) {
+        return { success: false, error: "Mot de passe actuel incorrect." };
+    }
+
+    const { hash, salt } = hashMemberPassword(newPassword);
+    await updateMember(member._id.toString(), {
+        passwordHash: hash,
+        passwordSalt: salt,
+    });
+
+    return { success: true };
 }

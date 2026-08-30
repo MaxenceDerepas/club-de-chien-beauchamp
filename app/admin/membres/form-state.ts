@@ -41,6 +41,7 @@ export type CreateMemberFormState = {
         registrationDate: string;
         membershipActive: boolean;
         siteAccessEnabled: boolean;
+        isAdmin: boolean;
         notes: string;
     };
 };
@@ -81,6 +82,7 @@ export const initialCreateMemberState: CreateMemberFormState = {
         registrationDate: "",
         membershipActive: true,
         siteAccessEnabled: true,
+        isAdmin: false,
         notes: "",
     },
 };

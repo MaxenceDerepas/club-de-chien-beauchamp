@@ -84,8 +84,8 @@ export default async function HomePage() {
 
             <section id="accueil" className={styles.hero}>
                 <Image
-                    src="/images/hero-terrain.jpg"
-                    alt="Terrain du club"
+                    src="/images/hero-accueil.jpg"
+                    alt="Club Beauchampois d'Éducation Canine"
                     fill
                     priority
                     className={styles.heroBg}
@@ -326,7 +326,7 @@ export default async function HomePage() {
 
                         <div className={styles.contactGrid}>
                             <a
-                                href="tel:0123456789"
+                                href="tel:+33684908750"
                                 className={styles.contactCard}
                                 aria-label="Téléphoner au club"
                             >
@@ -334,7 +334,7 @@ export default async function HomePage() {
                                     Téléphone
                                 </span>
                                 <span className={styles.contactValue}>
-                                    01 23 45 67 89
+                                    06 84 90 87 50
                                 </span>
                                 <span className={styles.contactHint}>
                                     Du lundi au samedi · 9h00 à 18h00
@@ -342,7 +342,7 @@ export default async function HomePage() {
                             </a>
 
                             <a
-                                href="mailto:contact@club-canin-beauchamp.fr"
+                                href="mailto:clubcaninbeauchamp@hotmail.com"
                                 className={styles.contactCard}
                                 aria-label="Envoyer un email au club"
                             >
@@ -350,7 +350,7 @@ export default async function HomePage() {
                                     Email
                                 </span>
                                 <span className={styles.contactValue}>
-                                    contact@club-canin-beauchamp.fr
+                                    clubcaninbeauchamp@hotmail.com
                                 </span>
                             </a>
 
