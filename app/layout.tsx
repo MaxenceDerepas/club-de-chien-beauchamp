@@ -56,8 +56,8 @@ export const metadata: Metadata = {
         images: ["/images/hero-accueil.jpg"],
     },
     icons: {
-        icon: "/images/logo-club.png",
-        apple: "/images/logo-club.png",
+        icon: "/favicon.ico",
+        apple: "/apple-touch-icon.png",
     },
     manifest: "/manifest.json",
     alternates: {

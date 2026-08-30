@@ -138,6 +138,22 @@
     color: #9b1c1c;
 }
 
+.statusExpired {
+    background: #9b1c1c;
+    color: #fff;
+}
+
+.statusExpiring {
+    background: #fef3cd;
+    color: #856404;
+}
+
+.expiryDate {
+    font-size: 0.75rem;
+    color: #6b7b8a;
+    margin-top: 2px;
+}
+
 .actions {
     display: flex;
     gap: 10px;

@@ -24,6 +24,9 @@ export default async function AdminMembersPage() {
         dogPhotoUrl: member.dogPhotoUrl || "",
         healthCourse: member.healthCourse ?? false,
         obedience: member.obedience ?? false,
+        registrationDate: member.registrationDate
+            ? new Date(member.registrationDate).toISOString()
+            : null,
     }));
 
     return (

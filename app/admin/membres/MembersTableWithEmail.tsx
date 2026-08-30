@@ -36,6 +36,7 @@ type MemberItem = {
     dogPhotoUrl: string;
     healthCourse: boolean;
     obedience: boolean;
+    registrationDate: string | null;
 };
 
 type Props = {
@@ -62,8 +63,35 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     ruban_noir: "#2b2b2b",
 };
 
+function getMembershipStatus(member: MemberItem): "ok" | "expiring" | "expired" {
+    if (!member.membershipActive || !member.registrationDate) return "ok";
+    const regDate = new Date(member.registrationDate);
+    const expiryDate = new Date(regDate);
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    const now = new Date();
+    if (now >= expiryDate) return "expired";
+    const daysLeft = Math.ceil(
+        (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    if (daysLeft <= 30) return "expiring";
+    return "ok";
+}
+
+function formatExpiryInfo(registrationDate: string | null): string {
+    if (!registrationDate) return "";
+    const regDate = new Date(registrationDate);
+    const expiryDate = new Date(regDate);
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    return expiryDate.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+}
+
 type StatusFilter = "all" | "active" | "inactive";
 type AccessFilter = "all" | "enabled" | "disabled";
+type SubscriptionFilter = "all" | "expiring" | "expired";
 
 export default function MembersTableWithEmail({ members }: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,6 +115,7 @@ export default function MembersTableWithEmail({ members }: Props) {
     const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
     const [accessFilter, setAccessFilter] = useState<AccessFilter>("all");
     const [levelFilter, setLevelFilter] = useState<MemberLevel | "all">("all");
+    const [subscriptionFilter, setSubscriptionFilter] = useState<SubscriptionFilter>("all");
 
     const filteredMembers = useMemo(() => {
         const q = search.trim().toLowerCase();
@@ -96,6 +125,11 @@ export default function MembersTableWithEmail({ members }: Props) {
             if (accessFilter === "enabled" && !m.siteAccessEnabled) return false;
             if (accessFilter === "disabled" && m.siteAccessEnabled) return false;
             if (levelFilter !== "all" && m.level !== levelFilter) return false;
+            if (subscriptionFilter !== "all") {
+                const ms = getMembershipStatus(m);
+                if (subscriptionFilter === "expiring" && ms !== "expiring") return false;
+                if (subscriptionFilter === "expired" && ms !== "expired") return false;
+            }
 
             if (!q) return true;
             const haystack = [
@@ -111,7 +145,7 @@ export default function MembersTableWithEmail({ members }: Props) {
                 .toLowerCase();
             return haystack.includes(q);
         });
-    }, [members, search, statusFilter, accessFilter, levelFilter]);
+    }, [members, search, statusFilter, accessFilter, levelFilter, subscriptionFilter]);
 
     const selectableMembers = useMemo(
         () => members.filter((member) => member.email?.trim()),
@@ -227,6 +261,20 @@ export default function MembersTableWithEmail({ members }: Props) {
                     <option value="disabled">Accès désactivé</option>
                 </select>
 
+                <select
+                    className={styles.filterSelect}
+                    value={subscriptionFilter}
+                    onChange={(e) =>
+                        setSubscriptionFilter(
+                            e.target.value as SubscriptionFilter,
+                        )
+                    }
+                >
+                    <option value="all">Abonnement : tous</option>
+                    <option value="expiring">Expire bientôt</option>
+                    <option value="expired">Expiré</option>
+                </select>
+
                 <span className={styles.filterCount}>
                     {filteredMembers.length} / {members.length}
                 </span>
@@ -321,17 +369,58 @@ export default function MembersTableWithEmail({ members }: Props) {
                                     <div>{member.address || "—"}</div>
                                 </td>
                                 <td>
-                                    <span
-                                        className={`${styles.status} ${
-                                            member.membershipActive
-                                                ? styles.statusOn
-                                                : styles.statusOff
-                                        }`}
-                                    >
-                                        {member.membershipActive
-                                            ? "Active"
-                                            : "Inactive"}
-                                    </span>
+                                    {(() => {
+                                        const ms = getMembershipStatus(member);
+                                        const expiry = formatExpiryInfo(member.registrationDate);
+                                        if (ms === "expired") {
+                                            return (
+                                                <>
+                                                    <span className={`${styles.status} ${styles.statusExpired}`}>
+                                                        Expiré
+                                                    </span>
+                                                    {expiry && (
+                                                        <div className={styles.expiryDate}>
+                                                            depuis le {expiry}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            );
+                                        }
+                                        if (ms === "expiring") {
+                                            return (
+                                                <>
+                                                    <span className={`${styles.status} ${styles.statusExpiring}`}>
+                                                        Expire bientôt
+                                                    </span>
+                                                    {expiry && (
+                                                        <div className={styles.expiryDate}>
+                                                            le {expiry}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            );
+                                        }
+                                        return (
+                                            <>
+                                                <span
+                                                    className={`${styles.status} ${
+                                                        member.membershipActive
+                                                            ? styles.statusOn
+                                                            : styles.statusOff
+                                                    }`}
+                                                >
+                                                    {member.membershipActive
+                                                        ? "Active"
+                                                        : "Inactive"}
+                                                </span>
+                                                {expiry && member.membershipActive && (
+                                                    <div className={styles.expiryDate}>
+                                                        jusqu&apos;au {expiry}
+                                                    </div>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
                                 </td>
                                 <td>
                                     <span
