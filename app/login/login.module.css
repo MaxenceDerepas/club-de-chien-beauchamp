@@ -69,6 +69,33 @@
     background: #ffffff;
 }
 
+.passwordRow {
+    display: flex;
+    gap: 0;
+}
+
+.passwordRow input {
+    flex: 1;
+    border-right: none;
+}
+
+.togglePassword {
+    height: 50px;
+    padding: 0 14px;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-left: none;
+    background: rgba(255, 255, 255, 0.85);
+    color: #159fd3;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.togglePassword:hover {
+    background: #ffffff;
+}
+
 .error {
     margin: 0;
     padding: 10px 14px;

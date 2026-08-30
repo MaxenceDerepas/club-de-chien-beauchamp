@@ -10,3 +10,28 @@ body {
 * {
     box-sizing: border-box;
 }
+
+/* Loading spinner */
+.loading-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 12px;
+    color: #0c8fb4;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #cfe2ea;
+    border-top-color: #0c8fb4;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

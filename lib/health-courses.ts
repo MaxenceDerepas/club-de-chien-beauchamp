@@ -30,12 +30,17 @@ function getDb() {
     return clientPromise.then((client) => client.db("club-canin"));
 }
 
+let indexesCreated = false;
+
 export async function getHealthCoursesCollection() {
     const db = await getDb();
     const collection = db.collection<HealthCourseRecord>("health_courses");
 
-    await collection.createIndex({ sessionDate: 1 });
-    await collection.createIndex({ createdAt: -1 });
+    if (!indexesCreated) {
+        indexesCreated = true;
+        collection.createIndex({ sessionDate: 1 }).catch(() => {});
+        collection.createIndex({ createdAt: -1 }).catch(() => {});
+    }
 
     return collection;
 }

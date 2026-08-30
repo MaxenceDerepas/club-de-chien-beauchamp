@@ -25,10 +25,17 @@ function getDb() {
     return clientPromise.then((client) => client.db("club-canin"));
 }
 
+let indexesCreated = false;
+
 export async function getGalleryCollection() {
     const db = await getDb();
     const collection = db.collection<GalleryAlbum>("gallery_albums");
-    await collection.createIndex({ createdAt: -1 });
+
+    if (!indexesCreated) {
+        indexesCreated = true;
+        collection.createIndex({ createdAt: -1 }).catch(() => {});
+    }
+
     return collection;
 }
 

@@ -44,13 +44,18 @@ function getDb() {
     return clientPromise.then((client) => client.db("club-canin"));
 }
 
+let indexesCreated = false;
+
 export async function getEventsCollection() {
     const db = await getDb();
     const collection = db.collection<EventRecord>("events");
 
-    await collection.createIndex({ createdAt: -1 });
-    await collection.createIndex({ eventDate: 1 });
-    await collection.createIndex({ title: 1 });
+    if (!indexesCreated) {
+        indexesCreated = true;
+        collection.createIndex({ createdAt: -1 }).catch(() => {});
+        collection.createIndex({ eventDate: 1 }).catch(() => {});
+        collection.createIndex({ title: 1 }).catch(() => {});
+    }
 
     return collection;
 }

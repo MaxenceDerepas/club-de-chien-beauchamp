@@ -60,13 +60,18 @@ function getDb() {
     return clientPromise.then((client) => client.db("club-canin"));
 }
 
+let indexesCreated = false;
+
 export async function getMembersCollection() {
     const db = await getDb();
     const collection = db.collection<MemberRecord>("members");
 
-    await collection.createIndex({ usernameLower: 1 }, { unique: true });
-    await collection.createIndex({ lastName: 1, firstName: 1 });
-    await collection.createIndex({ dogName: 1 });
+    if (!indexesCreated) {
+        indexesCreated = true;
+        collection.createIndex({ usernameLower: 1 }, { unique: true }).catch(() => {});
+        collection.createIndex({ lastName: 1, firstName: 1 }).catch(() => {});
+        collection.createIndex({ dogName: 1 }).catch(() => {});
+    }
 
     return collection;
 }

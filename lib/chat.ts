@@ -15,11 +15,16 @@ function getDb() {
     return clientPromise.then((client) => client.db("club-canin"));
 }
 
+let indexesCreated = false;
+
 export async function getChatCollection() {
     const db = await getDb();
     const collection = db.collection<ChatMessage>("chat_messages");
 
-    await collection.createIndex({ eventId: 1, createdAt: 1 });
+    if (!indexesCreated) {
+        indexesCreated = true;
+        collection.createIndex({ eventId: 1, createdAt: 1 }).catch(() => {});
+    }
 
     return collection;
 }
