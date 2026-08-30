@@ -97,17 +97,17 @@ const documentationCategories: DocumentationCategory[] = [
             {
                 id: "pv-ago-2025",
                 title: "PV Assemblée Générale Ordinaire — 30 novembre 2025",
-                fileUrl: "/documents/pv-ago-2025-11-30.pdf",
+                fileUrl: "https://res.cloudinary.com/t2c5ip49/raw/upload/12-PV_DE_L_AGO_CBEC_DU_30_11_2025",
             },
             {
                 id: "pv-age-2025",
                 title: "PV Assemblée Générale Extraordinaire — 30 novembre 2025",
-                fileUrl: "/documents/pv-age-2025-11-30.pdf",
+                fileUrl: "https://res.cloudinary.com/t2c5ip49/raw/upload/11-PV_DE_L_AGE_CBEC_DU_30_11_2025",
             },
             {
                 id: "pv-ago-2024",
                 title: "PV Assemblée Générale Ordinaire — 15 décembre 2024",
-                fileUrl: "/documents/pv-ago-2024-12-15.pdf",
+                fileUrl: "https://res.cloudinary.com/t2c5ip49/raw/upload/10-PV_AGO_Beauchamp_15122024",
             },
         ],
     },
