@@ -88,6 +88,42 @@ export async function updateHealthCourse(
     );
 }
 
+/**
+ * Find or auto-create a health course session for a given Sunday date.
+ * Used when a member pre-registers — no admin creation needed.
+ */
+export async function getOrCreateHealthCourseForDate(sundayDate: Date) {
+    const collection = await getHealthCoursesCollection();
+
+    // Normalize to start of day
+    const start = new Date(sundayDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setHours(23, 59, 59, 999);
+
+    const existing = await collection.findOne({
+        sessionDate: { $gte: start, $lte: end },
+    });
+
+    if (existing) return existing;
+
+    const now = new Date();
+    const newSession: Omit<HealthCourseRecord, "_id"> = {
+        title: "Parcours de santé",
+        sessionDate: start,
+        location: "",
+        description: "",
+        maxParticipants: 0,
+        isPublished: true,
+        registrations: [],
+        createdAt: now,
+        updatedAt: now,
+    };
+
+    const result = await collection.insertOne(newSession);
+    return { ...newSession, _id: result.insertedId };
+}
+
 export async function deleteHealthCourseById(id: string) {
     const collection = await getHealthCoursesCollection();
     if (!ObjectId.isValid(id)) {

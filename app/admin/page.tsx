@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { adminSession, verifySessionCookieValue } from "@/lib/admin-auth";
@@ -10,6 +11,11 @@ import { MEMBER_LEVELS } from "@/lib/levels";
 import { loginAdmin, logoutAdmin } from "./actions";
 import AnnouncementEditor from "./AnnouncementEditor";
 import styles from "./admin.module.css";
+
+export const metadata: Metadata = {
+    title: "Administration",
+    robots: { index: false, follow: false },
+};
 
 type AdminPageProps = {
     searchParams?: Promise<{ error?: string }>;

@@ -131,7 +131,7 @@ export default function AdminHealthCourseCalendar({
                     Vue administrative du calendrier.
                 </p>
                 <p className={styles.sidebarText}>
-                    Cliquez sur un dimanche programmé pour voir et gérer les
+                    Cliquez sur un dimanche pour voir et gérer les
                     inscriptions.
                 </p>
             </aside>
@@ -178,6 +178,8 @@ export default function AdminHealthCourseCalendar({
                                 ).length ?? 0;
                             const isSelected =
                                 session && session.id === selectedSessionId;
+                            const hasRegistrations =
+                                session && session.registrations.length > 0;
 
                             return (
                                 <div key={key} className={styles.column}>
@@ -203,7 +205,7 @@ export default function AdminHealthCourseCalendar({
                                         </span>
                                     </div>
                                     <div className={styles.bodyCell}>
-                                        {session ? (
+                                        {hasRegistrations ? (
                                             <div
                                                 className={`${styles.statusBadge} ${
                                                     pendingCount > 0
@@ -211,7 +213,7 @@ export default function AdminHealthCourseCalendar({
                                                         : styles.statusApproved
                                                 }`}
                                                 onClick={() => {
-                                                    if (onSelectSession) {
+                                                    if (session && onSelectSession) {
                                                         onSelectSession(
                                                             isSelected
                                                                 ? null
@@ -234,7 +236,7 @@ export default function AdminHealthCourseCalendar({
                                                     styles.disabledBadge
                                                 }
                                             >
-                                                Non programmé
+                                                Aucune inscription
                                             </div>
                                         )}
 

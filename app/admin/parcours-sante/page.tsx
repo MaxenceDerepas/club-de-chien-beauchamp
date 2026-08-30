@@ -5,7 +5,6 @@ import { listMembers } from "@/lib/members";
 import {
     approveHealthCourseRegistrationAction,
     rejectHealthCourseRegistrationAction,
-    deleteHealthCourseAction,
 } from "./actions";
 import AdminParcoursView from "./AdminParcoursView";
 import type { AdminCalendarMemberInfo } from "@/components/AdminHealthCourseCalendar";
@@ -52,13 +51,6 @@ export default async function AdminHealthCoursesPage() {
                     <Link href="/admin" className={styles.backLink}>
                         ← Retour au tableau de bord
                     </Link>
-
-                    <Link
-                        href="/admin/parcours-sante/nouveau"
-                        className={styles.primaryLink}
-                    >
-                        Créer un parcours de santé
-                    </Link>
                 </div>
 
                 <AdminParcoursView
@@ -66,7 +58,6 @@ export default async function AdminHealthCoursesPage() {
                     memberInfoById={memberInfoById}
                     approveAction={approveHealthCourseRegistrationAction}
                     rejectAction={rejectHealthCourseRegistrationAction}
-                    deleteAction={deleteHealthCourseAction}
                 />
             </div>
         </main>

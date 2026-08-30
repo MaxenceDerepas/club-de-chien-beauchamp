@@ -12,6 +12,7 @@ import {
     requestHealthCourseRegistration,
     cancelHealthCourseRegistration,
     getHealthCourseById,
+    getOrCreateHealthCourseForDate,
 } from "@/lib/health-courses";
 import { meetsMinLevel } from "@/lib/members";
 
@@ -50,23 +51,26 @@ export async function preregisterForEventAction(formData: FormData) {
 
 export async function preregisterForHealthCourseAction(formData: FormData) {
     const member = await requireMemberSession();
+    if (!member._id) return;
 
-    const sessionId = String(formData.get("sessionId") || "");
-    if (!sessionId || !member._id) return;
+    if (!member.healthCourse) return;
 
-    if (!member.healthCourse) {
-        return;
-    }
+    // Accept either a date (new auto-generated calendar) or sessionId (legacy)
+    const dateStr = String(formData.get("date") || "");
+    if (!dateStr) return;
 
-    const session = await getHealthCourseById(sessionId);
-    if (!session || !session.sessionDate) return;
+    const sundayDate = new Date(dateStr);
+    if (Number.isNaN(sundayDate.getTime())) return;
 
-    const sevenDaysBefore = new Date(session.sessionDate);
+    // Check 7-day cutoff
+    const sevenDaysBefore = new Date(sundayDate);
     sevenDaysBefore.setDate(sevenDaysBefore.getDate() - 7);
     sevenDaysBefore.setHours(23, 59, 59, 999);
-    if (new Date() > sevenDaysBefore) {
-        return;
-    }
+    if (new Date() > sevenDaysBefore) return;
+
+    // Auto-create session if it doesn't exist
+    const session = await getOrCreateHealthCourseForDate(sundayDate);
+    const sessionId = session._id!.toString();
 
     const memberName =
         [member.firstName, member.lastName].filter(Boolean).join(" ").trim() ||
@@ -84,7 +88,6 @@ export async function preregisterForHealthCourseAction(formData: FormData) {
 
     revalidatePath("/membre");
     revalidatePath("/admin/parcours-sante");
-    revalidatePath(`/admin/parcours-sante/${sessionId}`);
 }
 
 export async function cancelHealthCourseRegistrationAction(
@@ -94,16 +97,6 @@ export async function cancelHealthCourseRegistrationAction(
 
     const sessionId = String(formData.get("sessionId") || "");
     if (!sessionId || !member._id) return;
-
-    const session = await getHealthCourseById(sessionId);
-    if (!session || !session.sessionDate) return;
-
-    const sevenDaysBefore = new Date(session.sessionDate);
-    sevenDaysBefore.setDate(sevenDaysBefore.getDate() - 7);
-    sevenDaysBefore.setHours(23, 59, 59, 999);
-    if (new Date() > sevenDaysBefore) {
-        return;
-    }
 
     try {
         await cancelHealthCourseRegistration(

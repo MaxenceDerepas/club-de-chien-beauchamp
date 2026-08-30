@@ -1,0 +1,88 @@
+.carousel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.arrow:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+}
+
+.arrow svg {
+    width: 22px;
+    height: 22px;
+}
+
+.counter {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+    min-width: 60px;
+    text-align: center;
+}
+
+.dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.dotActive {
+    background: #ffffff;
+    transform: scale(1.2);
+}
+
+@media (max-width: 720px) {
+    .arrow {
+        width: 38px;
+        height: 38px;
+    }
+
+    .arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .counter {
+        font-size: 1rem;
+    }
+}

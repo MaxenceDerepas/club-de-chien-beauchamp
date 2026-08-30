@@ -18,7 +18,6 @@ type Props = {
     memberInfoById: Record<string, AdminCalendarMemberInfo>;
     approveAction: (formData: FormData) => void | Promise<void>;
     rejectAction: (formData: FormData) => void | Promise<void>;
-    deleteAction: (formData: FormData) => void | Promise<void>;
 };
 
 function formatDate(iso: string) {
@@ -35,7 +34,6 @@ export default function AdminParcoursView({
     memberInfoById,
     approveAction,
     rejectAction,
-    deleteAction,
 }: Props) {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const selectedSession = sessions.find((s) => s.id === selectedId) ?? null;
@@ -296,21 +294,6 @@ export default function AdminParcoursView({
                             </div>
                         </div>
                     )}
-                    <div className={styles.deleteRow}>
-                        <form action={deleteAction}>
-                            <input
-                                type="hidden"
-                                name="id"
-                                value={selectedSession.id}
-                            />
-                            <button
-                                type="submit"
-                                className={styles.deleteButton}
-                            >
-                                Supprimer cette séance
-                            </button>
-                        </form>
-                    </div>
                 </section>
             )}
         </>

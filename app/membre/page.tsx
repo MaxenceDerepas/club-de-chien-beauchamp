@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { requireMemberSession } from "@/lib/member-auth";
@@ -8,17 +9,15 @@ import {
     cancelHealthCourseRegistrationAction,
 } from "./actions";
 import { listPublishedUpcomingEvents } from "@/lib/events";
-import { listPublishedUpcomingHealthCourses } from "@/lib/health-courses";
+import { listHealthCourses } from "@/lib/health-courses";
 import { listMembers } from "@/lib/members";
 import { listAlbums } from "@/lib/gallery";
 import { getMemberAnnouncement } from "@/lib/content";
 import { listEvents } from "@/lib/events";
 import MemberGallery from "./MemberGallery";
 import ChangePasswordForm from "./ChangePasswordForm";
-import EventCard, {
-    type EventCardData,
-    type EventCardMemberInfo,
-} from "@/components/EventCard";
+import { type EventCardData, type EventCardMemberInfo } from "@/components/EventCard";
+import EventCarousel from "@/components/EventCarousel";
 import HealthCourseCalendar, {
     type CalendarSession,
     type CalendarMemberInfo,
@@ -28,6 +27,11 @@ import homeStyles from "@/app/home.module.css";
 import styles from "./membre.module.css";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+    title: "Espace membre",
+    robots: { index: false, follow: false },
+};
 
 function getNavItems(showHealthCourse: boolean, isAdmin: boolean) {
     const items = [
@@ -158,7 +162,7 @@ export default async function MembrePage() {
             })),
         }));
     const healthCourses = hasHealthCourse
-        ? await listPublishedUpcomingHealthCourses()
+        ? await listHealthCourses()
         : [];
 
     const calendarSessions: CalendarSession[] = healthCourses
@@ -372,18 +376,13 @@ export default async function MembrePage() {
                                 </p>
                             </div>
                         ) : (
-                            eventCards.map((card) => (
-                                <EventCard
-                                    key={card.id}
-                                    event={card}
-                                    currentMemberId={memberId || ""}
-                                    currentMemberLevel={member.level}
-                                    memberInfoById={eventMemberInfoById}
-                                    preregisterAction={
-                                        preregisterForEventAction
-                                    }
-                                />
-                            ))
+                            <EventCarousel
+                                events={eventCards}
+                                currentMemberId={memberId || ""}
+                                currentMemberLevel={member.level}
+                                memberInfoById={eventMemberInfoById}
+                                preregisterAction={preregisterForEventAction}
+                            />
                         )}
                     </section>
 

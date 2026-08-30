@@ -69,14 +69,6 @@ function getSundaysOfMonth(year: number, month: number): Date[] {
     return sundays;
 }
 
-function isSameDay(a: Date, b: Date): boolean {
-    return (
-        a.getFullYear() === b.getFullYear() &&
-        a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate()
-    );
-}
-
 export default function HealthCourseCalendar({
     sessions,
     currentMemberId,
@@ -138,12 +130,11 @@ export default function HealthCourseCalendar({
                     />
                 </div>
                 <p className={styles.sidebarText}>
-                    L&apos;équipe d&apos;éducation doit valider votre inscription pour
-                    confirmer votre participation.
+                    Choisissez un dimanche et préinscrivez-vous.
+                    L&apos;équipe d&apos;éducation validera votre inscription.
                 </p>
                 <p className={styles.sidebarText}>
-                    Les préinscriptions ferment 7 jours avant la date de la séance
-                    (le dimanche soir qui précède à minuit).
+                    Les préinscriptions ferment 7 jours avant la date de la séance.
                 </p>
             </aside>
 
@@ -193,6 +184,8 @@ export default function HealthCourseCalendar({
                             sevenDaysBefore.setHours(23, 59, 59, 999);
                             const isClosedForRegistration = !isPast && new Date() > sevenDaysBefore;
 
+                            const sundayISO = sunday.toISOString();
+
                             return (
                                 <div
                                     key={key}
@@ -204,154 +197,106 @@ export default function HealthCourseCalendar({
                                         </span>
                                     </div>
                                     <div className={styles.bodyCell}>
-                                        {session ? (
-                                            myReg ? (
-                                                <>
-                                                    <div
-                                                        className={`${styles.statusBadge} ${
-                                                            myReg.status ===
-                                                            "approved"
-                                                                ? styles.statusApproved
-                                                                : myReg.status ===
-                                                                    "rejected"
-                                                                  ? styles.statusRejected
-                                                                  : styles.statusPending
-                                                        }`}
-                                                    >
-                                                        {myReg.status ===
-                                                        "approved"
-                                                            ? "Validé(e)"
-                                                            : myReg.status ===
-                                                                "rejected"
-                                                              ? "Non validé(e)"
-                                                              : "⏳ Préinscrit(e)"}
-                                                    </div>
-                                                    {(myReg.status === "pending" ||
-                                                        myReg.status === "approved") &&
-                                                        !isPast &&
-                                                        !isClosedForRegistration && (
-                                                        <form
-                                                            action={cancelAction}
-                                                        >
-                                                            <input
-                                                                type="hidden"
-                                                                name="sessionId"
-                                                                value={session.id}
-                                                            />
-                                                            <button
-                                                                type="submit"
-                                                                className={
-                                                                    styles.cancelButton
-                                                                }
-                                                            >
-                                                                Se désinscrire
-                                                            </button>
-                                                        </form>
-                                                    )}
-                                                </>
-                                            ) : isPast ? (
-                                                <div className={styles.disabledBadge}>
-                                                    Séance passée
-                                                </div>
-                                            ) : isClosedForRegistration ? (
-                                                <div className={styles.disabledBadge}>
-                                                    Préinscriptions fermées
-                                                </div>
-                                            ) : (
-                                                <form
-                                                    action={preregisterAction}
+                                        {myReg ? (
+                                            <>
+                                                <div
+                                                    className={`${styles.statusBadge} ${
+                                                        myReg.status === "approved"
+                                                            ? styles.statusApproved
+                                                            : myReg.status === "rejected"
+                                                              ? styles.statusRejected
+                                                              : styles.statusPending
+                                                    }`}
                                                 >
-                                                    <input
-                                                        type="hidden"
-                                                        name="sessionId"
-                                                        value={session.id}
-                                                    />
-                                                    <button
-                                                        type="submit"
-                                                        className={
-                                                            styles.registerButton
-                                                        }
-                                                    >
-                                                        Se préinscrire
-                                                    </button>
-                                                </form>
-                                            )
-                                        ) : (
+                                                    {myReg.status === "approved"
+                                                        ? "Validé(e)"
+                                                        : myReg.status === "rejected"
+                                                          ? "Non validé(e)"
+                                                          : "⏳ Préinscrit(e)"}
+                                                </div>
+                                                {(myReg.status === "pending" ||
+                                                    myReg.status === "approved") &&
+                                                    !isPast &&
+                                                    !isClosedForRegistration &&
+                                                    session && (
+                                                    <form action={cancelAction}>
+                                                        <input
+                                                            type="hidden"
+                                                            name="sessionId"
+                                                            value={session.id}
+                                                        />
+                                                        <button
+                                                            type="submit"
+                                                            className={styles.cancelButton}
+                                                        >
+                                                            Se désinscrire
+                                                        </button>
+                                                    </form>
+                                                )}
+                                            </>
+                                        ) : isPast ? (
                                             <div className={styles.disabledBadge}>
-                                                Non programmé
+                                                Séance passée
                                             </div>
+                                        ) : isClosedForRegistration ? (
+                                            <div className={styles.disabledBadge}>
+                                                Préinscriptions fermées
+                                            </div>
+                                        ) : (
+                                            <form action={preregisterAction}>
+                                                <input
+                                                    type="hidden"
+                                                    name="date"
+                                                    value={sundayISO}
+                                                />
+                                                <button
+                                                    type="submit"
+                                                    className={styles.registerButton}
+                                                >
+                                                    Se préinscrire
+                                                </button>
+                                            </form>
                                         )}
 
                                         <div className={styles.avatarsList}>
                                             {approved.map((reg) => {
-                                                const info =
-                                                    memberInfoById[reg.memberId];
-                                                const dogName =
-                                                    info?.dogName ||
-                                                    reg.memberName;
+                                                const info = memberInfoById[reg.memberId];
+                                                const dogName = info?.dogName || reg.memberName;
                                                 return (
                                                     <div
                                                         key={reg.memberId}
                                                         className={styles.avatarItem}
                                                     >
-                                                        <span
-                                                            className={
-                                                                styles.avatarName
-                                                            }
-                                                        >
+                                                        <span className={styles.avatarName}>
                                                             {dogName}
                                                         </span>
-                                                        <div
-                                                            className={
-                                                                styles.avatarWrap
-                                                            }
-                                                        >
+                                                        <div className={styles.avatarWrap}>
                                                             {info?.dogPhotoUrl ? (
                                                                 // eslint-disable-next-line @next/next/no-img-element
                                                                 <img
-                                                                    src={
-                                                                        info.dogPhotoUrl
-                                                                    }
+                                                                    src={info.dogPhotoUrl}
                                                                     alt={dogName}
-                                                                    className={
-                                                                        styles.avatarImg
-                                                                    }
+                                                                    className={styles.avatarImg}
                                                                     style={{
-                                                                        borderColor:
-                                                                            info
-                                                                                ? LEVEL_COLORS[
-                                                                                      info
-                                                                                          .level
-                                                                                  ]
-                                                                                : "#ef6b6b",
+                                                                        borderColor: info
+                                                                            ? LEVEL_COLORS[info.level]
+                                                                            : "#ef6b6b",
                                                                     }}
                                                                 />
                                                             ) : (
                                                                 <span
-                                                                    className={
-                                                                        styles.avatarFallback
-                                                                    }
+                                                                    className={styles.avatarFallback}
                                                                     style={{
-                                                                        borderColor:
-                                                                            info
-                                                                                ? LEVEL_COLORS[
-                                                                                      info
-                                                                                          .level
-                                                                                  ]
-                                                                                : "#ef6b6b",
+                                                                        borderColor: info
+                                                                            ? LEVEL_COLORS[info.level]
+                                                                            : "#ef6b6b",
                                                                     }}
                                                                 >
-                                                                    {dogName
-                                                                        .charAt(0)
-                                                                        .toUpperCase()}
+                                                                    {dogName.charAt(0).toUpperCase()}
                                                                 </span>
                                                             )}
                                                             {info?.healthCourse && (
-                                                                <span
-                                                                    className={
-                                                                        styles.avatarTagHealth
-                                                                    }
-                                                                >
+                                                                <span className={styles.avatarTagHealth}>
                                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                                                     <img
                                                                         src="/images/Tag-Parcours-de-sante.png"
@@ -360,11 +305,7 @@ export default function HealthCourseCalendar({
                                                                 </span>
                                                             )}
                                                             {info?.obedience && (
-                                                                <span
-                                                                    className={
-                                                                        styles.avatarTagObedience
-                                                                    }
-                                                                >
+                                                                <span className={styles.avatarTagObedience}>
                                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                                                     <img
                                                                         src="/images/Tag-Obeissance.png"

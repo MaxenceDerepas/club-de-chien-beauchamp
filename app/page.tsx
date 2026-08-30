@@ -9,6 +9,46 @@ import MobileNav from "@/components/MobileNav";
 
 export const dynamic = "force-dynamic";
 
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsActivityLocation",
+    name: "Club Beauchampois d'Éducation Canine",
+    description:
+        "Club d'éducation canine à Beauchamp (Val-d'Oise). Cours chiots, ados, collectifs, obéissance, ring et parcours de santé.",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://club-de-chien-beauchamp.vercel.app",
+    telephone: "+33684908750",
+    email: "clubcaninbeauchamp@hotmail.com",
+    address: {
+        "@type": "PostalAddress",
+        streetAddress: "49 Chaussée Jules César",
+        addressLocality: "Beauchamp",
+        postalCode: "95250",
+        addressRegion: "Val-d'Oise",
+        addressCountry: "FR",
+    },
+    geo: {
+        "@type": "GeoCoordinates",
+        latitude: 49.0145,
+        longitude: 2.1935,
+    },
+    openingHoursSpecification: [
+        {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: "Saturday",
+            opens: "14:00",
+            closes: "17:00",
+        },
+        {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: "Sunday",
+            opens: "09:00",
+            closes: "12:00",
+        },
+    ],
+    sport: "Éducation canine",
+    image: "/images/hero-accueil.jpg",
+};
+
 export default async function HomePage() {
     const [announcement, member] = await Promise.all([
         getHomepageAnnouncement(),
@@ -37,6 +77,10 @@ export default async function HomePage() {
 
     return (
         <main className={styles.page}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <header className={styles.header}>
                 <div className={styles.headerInner}>
                     <a href="#accueil" className={styles.logoWrap}>
