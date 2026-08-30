@@ -33,7 +33,7 @@ export default async function EditMemberPage({ params }: Props) {
             <div className={styles.shell}>
                 <div className={styles.topbar}>
                     <Link href="/admin/membres" className={styles.backLink}>
-                        ← Retour aux membres
+                        ← Retour aux adhérents
                     </Link>
                 </div>
 
@@ -43,7 +43,7 @@ export default async function EditMemberPage({ params }: Props) {
                         Modifier {member.firstName} {member.lastName}
                     </h1>
                     <p className={styles.text}>
-                        Mets à jour la fiche du membre et ses accès.
+                        Mets à jour la fiche de l'adhérent et ses accès.
                     </p>
 
                     {member.dogPhotoUrl ? (
@@ -430,7 +430,7 @@ export default async function EditMemberPage({ params }: Props) {
 
                         <section className={styles.section}>
                             <h2 className={styles.sectionTitle}>
-                                Accès membre
+                                Accès adhérent
                             </h2>
 
                             <div className={styles.grid}>
@@ -573,7 +573,7 @@ export default async function EditMemberPage({ params }: Props) {
                                                 member.siteAccessEnabled
                                             }
                                         />
-                                        Accès membre activé
+                                        Accès adhérent activé
                                     </label>
 
                                     <label className={styles.checkboxRow}>

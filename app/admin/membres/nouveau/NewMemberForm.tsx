@@ -336,12 +336,12 @@ export default function NewMemberForm() {
             </section>
 
             <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>Accès membre</h2>
+                <h2 className={styles.sectionTitle}>Accès adhérent</h2>
 
                 <div className={styles.infoNotice}>
                     L’identifiant et le mot de passe doivent être communiqués à
                     l’adhérent afin qu’il puisse se connecter à son espace
-                    membre.
+                    adhérent.
                 </div>
 
                 <div className={styles.grid}>
@@ -467,7 +467,7 @@ export default function NewMemberForm() {
                                 name="siteAccessEnabled"
                                 defaultChecked={v.siteAccessEnabled}
                             />
-                            Accès membre activé
+                            Accès adhérent activé
                         </label>
 
                         <label className={styles.checkboxRow}>

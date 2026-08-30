@@ -242,7 +242,7 @@ export default function MembersTableWithEmail({ members }: Props) {
                             <th>Niveau</th>
                             <th>Contact</th>
                             <th>Adhésion</th>
-                            <th>Accès membre</th>
+                            <th>Accès adhérent</th>
                             <th>Actions</th>
                         </tr>
                     </thead>

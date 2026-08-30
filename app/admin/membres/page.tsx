@@ -38,21 +38,21 @@ export default async function AdminMembersPage() {
                         href="/admin/membres/nouveau"
                         className={styles.primaryLink}
                     >
-                        Ajouter un membre
+                        Ajouter un adhérent
                     </Link>
                 </div>
 
                 <section className={styles.card}>
-                    <div className={styles.badge}>MEMBRES</div>
-                    <h1 className={styles.title}>Gestion des membres</h1>
+                    <div className={styles.badge}>ADHÉRENTS</div>
+                    <h1 className={styles.title}>Gestion des adhérents</h1>
                     <p className={styles.text}>
                         Ajoute, modifie ou supprime les adhérents du club, ainsi
-                        que leurs accès à l’espace membre.
+                        que leurs accès à l’espace adhérent.
                     </p>
 
                     {serializedMembers.length === 0 ? (
                         <div className={styles.empty}>
-                            Aucun membre enregistré pour le moment.
+                            Aucun adhérent enregistré pour le moment.
                         </div>
                     ) : (
                         <MembersTableWithEmail members={serializedMembers} />

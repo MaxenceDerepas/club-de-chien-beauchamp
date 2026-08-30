@@ -37,7 +37,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
         const now = new Date();
 
-        // Stats membres
+        // Stats adhérents
         const activeMembers = members.filter((m) => m.membershipActive);
         const siteAccessCount = members.filter((m) => m.siteAccessEnabled).length;
         const healthCourseMembers = members.filter((m) => m.healthCourse).length;
@@ -113,7 +113,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                     href="/membre"
                                     className={styles.backToMemberLink}
                                 >
-                                    ← Espace membre
+                                    ← Espace adhérent
                                 </Link>
                             )}
                             <form
@@ -137,7 +137,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 {activeMembers.length}
                             </span>
                             <span className={styles.statLabel}>
-                                Membres actifs
+                                Adhérents actifs
                             </span>
                             <span className={styles.statSub}>
                                 {siteAccessCount} avec accès site
@@ -226,10 +226,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                             className={styles.featureCard}
                         >
                             <h2 className={styles.featureTitle}>
-                                Gérer les membres
+                                Gérer les adhérents
                             </h2>
                             <p className={styles.text}>
-                                Ajouter, modifier, supprimer un membre et gérer
+                                Ajouter, modifier, supprimer un adhérent et gérer
                                 ses accès à l&apos;espace privé.
                             </p>
                         </Link>
@@ -257,7 +257,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                             </h2>
                             <p className={styles.text}>
                                 Gérer les parcours de santé et les demandes
-                                d&apos;inscription des membres.
+                                d&apos;inscription des adhérents.
                             </p>
                         </Link>
 
@@ -297,9 +297,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                         initialText={memberAnnouncement.text}
                         initialEnabled={memberAnnouncement.enabled}
                         apiEndpoint="/api/admin/member-announcement"
-                        title="Annonce espace membre"
+                        title="Annonce espace adhérent"
                         description="Ce message s'affiche dans l'espace des adhérents connectés."
-                        checkboxLabel="Afficher l'annonce dans l'espace membre"
+                        checkboxLabel="Afficher l'annonce dans l'espace adhérent"
                         placeholder="Exemple : Pensez à mettre à jour vos vaccinations."
                     />
                 </section>

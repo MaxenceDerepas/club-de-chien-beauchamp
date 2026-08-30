@@ -11,16 +11,16 @@ export default async function NewMemberPage() {
             <div className={styles.shell}>
                 <div className={styles.topbar}>
                     <Link href="/admin/membres" className={styles.backLink}>
-                        ← Retour aux membres
+                        ← Retour aux adhérents
                     </Link>
                 </div>
 
                 <section className={styles.card}>
-                    <div className={styles.badge}>NOUVEAU MEMBRE</div>
+                    <div className={styles.badge}>NOUVEL ADHÉRENT</div>
                     <h1 className={styles.title}>Ajouter un adhérent</h1>
                     <p className={styles.text}>
                         Renseigne les informations de l’adhérent, de son chien et
-                        ses accès à l’espace membre. Les champs marqués d’une
+                        ses accès à l’espace adhérent. Les champs marqués d’une
                         étoile sont obligatoires.
                     </p>
 
