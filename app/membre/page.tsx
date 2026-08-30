@@ -56,7 +56,7 @@ function getNavItems(showHealthCourse: boolean, isAdmin: boolean) {
 type DocumentationCategory = {
     id: string;
     title: string;
-    icon: "heart" | "education";
+    icon: "heart" | "education" | "document";
     documents: { id: string; title: string; fileUrl: string }[];
 };
 
@@ -88,6 +88,28 @@ const documentationCategories: DocumentationCategory[] = [
         title: "L'éducation au quotidien",
         icon: "education",
         documents: [],
+    },
+    {
+        id: "pv",
+        title: "Procès-verbaux",
+        icon: "document",
+        documents: [
+            {
+                id: "pv-ago-2025",
+                title: "PV Assemblée Générale Ordinaire — 30 novembre 2025",
+                fileUrl: "/documents/pv-ago-2025-11-30.pdf",
+            },
+            {
+                id: "pv-age-2025",
+                title: "PV Assemblée Générale Extraordinaire — 30 novembre 2025",
+                fileUrl: "/documents/pv-age-2025-11-30.pdf",
+            },
+            {
+                id: "pv-ago-2024",
+                title: "PV Assemblée Générale Ordinaire — 15 décembre 2024",
+                fileUrl: "/documents/pv-ago-2024-12-15.pdf",
+            },
+        ],
     },
 ];
 
@@ -422,6 +444,26 @@ export default async function MembrePage() {
                                                             strokeLinejoin="round"
                                                             fill="none"
                                                         />
+                                                    </svg>
+                                                ) : category.icon === "document" ? (
+                                                    <svg
+                                                        viewBox="0 0 32 32"
+                                                        fill="none"
+                                                    >
+                                                        <path
+                                                            d="M8 4h10l8 8v16a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V4z"
+                                                            stroke="#ffffff"
+                                                            strokeWidth="1.5"
+                                                            fill="none"
+                                                        />
+                                                        <path
+                                                            d="M18 4v8h8"
+                                                            stroke="#ffffff"
+                                                            strokeWidth="1.5"
+                                                            fill="none"
+                                                        />
+                                                        <line x1="12" y1="18" x2="22" y2="18" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
+                                                        <line x1="12" y1="22" x2="20" y2="22" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
                                                     </svg>
                                                 ) : (
                                                     <svg
