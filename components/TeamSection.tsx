@@ -68,6 +68,66 @@ export default function TeamSection() {
                         </article>
                     ))}
                 </div>
+
+                <div className={styles.teamDescription}>
+                    <h3 className={styles.teamDescTitle}>LE C.B.E.C.</h3>
+
+                    <p>
+                        Le <strong>Club Beauchampois d'Éducation Canine</strong> a
+                        été créé en <strong className={styles.highlight}>1975</strong> et
+                        est <strong className={styles.highlight}>affilié à la Société
+                        Centrale Canine</strong>.
+                    </p>
+
+                    <p>
+                        Dirigé par une équipe d'éducateurs diplômés tous bénévoles,
+                        le club propose des cours pour les chiots, la sociabilité
+                        chiens et maîtres, les bases de l'éducation, la préparation
+                        aux concours des disciplines d'Obéissance et de Ring.
+                    </p>
+
+                    <p>
+                        Au fil des années, les formations reçues par les moniteurs
+                        ont amené l'association à s'orienter et à adopter une
+                        méthode d'éducation positive.
+                    </p>
+
+                    <p>
+                        Tous les éducateurs sont passionnés, formés aux pratiques
+                        et aux disciplines canines dans{" "}
+                        <strong className={styles.highlight}>le respect du bien-être
+                        animal</strong>. Ils sont là pour vous accompagner et vous
+                        conseiller sur l'éducation de votre chien.
+                    </p>
+
+                    <p>
+                        Nos méthodes sont basées sur{" "}
+                        <strong className={styles.highlight}>le respect du chien</strong>,
+                        nous favorisons l'apprentissage et le travail par la
+                        motivation (jeu, récompenses). Il nous semble essentiel que
+                        les cours soient pour le maître et son chien un moment de
+                        plaisir et non une contrainte.
+                    </p>
+
+                    <p>
+                        Les chiots sont les bienvenus dès leurs vaccinations à jour,
+                        ils découvriront les premières bases de notre éducation à
+                        savoir : l'apprentissage par le jeu, la connexion
+                        maître/chiot et la socialisation avec les humains et ses
+                        congénères.
+                    </p>
+
+                    <p>
+                        L'objectif des cours devra, notamment, permettre à votre
+                        chien de trouver sa place au sein de votre famille.
+                    </p>
+
+                    <p>
+                        Une bonne éducation sera un plus pour les belles années que
+                        vous vous préparez à partager avec votre compagnon à quatre
+                        pattes.
+                    </p>
+                </div>
             </div>
         </section>
     );
