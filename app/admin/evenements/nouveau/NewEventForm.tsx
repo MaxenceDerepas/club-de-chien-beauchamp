@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, useActionState, type ChangeEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { createEventAction } from "../actions";
 import styles from "../evenements.module.css";
@@ -11,6 +11,7 @@ export default function NewEventForm() {
     const error = searchParams.get("error");
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [unlimited, setUnlimited] = useState(false);
+    const [isPending, setIsPending] = useState(false);
     const imageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -38,7 +39,7 @@ export default function NewEventForm() {
     }
 
     return (
-        <form action={createEventAction} className={styles.formCard}>
+        <form action={async (formData) => { setIsPending(true); await createEventAction(formData); }} className={styles.formCard}>
             {error ? <div className={styles.errorBox}>{error}</div> : null}
 
             <section className={styles.section}>
@@ -214,8 +215,8 @@ export default function NewEventForm() {
                 >
                     Annuler
                 </Link>
-                <button type="submit" className={styles.submitButton}>
-                    Enregistrer l’événement
+                <button type="submit" className={styles.submitButton} disabled={isPending}>
+                    {isPending ? "Création en cours…" : "Enregistrer l’événement"}
                 </button>
             </div>
         </form>
