@@ -387,9 +387,9 @@ export default function NewMemberForm() {
                 <h2 className={styles.sectionTitle}>Accès adhérent</h2>
 
                 <div className={styles.infoNotice}>
-                    L’identifiant et le mot de passe doivent être communiqués à
-                    l’adhérent afin qu’il puisse se connecter à son espace
-                    adhérent.
+                    Un email contenant l’identifiant et le mot de passe sera
+                    automatiquement envoyé à l’adhérent lors de la création de
+                    son compte.
                 </div>
 
                 <div className={styles.grid}>
@@ -433,7 +433,7 @@ export default function NewMemberForm() {
                         </div>
 
                         <p className={styles.hint}>
-                            Mot de passe généré automatiquement. Notez-le pour le communiquer à l’adhérent.
+                            Mot de passe généré automatiquement. Il sera envoyé par email à l’adhérent.
                         </p>
                     </div>
 
