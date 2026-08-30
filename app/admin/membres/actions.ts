@@ -12,7 +12,7 @@ import {
 } from "@/lib/members";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { hashMemberPassword } from "@/lib/member-auth";
-import { sendBulkMail } from "@/lib/mailer";
+import { sendBulkMail, sendTransactionalMail } from "@/lib/mailer";
 import { CreateMemberFormState } from "./form-state";
 
 function getValues(formData: FormData): CreateMemberFormState["values"] {
@@ -57,6 +57,8 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
         notes: String(formData.get("notes") || "").trim(),
         healthCourse: formData.get("healthCourse") === "on",
         obedience: formData.get("obedience") === "on",
+        imageRightsClub: formData.get("imageRightsClub") === "on",
+        imageRightsExternal: formData.get("imageRightsExternal") === "on",
         level: String(formData.get("level") || "chiot") as
             | "chiot"
             | "premier_cours"
@@ -156,6 +158,8 @@ export async function createMemberAction(
             isAdmin: values.isAdmin,
             healthCourse: values.healthCourse,
             obedience: values.obedience,
+            imageRightsClub: values.imageRightsClub,
+            imageRightsExternal: values.imageRightsExternal,
             dogPhotoUrl,
 
             username: values.username,
@@ -167,6 +171,16 @@ export async function createMemberAction(
             createdAt: now,
             updatedAt: now,
         });
+        // Welcome email (fire-and-forget)
+        if (values.email) {
+            sendTransactionalMail({
+                to: { email: values.email, name: `${values.firstName} ${values.lastName}` },
+                subject: "Bienvenue au Club Beauchampois d'Éducation Canine",
+                text: `Bonjour ${values.firstName},\n\nBienvenue au Club Beauchampois d'Éducation Canine !\n\nVotre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :\n\n  Identifiant : ${values.username}\n  Mot de passe : ${password}\n\nNous vous conseillons de changer votre mot de passe lors de votre première connexion.\n\nÀ bientôt sur le terrain !\nClub Beauchampois d'Éducation Canine`,
+            }).catch((err) =>
+                console.error("Welcome email error", err),
+            );
+        }
     } catch (error: any) {
         if (error?.code === 11000) {
             return {
@@ -222,6 +236,8 @@ export async function updateMemberAction(id: string, formData: FormData) {
             | "ruban_noir",
         healthCourse: formData.get("healthCourse") === "on",
         obedience: formData.get("obedience") === "on",
+        imageRightsClub: formData.get("imageRightsClub") === "on",
+        imageRightsExternal: formData.get("imageRightsExternal") === "on",
         firstName,
         lastName,
         address: String(formData.get("address") || "").trim(),

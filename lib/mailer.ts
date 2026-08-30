@@ -1,37 +1,47 @@
-import nodemailer, { type Transporter } from "nodemailer";
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
-let cachedTransporter: Transporter | null = null;
-
-function getEnv(name: string) {
-    const value = process.env[name];
-    if (!value) {
-        throw new Error(`Missing environment variable: ${name}`);
+function getApiKey(): string {
+    const key = process.env.BREVO_API_KEY;
+    if (!key) {
+        throw new Error("Missing environment variable: BREVO_API_KEY");
     }
-    return value;
+    return key;
 }
 
-export function getMailTransporter(): Transporter {
-    if (cachedTransporter) return cachedTransporter;
+function getSender(): { name: string; email: string } {
+    return {
+        name:
+            process.env.BREVO_SENDER_NAME ||
+            "Club Beauchampois d'Éducation Canine",
+        email:
+            process.env.BREVO_SENDER_EMAIL ||
+            "clubcaninbeauchamp@hotmail.com",
+    };
+}
 
-    const host = getEnv("SMTP_HOST");
-    const port = Number.parseInt(process.env.SMTP_PORT || "587", 10);
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASSWORD;
-    const secure = process.env.SMTP_SECURE === "true" || port === 465;
-
-    cachedTransporter = nodemailer.createTransport({
-        host,
-        port,
-        secure,
-        auth: user && pass ? { user, pass } : undefined,
+async function brevoSend(payload: Record<string, unknown>): Promise<void> {
+    const res = await fetch(BREVO_API_URL, {
+        method: "POST",
+        headers: {
+            "api-key": getApiKey(),
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
     });
 
-    return cachedTransporter;
+    if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`Brevo API error ${res.status}: ${body}`);
+    }
 }
 
-export type SendMailOptions = {
+// ── Emails groupés (admin → adhérents) ──────────────────────────────
+
+export type SendBulkMailOptions = {
     subject: string;
     text: string;
+    html?: string;
     bcc: string[];
     replyTo?: string;
 };
@@ -39,25 +49,69 @@ export type SendMailOptions = {
 export async function sendBulkMail({
     subject,
     text,
+    html,
     bcc,
     replyTo,
-}: SendMailOptions) {
+}: SendBulkMailOptions) {
     if (bcc.length === 0) {
         throw new Error("Aucun destinataire.");
     }
 
-    const from =
-        process.env.SMTP_FROM ||
-        `"Club canin" <${process.env.SMTP_USER ?? "no-reply@localhost"}>`;
+    const sender = getSender();
 
-    const transporter = getMailTransporter();
-
-    await transporter.sendMail({
-        from,
-        to: from,
-        bcc,
+    const payload: Record<string, unknown> = {
+        sender,
+        // Brevo requires at least one "to"; we send to ourselves and BCC the rest
+        to: [{ email: sender.email, name: sender.name }],
+        bcc: bcc.map((email) => ({ email })),
         subject,
-        text,
-        replyTo,
-    });
+        textContent: text,
+    };
+
+    if (html) {
+        payload.htmlContent = html;
+    }
+
+    if (replyTo) {
+        payload.replyTo = { email: replyTo };
+    }
+
+    await brevoSend(payload);
+}
+
+// ── Email transactionnel (individuel) ───────────────────────────────
+
+export type SendTransactionalMailOptions = {
+    to: { email: string; name?: string };
+    subject: string;
+    text: string;
+    html?: string;
+    replyTo?: string;
+};
+
+export async function sendTransactionalMail({
+    to,
+    subject,
+    text,
+    html,
+    replyTo,
+}: SendTransactionalMailOptions) {
+    const sender = getSender();
+
+    const payload: Record<string, unknown> = {
+        sender,
+        to: [{ email: to.email, name: to.name || to.email }],
+        subject,
+        textContent: text,
+    };
+
+    if (html) {
+        payload.htmlContent = html;
+    }
+
+    if (replyTo) {
+        payload.replyTo = { email: replyTo };
+    }
+
+    await brevoSend(payload);
 }

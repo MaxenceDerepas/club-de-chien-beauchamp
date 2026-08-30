@@ -47,12 +47,21 @@ export default async function EditMemberPage({ params }: Props) {
                     </p>
 
                     {member.dogPhotoUrl ? (
-                        <div className={styles.formCard} style={{ marginBottom: 0, paddingBottom: 18 }}>
+                        <div
+                            className={styles.formCard}
+                            style={{ marginBottom: 0, paddingBottom: 18 }}
+                        >
                             <div className={styles.field}>
                                 <label className={styles.label}>
                                     Photo actuelle
                                 </label>
-                                <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "flex-end",
+                                        gap: 12,
+                                    }}
+                                >
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
                                         src={member.dogPhotoUrl}
@@ -66,11 +75,18 @@ export default async function EditMemberPage({ params }: Props) {
                                         }}
                                     />
                                     <form action={deleteMemberPhotoAction}>
-                                        <input type="hidden" name="id" value={id} />
+                                        <input
+                                            type="hidden"
+                                            name="id"
+                                            value={id}
+                                        />
                                         <button
                                             type="submit"
                                             className={styles.deleteButton}
-                                            style={{ fontSize: "0.82rem", padding: "6px 14px" }}
+                                            style={{
+                                                fontSize: "0.82rem",
+                                                padding: "6px 14px",
+                                            }}
                                         >
                                             Supprimer la photo
                                         </button>
@@ -156,7 +172,7 @@ export default async function EditMemberPage({ params }: Props) {
                                         className={styles.label}
                                         htmlFor="phoneCompany"
                                     >
-                                        Cie de téléphone
+                                        Cie d'assurance
                                     </label>
                                     <input
                                         id="phoneCompany"
@@ -195,6 +211,37 @@ export default async function EditMemberPage({ params }: Props) {
                                         className={styles.input}
                                         defaultValue={member.email}
                                     />
+                                </div>
+
+                                <div className={styles.field}>
+                                    <label className={styles.label}>
+                                        Droit à l&apos;image
+                                    </label>
+
+                                    <label className={styles.checkboxRow}>
+                                        <input
+                                            type="checkbox"
+                                            name="imageRightsClub"
+                                            defaultChecked={
+                                                member.imageRightsClub ?? false
+                                            }
+                                        />
+                                        Internet club (visible par les
+                                        adhérents)
+                                    </label>
+
+                                    <label className={styles.checkboxRow}>
+                                        <input
+                                            type="checkbox"
+                                            name="imageRightsExternal"
+                                            defaultChecked={
+                                                member.imageRightsExternal ??
+                                                false
+                                            }
+                                        />
+                                        Externe (visible par tous, y compris
+                                        hors club)
+                                    </label>
                                 </div>
                             </div>
                         </section>
@@ -580,9 +627,7 @@ export default async function EditMemberPage({ params }: Props) {
                                         <input
                                             type="checkbox"
                                             name="isAdmin"
-                                            defaultChecked={
-                                                member.isAdmin
-                                            }
+                                            defaultChecked={member.isAdmin}
                                         />
                                         Administrateur
                                     </label>

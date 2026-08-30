@@ -135,6 +135,30 @@ export default function NewMemberForm() {
                             defaultValue={v.email}
                         />
                     </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label}>
+                            Droit à l&apos;image
+                        </label>
+
+                        <label className={styles.checkboxRow}>
+                            <input
+                                type="checkbox"
+                                name="imageRightsClub"
+                                defaultChecked={v.imageRightsClub}
+                            />
+                            Internet club (visible par les adhérents)
+                        </label>
+
+                        <label className={styles.checkboxRow}>
+                            <input
+                                type="checkbox"
+                                name="imageRightsExternal"
+                                defaultChecked={v.imageRightsExternal}
+                            />
+                            Externe (visible par tous, y compris hors club)
+                        </label>
+                    </div>
                 </div>
             </section>
 

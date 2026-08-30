@@ -35,6 +35,8 @@ export type MemberRecord = {
     level: MemberLevel;
     healthCourse: boolean;
     obedience: boolean;
+    imageRightsClub: boolean;
+    imageRightsExternal: boolean;
     dogPhotoUrl: string;
 
     registrationDate: Date;

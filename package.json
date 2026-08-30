@@ -13,14 +13,12 @@
     "mongodb": "^7.1.0",
     "mongoose": "^9.9.4",
     "next": "^16.2.3",
-    "nodemailer": "^8.0.5",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

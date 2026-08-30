@@ -37,6 +37,8 @@ export type CreateMemberFormState = {
 
         healthCourse: boolean;
         obedience: boolean;
+        imageRightsClub: boolean;
+        imageRightsExternal: boolean;
         username: string;
         registrationDate: string;
         membershipActive: boolean;
@@ -77,6 +79,8 @@ export const initialCreateMemberState: CreateMemberFormState = {
         level: "chiot",
         healthCourse: false,
         obedience: false,
+        imageRightsClub: false,
+        imageRightsExternal: false,
 
         username: "",
         registrationDate: "",
