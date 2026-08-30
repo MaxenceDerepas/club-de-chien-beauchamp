@@ -20,6 +20,8 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
         firstName: String(formData.get("firstName") || "").trim(),
         lastName: String(formData.get("lastName") || "").trim(),
         address: String(formData.get("address") || "").trim(),
+        postalCode: String(formData.get("postalCode") || "").trim(),
+        city: String(formData.get("city") || "").trim(),
         phone: String(formData.get("phone") || "").trim(),
         phoneCompany: String(formData.get("phoneCompany") || "").trim(),
         policyNumber: String(formData.get("policyNumber") || "").trim(),
@@ -131,6 +133,8 @@ export async function createMemberAction(
             firstName: values.firstName,
             lastName: values.lastName,
             address: values.address,
+            postalCode: values.postalCode,
+            city: values.city,
             phone: values.phone,
             phoneCompany: values.phoneCompany,
             policyNumber: values.policyNumber,
@@ -241,6 +245,8 @@ export async function updateMemberAction(id: string, formData: FormData) {
         firstName,
         lastName,
         address: String(formData.get("address") || "").trim(),
+        postalCode: String(formData.get("postalCode") || "").trim(),
+        city: String(formData.get("city") || "").trim(),
         phone: String(formData.get("phone") || "").trim(),
         phoneCompany: String(formData.get("phoneCompany") || "").trim(),
         policyNumber: String(formData.get("policyNumber") || "").trim(),
@@ -299,6 +305,19 @@ export async function updateMemberAction(id: string, formData: FormData) {
 
     try {
         await updateMemberInDb(id, updatePayload);
+
+        // Send email with new password (fire-and-forget)
+        if (newPassword && (updatePayload.email || existingMember.email)) {
+            const email = updatePayload.email || existingMember.email;
+            const name = `${firstName} ${lastName}`.trim() || "Adhérent";
+            sendTransactionalMail({
+                to: { email, name },
+                subject: "Votre mot de passe a été modifié",
+                text: `Bonjour ${firstName},\n\nVotre mot de passe pour l'espace membre du Club Beauchampois d'Éducation Canine a été modifié.\n\nVos identifiants de connexion :\n\n  Identifiant : ${username}\n  Nouveau mot de passe : ${newPassword}\n\nNous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.\n\nÀ bientôt !\nClub Beauchampois d'Éducation Canine`,
+            }).catch((err) =>
+                console.error("Password change email error", err),
+            );
+        }
     } catch (error: any) {
         if (error?.code === 11000) {
             redirect(

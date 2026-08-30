@@ -88,6 +88,30 @@ export default function NewMemberForm() {
                     </div>
 
                     <div className={styles.field}>
+                        <label className={styles.label} htmlFor="postalCode">
+                            Code postal
+                        </label>
+                        <input
+                            id="postalCode"
+                            name="postalCode"
+                            className={styles.input}
+                            defaultValue={v.postalCode}
+                        />
+                    </div>
+
+                    <div className={styles.field}>
+                        <label className={styles.label} htmlFor="city">
+                            Ville
+                        </label>
+                        <input
+                            id="city"
+                            name="city"
+                            className={styles.input}
+                            defaultValue={v.city}
+                        />
+                    </div>
+
+                    <div className={styles.field}>
                         <label className={styles.label} htmlFor="phone">
                             Téléphone
                         </label>

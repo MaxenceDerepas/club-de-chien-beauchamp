@@ -4,6 +4,8 @@ export type CreateMemberFormState = {
         firstName: string;
         lastName: string;
         address: string;
+        postalCode: string;
+        city: string;
         phone: string;
         phoneCompany: string;
         policyNumber: string;
@@ -54,6 +56,8 @@ export const initialCreateMemberState: CreateMemberFormState = {
         firstName: "",
         lastName: "",
         address: "",
+        postalCode: "",
+        city: "",
         phone: "",
         phoneCompany: "",
         policyNumber: "",

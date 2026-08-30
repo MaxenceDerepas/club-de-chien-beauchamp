@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getMemberById } from "@/lib/members";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { updateMemberAction, deleteMemberPhotoAction } from "../actions";
+import PasswordField from "./PasswordField";
 import styles from "../membres.module.css";
 
 type Props = {
@@ -149,6 +150,40 @@ export default async function EditMemberPage({ params }: Props) {
                                         name="address"
                                         className={styles.input}
                                         defaultValue={member.address}
+                                    />
+                                </div>
+
+                                <div className={styles.field}>
+                                    <label
+                                        className={styles.label}
+                                        htmlFor="postalCode"
+                                    >
+                                        Code postal
+                                    </label>
+                                    <input
+                                        id="postalCode"
+                                        name="postalCode"
+                                        className={styles.input}
+                                        defaultValue={
+                                            (member as any).postalCode || ""
+                                        }
+                                    />
+                                </div>
+
+                                <div className={styles.field}>
+                                    <label
+                                        className={styles.label}
+                                        htmlFor="city"
+                                    >
+                                        Ville
+                                    </label>
+                                    <input
+                                        id="city"
+                                        name="city"
+                                        className={styles.input}
+                                        defaultValue={
+                                            (member as any).city || ""
+                                        }
                                     />
                                 </div>
 
@@ -497,24 +532,7 @@ export default async function EditMemberPage({ params }: Props) {
                                     />
                                 </div>
 
-                                <div className={styles.field}>
-                                    <label
-                                        className={styles.label}
-                                        htmlFor="password"
-                                    >
-                                        Nouveau mot de passe
-                                    </label>
-                                    <input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        className={styles.input}
-                                    />
-                                    <p className={styles.hint}>
-                                        Laisse vide pour conserver l’ancien mot
-                                        de passe.
-                                    </p>
-                                </div>
+                                <PasswordField />
 
                                 <div className={styles.field}>
                                     <label
