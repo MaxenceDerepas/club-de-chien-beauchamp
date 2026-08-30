@@ -133,6 +133,27 @@
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
 }
 
+.adminLink {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 10px 20px;
+    background: #f5d957;
+    color: #1f1f1f;
+    border: 3px solid #1f1f1f;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 3px 3px 0 #1f1f1f;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.adminLink:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #1f1f1f;
+}
+
 .memberName {
     margin: 14px 0 0;
     font-size: 1.5rem;

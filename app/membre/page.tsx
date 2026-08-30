@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { requireMemberSession } from "@/lib/member-auth";
 import { logoutMemberAction } from "@/app/login/actions";
 import {
@@ -317,6 +318,11 @@ export default async function MembrePage() {
                         )}
                     </div>
                     <h2 className={styles.memberName}>{displayName}</h2>
+                    {isAdmin && (
+                        <Link href="/admin" className={styles.adminLink}>
+                            Espace administrateur
+                        </Link>
+                    )}
                 </aside>
 
                 <div className={styles.main}>
