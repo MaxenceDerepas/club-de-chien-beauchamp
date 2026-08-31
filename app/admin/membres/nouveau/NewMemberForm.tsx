@@ -50,6 +50,20 @@ export default function NewMemberForm() {
 
                 <div className={styles.grid}>
                     <div className={styles.field}>
+                        <label className={styles.label} htmlFor="memberNumber">
+                            N° adhérent
+                        </label>
+                        <input
+                            id="memberNumber"
+                            name="memberNumber"
+                            className={styles.input}
+                            defaultValue={v.memberNumber}
+                        />
+                    </div>
+
+                    <div className={styles.field} />
+
+                    <div className={styles.field}>
                         <label className={styles.label} htmlFor="firstName">
                             Prénom *
                         </label>

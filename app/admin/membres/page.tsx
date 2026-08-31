@@ -10,6 +10,7 @@ export default async function AdminMembersPage() {
 
     const serializedMembers = members.map((member) => ({
         id: member._id?.toString() || "",
+        memberNumber: (member as any).memberNumber || "",
         firstName: member.firstName,
         lastName: member.lastName,
         email: member.email || "",

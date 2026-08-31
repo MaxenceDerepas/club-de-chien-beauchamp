@@ -8,6 +8,7 @@ import type { MemberLevel } from "@/lib/levels";
 export type MemberRecord = {
     _id?: ObjectId;
 
+    memberNumber: string;
     firstName: string;
     lastName: string;
     address: string;

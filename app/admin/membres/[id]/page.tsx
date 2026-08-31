@@ -107,6 +107,25 @@ export default async function EditMemberPage({ params }: Props) {
                                 <div className={styles.field}>
                                     <label
                                         className={styles.label}
+                                        htmlFor="memberNumber"
+                                    >
+                                        N° adhérent
+                                    </label>
+                                    <input
+                                        id="memberNumber"
+                                        name="memberNumber"
+                                        className={styles.input}
+                                        defaultValue={
+                                            (member as any).memberNumber || ""
+                                        }
+                                    />
+                                </div>
+
+                                <div className={styles.field} />
+
+                                <div className={styles.field}>
+                                    <label
+                                        className={styles.label}
                                         htmlFor="firstName"
                                     >
                                         Prénom *

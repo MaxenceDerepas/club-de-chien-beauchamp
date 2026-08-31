@@ -17,6 +17,7 @@ import { CreateMemberFormState } from "./form-state";
 
 function getValues(formData: FormData): CreateMemberFormState["values"] {
     return {
+        memberNumber: String(formData.get("memberNumber") || "").trim(),
         firstName: String(formData.get("firstName") || "").trim(),
         lastName: String(formData.get("lastName") || "").trim(),
         address: String(formData.get("address") || "").trim(),
@@ -129,6 +130,7 @@ export async function createMemberAction(
         const dogPhotoUrl = await saveDogPhotoFile(dogPhotoFile);
 
         await createMemberInDb({
+            memberNumber: values.memberNumber,
             level: values.level,
             firstName: values.firstName,
             lastName: values.lastName,
@@ -230,6 +232,7 @@ export async function updateMemberAction(id: string, formData: FormData) {
     }
 
     const updatePayload: Parameters<typeof updateMemberInDb>[1] = {
+        memberNumber: String(formData.get("memberNumber") || "").trim(),
         level: String(formData.get("level") || "chiot") as
             | "chiot"
             | "premier_cours"

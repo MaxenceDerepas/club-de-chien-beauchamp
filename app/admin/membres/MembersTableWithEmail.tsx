@@ -22,6 +22,7 @@ type MemberLevel =
 
 type MemberItem = {
     id: string;
+    memberNumber: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -285,6 +286,7 @@ export default function MembersTableWithEmail({ members }: Props) {
                     <thead>
                         <tr>
                             <th></th>
+                            <th>N°</th>
                             <th>Adhérent</th>
                             <th>Chien</th>
                             <th>Niveau</th>
@@ -297,7 +299,7 @@ export default function MembersTableWithEmail({ members }: Props) {
                     <tbody>
                         {filteredMembers.length === 0 ? (
                             <tr>
-                                <td colSpan={8} className={styles.emptyRow}>
+                                <td colSpan={9} className={styles.emptyRow}>
                                     Aucun adhérent ne correspond aux filtres.
                                 </td>
                             </tr>
@@ -337,6 +339,7 @@ export default function MembersTableWithEmail({ members }: Props) {
                                         )}
                                     </div>
                                 </td>
+                                <td>{member.memberNumber || "—"}</td>
                                 <td>
                                     <div className={styles.nameCell}>
                                         {member.firstName} {member.lastName}

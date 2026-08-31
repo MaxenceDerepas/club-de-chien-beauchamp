@@ -1,6 +1,7 @@
 export type CreateMemberFormState = {
     error: string | null;
     values: {
+        memberNumber: string;
         firstName: string;
         lastName: string;
         address: string;
@@ -53,6 +54,7 @@ export type CreateMemberFormState = {
 export const initialCreateMemberState: CreateMemberFormState = {
     error: null,
     values: {
+        memberNumber: "",
         firstName: "",
         lastName: "",
         address: "",
