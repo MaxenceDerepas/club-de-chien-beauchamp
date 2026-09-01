@@ -28,8 +28,8 @@ const jsonLd = {
     },
     geo: {
         "@type": "GeoCoordinates",
-        latitude: 49.0145,
-        longitude: 2.1935,
+        latitude: 49.003558,
+        longitude: 2.212043,
     },
     openingHoursSpecification: [
         {
@@ -399,7 +399,7 @@ export default async function HomePage() {
                             </a>
 
                             <a
-                                href="https://maps.google.com/?q=49+Chauss%C3%A9e+Jules+C%C3%A9sar+95250+Beauchamp"
+                                href="https://www.google.com/maps/search/?api=1&query=49.003558,2.212043"
                                 target="_blank"
                                 rel="noreferrer"
                                 className={styles.contactCard}

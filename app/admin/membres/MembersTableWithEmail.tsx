@@ -313,9 +313,13 @@ export default function MembersTableWithEmail({ members }: Props) {
                                                 src={member.dogPhotoUrl}
                                                 alt={member.dogName}
                                                 className={styles.tableAvatarImg}
+                                                style={{ borderColor: LEVEL_COLORS[member.level] }}
                                             />
                                         ) : (
-                                            <span className={styles.tableAvatarFallback}>
+                                            <span
+                                                className={styles.tableAvatarFallback}
+                                                style={{ borderColor: LEVEL_COLORS[member.level] }}
+                                            >
                                                 {member.dogName.charAt(0).toUpperCase()}
                                             </span>
                                         )}

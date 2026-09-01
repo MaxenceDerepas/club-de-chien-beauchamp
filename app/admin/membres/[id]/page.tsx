@@ -4,6 +4,7 @@ import { getMemberById } from "@/lib/members";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { updateMemberAction, deleteMemberPhotoAction } from "../actions";
 import PasswordField from "./PasswordField";
+import AdditionalDogsField from "./AdditionalDogsField";
 import styles from "../membres.module.css";
 
 type Props = {
@@ -528,6 +529,10 @@ export default async function EditMemberPage({ params }: Props) {
                                 </div>
                             </div>
                         </section>
+
+                        <AdditionalDogsField
+                            initialDogs={(member as any).additionalDogs || []}
+                        />
 
                         <section className={styles.section}>
                             <h2 className={styles.sectionTitle}>

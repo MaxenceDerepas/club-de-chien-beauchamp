@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { listAlbums } from "@/lib/gallery";
 import { listEvents } from "@/lib/events";
+import { listMembers } from "@/lib/members";
 import GalleryManager from "./GalleryManager";
 import styles from "./galerie.module.css";
 
@@ -10,7 +11,18 @@ export const dynamic = "force-dynamic";
 export default async function AdminGaleriePage() {
     await requireAdminSession();
 
-    const [albums, events] = await Promise.all([listAlbums(), listEvents()]);
+    const [albums, events, allMembers] = await Promise.all([
+        listAlbums(),
+        listEvents(),
+        listMembers(),
+    ]);
+
+    const memberNameMap = new Map(
+        allMembers.map((m) => [
+            m._id?.toString() ?? "",
+            `${m.firstName} ${m.lastName}`,
+        ]),
+    );
 
     const albumsData = albums.map((a) => ({
         id: a._id?.toString() ?? "",
@@ -18,6 +30,10 @@ export default async function AdminGaleriePage() {
         visibility: a.visibility,
         eventId: a.eventId || "",
         eventTitle: a.eventTitle || "",
+        allowedMemberIds: a.allowedMemberIds || [],
+        allowedMemberNames: (a.allowedMemberIds || []).map(
+            (mid) => memberNameMap.get(mid) || mid,
+        ),
         coverUrl: a.coverUrl || "",
         photoCount: a.photos.length,
         photos: a.photos.map((p) => ({
@@ -31,6 +47,12 @@ export default async function AdminGaleriePage() {
         id: e._id?.toString() ?? "",
         title: e.title,
         date: e.eventDate ? new Date(e.eventDate).toLocaleDateString("fr-FR") : "",
+    }));
+
+    const membersData = allMembers.map((m) => ({
+        id: m._id?.toString() ?? "",
+        name: `${m.firstName} ${m.lastName}`,
+        dogName: m.dogName || "",
     }));
 
     return (
@@ -50,7 +72,7 @@ export default async function AdminGaleriePage() {
                         adhérents.
                     </p>
 
-                    <GalleryManager albums={albumsData} events={eventsData} />
+                    <GalleryManager albums={albumsData} events={eventsData} members={membersData} />
                 </div>
             </div>
         </main>

@@ -508,3 +508,73 @@
         align-items: stretch;
     }
 }
+
+/* Member selection for restricted albums */
+.fieldFull {
+    grid-column: 1 / -1;
+}
+
+.selectedMembers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.memberChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: #e0f4fa;
+    border: 1px solid #b0dae8;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    color: #163040;
+}
+
+.memberChipRemove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #888;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.memberChipRemove:hover {
+    color: #d32f2f;
+}
+
+.memberDropdown {
+    background: #ffffff;
+    border: 1.5px solid #dde7ed;
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 4px;
+}
+
+.memberDropdownItem {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 0.95rem;
+    color: #163040;
+    cursor: pointer;
+}
+
+.memberDropdownItem:hover {
+    background: #f0f8fc;
+}
+
+.memberDropdownEmpty {
+    padding: 10px 14px;
+    color: #888;
+    font-size: 0.9rem;
+    font-style: italic;
+}

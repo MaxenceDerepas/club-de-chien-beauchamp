@@ -27,8 +27,10 @@ export async function createAlbumAction(
     const title = String(formData.get("title") || "").trim();
     const visibility = String(formData.get("visibility") || "all") as
         | "all"
-        | "event";
+        | "event"
+        | "members";
     const eventId = String(formData.get("eventId") || "").trim();
+    const allowedMemberIds = formData.getAll("allowedMemberIds").map((v) => String(v));
 
     if (!title) {
         return { error: "Le titre de l'album est requis." };
@@ -36,6 +38,10 @@ export async function createAlbumAction(
 
     if (visibility === "event" && !eventId) {
         return { error: "Veuillez sélectionner un événement." };
+    }
+
+    if (visibility === "members" && allowedMemberIds.length === 0) {
+        return { error: "Veuillez sélectionner au moins un adhérent." };
     }
 
     let eventTitle = "";
@@ -52,6 +58,7 @@ export async function createAlbumAction(
             title,
             visibility,
             ...(visibility === "event" ? { eventId, eventTitle } : {}),
+            ...(visibility === "members" ? { allowedMemberIds } : {}),
             createdAt: new Date(),
         });
         revalidateGallery();

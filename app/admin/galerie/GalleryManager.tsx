@@ -20,9 +20,11 @@ type AlbumPhoto = {
 type Album = {
     id: string;
     title: string;
-    visibility: "all" | "event";
+    visibility: "all" | "event" | "members";
     eventId: string;
     eventTitle: string;
+    allowedMemberIds: string[];
+    allowedMemberNames: string[];
     coverUrl: string;
     photoCount: number;
     photos: AlbumPhoto[];
@@ -35,12 +37,19 @@ type EventOption = {
     date: string;
 };
 
+type MemberOption = {
+    id: string;
+    name: string;
+    dogName: string;
+};
+
 type Props = {
     albums: Album[];
     events: EventOption[];
+    members: MemberOption[];
 };
 
-export default function GalleryManager({ albums, events }: Props) {
+export default function GalleryManager({ albums, events, members }: Props) {
     const [createState, createAction, isCreating] = useActionState(
         createAlbumAction,
         null,
@@ -53,7 +62,9 @@ export default function GalleryManager({ albums, events }: Props) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const [deletingAlbumId, setDeletingAlbumId] = useState<string | null>(null);
-    const [visibility, setVisibility] = useState<"all" | "event">("all");
+    const [visibility, setVisibility] = useState<"all" | "event" | "members">("all");
+    const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+    const [memberSearch, setMemberSearch] = useState("");
 
     const openAlbum = albums.find((a) => a.id === openAlbumId) ?? null;
 
@@ -90,17 +101,24 @@ export default function GalleryManager({ albums, events }: Props) {
                                 name="visibility"
                                 className={styles.select}
                                 value={visibility}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setVisibility(
-                                        e.target.value as "all" | "event",
-                                    )
-                                }
+                                        e.target.value as "all" | "event" | "members",
+                                    );
+                                    if (e.target.value !== "members") {
+                                        setSelectedMemberIds([]);
+                                        setMemberSearch("");
+                                    }
+                                }}
                             >
                                 <option value="all">
                                     Tous les adhérents
                                 </option>
                                 <option value="event">
                                     Inscrits à un événement
+                                </option>
+                                <option value="members">
+                                    Adhérents spécifiques
                                 </option>
                             </select>
                         </div>
@@ -129,6 +147,93 @@ export default function GalleryManager({ albums, events }: Props) {
                                         </option>
                                     ))}
                                 </select>
+                            </div>
+                        )}
+
+                        {visibility === "members" && (
+                            <div className={`${styles.field} ${styles.fieldFull}`}>
+                                <label className={styles.label}>
+                                    Adhérents autorisés
+                                </label>
+
+                                {selectedMemberIds.length > 0 && (
+                                    <div className={styles.selectedMembers}>
+                                        {selectedMemberIds.map((mid) => {
+                                            const m = members.find((x) => x.id === mid);
+                                            return (
+                                                <span key={mid} className={styles.memberChip}>
+                                                    {m ? `${m.name} (${m.dogName})` : mid}
+                                                    <button
+                                                        type="button"
+                                                        className={styles.memberChipRemove}
+                                                        onClick={() =>
+                                                            setSelectedMemberIds((prev) =>
+                                                                prev.filter((id) => id !== mid),
+                                                            )
+                                                        }
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                <input
+                                    type="text"
+                                    className={styles.input}
+                                    placeholder="Rechercher un adhérent…"
+                                    value={memberSearch}
+                                    onChange={(e) => setMemberSearch(e.target.value)}
+                                />
+
+                                {memberSearch.trim() && (
+                                    <div className={styles.memberDropdown}>
+                                        {members
+                                            .filter(
+                                                (m) =>
+                                                    !selectedMemberIds.includes(m.id) &&
+                                                    (`${m.name} ${m.dogName}`
+                                                        .toLowerCase()
+                                                        .includes(memberSearch.toLowerCase())),
+                                            )
+                                            .slice(0, 10)
+                                            .map((m) => (
+                                                <button
+                                                    key={m.id}
+                                                    type="button"
+                                                    className={styles.memberDropdownItem}
+                                                    onClick={() => {
+                                                        setSelectedMemberIds((prev) => [...prev, m.id]);
+                                                        setMemberSearch("");
+                                                    }}
+                                                >
+                                                    {m.name} — {m.dogName}
+                                                </button>
+                                            ))}
+                                        {members.filter(
+                                            (m) =>
+                                                !selectedMemberIds.includes(m.id) &&
+                                                (`${m.name} ${m.dogName}`
+                                                    .toLowerCase()
+                                                    .includes(memberSearch.toLowerCase())),
+                                        ).length === 0 && (
+                                            <div className={styles.memberDropdownEmpty}>
+                                                Aucun résultat
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {selectedMemberIds.map((mid) => (
+                                    <input
+                                        key={mid}
+                                        type="hidden"
+                                        name="allowedMemberIds"
+                                        value={mid}
+                                    />
+                                ))}
                             </div>
                         )}
                     </div>
@@ -161,7 +266,9 @@ export default function GalleryManager({ albums, events }: Props) {
                             <span className={styles.visibilityBadge}>
                                 {openAlbum.visibility === "all"
                                     ? "Tous les adhérents"
-                                    : `Inscrits : ${openAlbum.eventTitle}`}
+                                    : openAlbum.visibility === "event"
+                                      ? `Inscrits : ${openAlbum.eventTitle}`
+                                      : `${openAlbum.allowedMemberNames.length} adhérent(s) spécifiques`}
                             </span>
                         </div>
                         <button
@@ -393,11 +500,13 @@ export default function GalleryManager({ albums, events }: Props) {
                                             {album.title}
                                         </span>
                                         <span
-                                            className={`${styles.visibilityTag} ${album.visibility === "event" ? styles.visibilityEvent : ""}`}
+                                            className={`${styles.visibilityTag} ${album.visibility !== "all" ? styles.visibilityEvent : ""}`}
                                         >
                                             {album.visibility === "all"
                                                 ? "Tous"
-                                                : album.eventTitle}
+                                                : album.visibility === "event"
+                                                  ? album.eventTitle
+                                                  : `${album.allowedMemberNames.length} adhérent(s)`}
                                         </span>
                                     </div>
                                     <div

@@ -669,7 +669,7 @@
     border-radius: 50%;
     object-fit: cover;
     display: block;
-    border: 2px solid #d8edf5;
+    border: 3px solid #d8edf5;
 }
 
 .tableAvatarFallback {
@@ -683,7 +683,7 @@
     color: #163040;
     font-size: 1.1rem;
     font-weight: 800;
-    border: 2px solid #d8edf5;
+    border: 3px solid #d8edf5;
 }
 
 .tableAvatarTagHealth,
@@ -879,6 +879,78 @@
         padding: 18px;
         border-radius: 20px;
     }
+}
+
+.addDogButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 14px;
+    background: #163040;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.addDogButton:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.removeDogButton {
+    min-height: 34px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 10px;
+    background: #b42318;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.removeDogButton:hover {
+    opacity: 0.88;
+}
+
+.dogSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #eef3f6;
+}
+
+.dogSectionHeader h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    color: #163040;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.dogSectionHeader h2::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #11b7e5;
+    box-shadow: 0 0 0 4px rgba(17, 183, 229, 0.18);
 }
 
 @media (max-width: 900px) {

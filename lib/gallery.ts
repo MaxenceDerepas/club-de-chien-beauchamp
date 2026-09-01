@@ -10,12 +10,14 @@ export type GalleryPhoto = {
 export type GalleryAlbum = {
     _id?: ObjectId;
     title: string;
-    /** "all" = visible par tous les adhérents, "event" = visible par les inscrits à l'événement */
-    visibility: "all" | "event";
+    /** "all" = tous les adhérents, "event" = inscrits à l'événement, "members" = adhérents spécifiques */
+    visibility: "all" | "event" | "members";
     /** Si visibility === "event", l'ID de l'événement lié */
     eventId?: string;
     /** Titre de l'événement (pour affichage sans lookup) */
     eventTitle?: string;
+    /** Si visibility === "members", liste des IDs des adhérents autorisés */
+    allowedMemberIds?: string[];
     coverUrl?: string;
     photos: GalleryPhoto[];
     createdAt: Date;

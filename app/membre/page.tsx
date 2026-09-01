@@ -133,7 +133,7 @@ export default async function MembrePage() {
         getMemberAnnouncement(),
     ]);
 
-    // Filter albums: "all" visible to everyone, "event" only if member is registered
+    // Filter albums: "all" visible to everyone, "event" only if member is registered, "members" only if in allowedMemberIds
     const visibleAlbums = allAlbums
         .filter((album) => {
             if (album.visibility === "all") return true;
@@ -147,6 +147,9 @@ export default async function MembrePage() {
                         r.memberId === memberId &&
                         (r.status === "approved" || r.status === "pending"),
                 );
+            }
+            if (album.visibility === "members" && album.allowedMemberIds) {
+                return album.allowedMemberIds.includes(memberId || "");
             }
             return false;
         })

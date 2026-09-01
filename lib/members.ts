@@ -5,6 +5,17 @@ export { MEMBER_LEVELS, meetsMinLevel } from "@/lib/levels";
 export type { MemberLevel } from "@/lib/levels";
 import type { MemberLevel } from "@/lib/levels";
 
+export type AdditionalDog = {
+    dogName: string;
+    dogBreed: string;
+    dogSex: "male" | "female" | "unknown";
+    dogBirthDate: Date | null;
+    dogLofNumber: string;
+    dogIdentificationNumber: string;
+    rabiesBoosterDate: Date | null;
+    dogPhotoUrl: string;
+};
+
 export type MemberRecord = {
     _id?: ObjectId;
 
@@ -41,6 +52,7 @@ export type MemberRecord = {
     imageRightsClub: boolean;
     imageRightsExternal: boolean;
     dogPhotoUrl: string;
+    additionalDogs: AdditionalDog[];
 
     registrationDate: Date;
     membershipActive: boolean;

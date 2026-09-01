@@ -10,6 +10,7 @@ import {
     listMembers,
     updateMember as updateMemberInDb,
 } from "@/lib/members";
+import type { AdditionalDog } from "@/lib/members";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { hashMemberPassword } from "@/lib/member-auth";
 import { sendBulkMail, sendTransactionalMail } from "@/lib/mailer";
@@ -93,6 +94,28 @@ async function deletePhotoFile(photoUrl: string) {
     if (publicId) { await deleteImage(publicId); }
 }
 
+async function parseAdditionalDogs(formData: FormData): Promise<AdditionalDog[]> {
+    const dogs: AdditionalDog[] = [];
+    let i = 0;
+    while (formData.has(`additionalDog_${i}_dogName`)) {
+        const photoFile = formData.get(`additionalDogPhoto_${i}`) as File | null;
+        const existingPhotoUrl = String(formData.get(`additionalDog_${i}_dogPhotoUrl`) || "").trim();
+        const uploadedUrl = await saveDogPhotoFile(photoFile);
+        dogs.push({
+            dogName: String(formData.get(`additionalDog_${i}_dogName`) || "").trim(),
+            dogBreed: String(formData.get(`additionalDog_${i}_dogBreed`) || "").trim(),
+            dogSex: String(formData.get(`additionalDog_${i}_dogSex`) || "unknown") as "male" | "female" | "unknown",
+            dogBirthDate: optionalDate(String(formData.get(`additionalDog_${i}_dogBirthDate`) || "").trim()),
+            dogLofNumber: String(formData.get(`additionalDog_${i}_dogLofNumber`) || "").trim(),
+            dogIdentificationNumber: String(formData.get(`additionalDog_${i}_dogIdentificationNumber`) || "").trim(),
+            rabiesBoosterDate: optionalDate(String(formData.get(`additionalDog_${i}_rabiesBoosterDate`) || "").trim()),
+            dogPhotoUrl: uploadedUrl || existingPhotoUrl,
+        });
+        i++;
+    }
+    return dogs;
+}
+
 export async function createMemberAction(
     _prevState: CreateMemberFormState,
     formData: FormData,
@@ -128,6 +151,7 @@ export async function createMemberAction(
         const { hash, salt } = hashMemberPassword(password);
         const now = new Date();
         const dogPhotoUrl = await saveDogPhotoFile(dogPhotoFile);
+        const additionalDogs = await parseAdditionalDogs(formData);
 
         await createMemberInDb({
             memberNumber: values.memberNumber,
@@ -167,6 +191,7 @@ export async function createMemberAction(
             imageRightsClub: values.imageRightsClub,
             imageRightsExternal: values.imageRightsExternal,
             dogPhotoUrl,
+            additionalDogs,
 
             username: values.username,
             usernameLower: values.username.toLowerCase(),
@@ -231,6 +256,17 @@ export async function updateMemberAction(id: string, formData: FormData) {
         await deletePhotoFile(existingMember.dogPhotoUrl);
     }
 
+    const additionalDogs = await parseAdditionalDogs(formData);
+
+    // Delete photos from removed additional dogs
+    const existingAdditionalDogs: AdditionalDog[] = (existingMember as any).additionalDogs || [];
+    const newPhotoUrls = new Set(additionalDogs.map((d) => d.dogPhotoUrl).filter(Boolean));
+    for (const oldDog of existingAdditionalDogs) {
+        if (oldDog.dogPhotoUrl && !newPhotoUrls.has(oldDog.dogPhotoUrl)) {
+            await deletePhotoFile(oldDog.dogPhotoUrl);
+        }
+    }
+
     const updatePayload: Parameters<typeof updateMemberInDb>[1] = {
         memberNumber: String(formData.get("memberNumber") || "").trim(),
         level: String(formData.get("level") || "chiot") as
@@ -286,6 +322,7 @@ export async function updateMemberAction(id: string, formData: FormData) {
         rabiesBoosterDate: optionalDate(
             String(formData.get("rabiesBoosterDate") || "").trim(),
         ),
+        additionalDogs,
 
         registrationDate:
             optionalDate(
@@ -351,6 +388,12 @@ export async function deleteMemberAction(formData: FormData) {
     const member = await getMemberById(id);
     if (member?.dogPhotoUrl) {
         await deletePhotoFile(member.dogPhotoUrl);
+    }
+    const memberAdditionalDogs: AdditionalDog[] = (member as any)?.additionalDogs || [];
+    for (const dog of memberAdditionalDogs) {
+        if (dog.dogPhotoUrl) {
+            await deletePhotoFile(dog.dogPhotoUrl);
+        }
     }
 
     await deleteMemberById(id);

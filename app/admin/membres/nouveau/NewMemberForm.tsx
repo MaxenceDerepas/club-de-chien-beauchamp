@@ -24,6 +24,54 @@ export default function NewMemberForm() {
     }
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
+    type AdditionalDogForm = {
+        dogName: string;
+        dogBreed: string;
+        dogSex: "male" | "female" | "unknown";
+        dogBirthDate: string;
+        dogLofNumber: string;
+        dogIdentificationNumber: string;
+        rabiesBoosterDate: string;
+    };
+
+    const [additionalDogs, setAdditionalDogs] = useState<AdditionalDogForm[]>([]);
+    const [additionalDogPreviews, setAdditionalDogPreviews] = useState<(string | null)[]>([]);
+
+    function addDog() {
+        setAdditionalDogs((prev) => [
+            ...prev,
+            {
+                dogName: "",
+                dogBreed: "",
+                dogSex: "unknown",
+                dogBirthDate: "",
+                dogLofNumber: "",
+                dogIdentificationNumber: "",
+                rabiesBoosterDate: "",
+            },
+        ]);
+        setAdditionalDogPreviews((prev) => [...prev, null]);
+    }
+
+    function removeDog(index: number) {
+        setAdditionalDogs((prev) => prev.filter((_, i) => i !== index));
+        setAdditionalDogPreviews((prev) => {
+            const old = prev[index];
+            if (old) URL.revokeObjectURL(old);
+            return prev.filter((_, i) => i !== index);
+        });
+    }
+
+    function handleAdditionalDogPhotoChange(index: number, e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        setAdditionalDogPreviews((prev) => {
+            const next = [...prev];
+            if (next[index]) URL.revokeObjectURL(next[index]!);
+            next[index] = file ? URL.createObjectURL(file) : null;
+            return next;
+        });
+    }
+
     function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
         if (!file) {
@@ -396,6 +444,148 @@ export default function NewMemberForm() {
                     </div>
                 </div>
             </section>
+
+            {additionalDogs.map((dog, i) => (
+                <section key={i} className={styles.section}>
+                    <div className={styles.dogSectionHeader}>
+                        <h2>Chien suppl&eacute;mentaire {i + 2}</h2>
+                        <button
+                            type="button"
+                            className={styles.removeDogButton}
+                            onClick={() => removeDog(i)}
+                        >
+                            Supprimer ce chien
+                        </button>
+                    </div>
+
+                    <div className={styles.grid}>
+                        <div className={styles.field}>
+                            <label className={styles.label}>Nom du chien</label>
+                            <input
+                                name={`additionalDog_${i}_dogName`}
+                                className={styles.input}
+                                value={dog.dogName}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, dogName: val } : d));
+                                }}
+                            />
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Race</label>
+                            <input
+                                name={`additionalDog_${i}_dogBreed`}
+                                className={styles.input}
+                                value={dog.dogBreed}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, dogBreed: val } : d));
+                                }}
+                            />
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Sexe</label>
+                            <select
+                                name={`additionalDog_${i}_dogSex`}
+                                className={styles.select}
+                                value={dog.dogSex}
+                                onChange={(e) => {
+                                    const val = e.target.value as "male" | "female" | "unknown";
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, dogSex: val } : d));
+                                }}
+                            >
+                                <option value="unknown">Non renseign&eacute;</option>
+                                <option value="male">M&acirc;le</option>
+                                <option value="female">Femelle</option>
+                            </select>
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Date de naissance</label>
+                            <input
+                                name={`additionalDog_${i}_dogBirthDate`}
+                                type="date"
+                                className={styles.input}
+                                value={dog.dogBirthDate}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, dogBirthDate: val } : d));
+                                }}
+                            />
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Num&eacute;ro de LOF</label>
+                            <input
+                                name={`additionalDog_${i}_dogLofNumber`}
+                                className={styles.input}
+                                value={dog.dogLofNumber}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, dogLofNumber: val } : d));
+                                }}
+                            />
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Num&eacute;ro de tatouage / puce</label>
+                            <input
+                                name={`additionalDog_${i}_dogIdentificationNumber`}
+                                className={styles.input}
+                                value={dog.dogIdentificationNumber}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, dogIdentificationNumber: val } : d));
+                                }}
+                            />
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Photo du chien</label>
+                            <input
+                                name={`additionalDogPhoto_${i}`}
+                                type="file"
+                                accept="image/*"
+                                className={styles.input}
+                                onChange={(e) => handleAdditionalDogPhotoChange(i, e)}
+                            />
+                            {additionalDogPreviews[i] ? (
+                                <div className={styles.photoPreview}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src={additionalDogPreviews[i]!}
+                                        alt={`Aperçu chien ${i + 2}`}
+                                    />
+                                </div>
+                            ) : null}
+                        </div>
+
+                        <div className={styles.field}>
+                            <label className={styles.label}>Date du rappel vaccin rage</label>
+                            <input
+                                name={`additionalDog_${i}_rabiesBoosterDate`}
+                                type="date"
+                                className={styles.input}
+                                value={dog.rabiesBoosterDate}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setAdditionalDogs((prev) => prev.map((d, j) => j === i ? { ...d, rabiesBoosterDate: val } : d));
+                                }}
+                            />
+                        </div>
+                    </div>
+                </section>
+            ))}
+
+            <button
+                type="button"
+                className={styles.addDogButton}
+                onClick={addDog}
+            >
+                + Ajouter un chien
+            </button>
 
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Accès adhérent</h2>
