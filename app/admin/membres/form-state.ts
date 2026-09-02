@@ -36,7 +36,8 @@ export type CreateMemberFormState = {
             | "ruban_bleu"
             | "ruban_blanc"
             | "ruban_rouge"
-            | "ruban_noir";
+            | "ruban_noir"
+            | "equipe";
 
         healthCourse: boolean;
         obedience: boolean;

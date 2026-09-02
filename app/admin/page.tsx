@@ -58,6 +58,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             ruban_blanc: "Blanc",
             ruban_rouge: "Rouge",
             ruban_noir: "Noir",
+            equipe: "Équipe",
         };
         const LEVEL_COLORS: Record<string, string> = {
             chiot: "#f5d957",
@@ -67,6 +68,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             ruban_blanc: "#e0e0e0",
             ruban_rouge: "#ef6b6b",
             ruban_noir: "#2b2b2b",
+            equipe: "#e6b800",
         };
         const levelCounts = MEMBER_LEVELS.map((level) => ({
             level,

@@ -590,6 +590,9 @@ export default async function EditMemberPage({ params }: Props) {
                                         <option value="ruban_noir">
                                             Ruban noir
                                         </option>
+                                        <option value="equipe">
+                                            Équipe
+                                        </option>
                                     </select>
                                 </div>
                                 <div className={styles.field}>

@@ -658,6 +658,7 @@ export default function NewMemberForm() {
                             <option value="ruban_blanc">Ruban blanc</option>
                             <option value="ruban_rouge">Ruban rouge</option>
                             <option value="ruban_noir">Ruban noir</option>
+                            <option value="equipe">Équipe</option>
                         </select>
                     </div>
 

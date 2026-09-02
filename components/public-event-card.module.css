@@ -1,0 +1,167 @@
+.card {
+    perspective: 800px;
+    max-width: 380px;
+    width: 100%;
+}
+
+.inner {
+    position: relative;
+    width: 100%;
+    min-height: 340px;
+    transition: transform 0.5s ease;
+    transform-style: preserve-3d;
+}
+
+.innerFlipped {
+    transform: rotateY(180deg);
+}
+
+.front,
+.back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+/* ===== Front ===== */
+.frontContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 16px;
+    cursor: pointer;
+    color: #ffffff;
+    min-height: 340px;
+}
+
+.frontTitle {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.poster {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.noPoster {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.noPosterIcon {
+    width: 60px;
+    height: 60px;
+}
+
+.frontDate {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f5d957;
+}
+
+.flipHint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    opacity: 0.6;
+    font-weight: 500;
+    margin-top: auto;
+}
+
+.flipHintIcon {
+    width: 14px;
+    height: 14px;
+}
+
+/* ===== Back ===== */
+.backContent {
+    padding: 20px 18px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 340px;
+    overflow-y: auto;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    color: #f5d957;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0;
+    align-self: flex-start;
+}
+
+.backButton:hover {
+    text-decoration: underline;
+}
+
+.backTitle {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.backDate {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f5d957;
+}
+
+.backLocation {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.backDescription {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 500px) {
+    .card {
+        max-width: 280px;
+    }
+
+    .inner {
+        min-height: 300px;
+    }
+
+    .frontContent {
+        min-height: 300px;
+        padding: 14px 12px;
+    }
+
+    .backContent {
+        min-height: 300px;
+        padding: 16px 14px;
+    }
+}

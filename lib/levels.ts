@@ -6,6 +6,7 @@ export const MEMBER_LEVELS = [
     "ruban_blanc",
     "ruban_rouge",
     "ruban_noir",
+    "equipe",
 ] as const;
 
 export type MemberLevel = (typeof MEMBER_LEVELS)[number];

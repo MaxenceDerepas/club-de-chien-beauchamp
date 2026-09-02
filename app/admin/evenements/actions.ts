@@ -44,7 +44,8 @@ export async function createEventAction(formData: FormData) {
         | "ruban_bleu"
         | "ruban_blanc"
         | "ruban_rouge"
-        | "ruban_noir";
+        | "ruban_noir"
+        | "equipe";
     const unlimitedParticipants = formData.get("unlimitedParticipants") === "on";
     const maxParticipants = unlimitedParticipants
         ? 0
@@ -127,7 +128,8 @@ export async function updateEventAction(formData: FormData) {
         | "ruban_bleu"
         | "ruban_blanc"
         | "ruban_rouge"
-        | "ruban_noir";
+        | "ruban_noir"
+        | "equipe";
     const unlimitedParticipants = formData.get("unlimitedParticipants") === "on";
     const maxParticipants = unlimitedParticipants
         ? 0

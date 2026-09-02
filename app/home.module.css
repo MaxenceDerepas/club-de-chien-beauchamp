@@ -409,15 +409,12 @@
 }
 
 .eventsContent {
-    max-width: 760px;
+    max-width: 900px;
     margin: 0 auto;
-}
-
-.eventsContent p {
-    margin: 0 0 10px;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    font-weight: 400;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px;
 }
 
 .contactsSection {

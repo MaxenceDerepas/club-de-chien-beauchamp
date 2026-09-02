@@ -18,7 +18,8 @@ type MemberLevel =
     | "ruban_bleu"
     | "ruban_blanc"
     | "ruban_rouge"
-    | "ruban_noir";
+    | "ruban_noir"
+    | "equipe";
 
 type MemberItem = {
     id: string;
@@ -52,6 +53,7 @@ const LEVEL_LABELS: Record<MemberLevel, string> = {
     ruban_blanc: "Ruban blanc",
     ruban_rouge: "Ruban rouge",
     ruban_noir: "Ruban noir",
+    equipe: "Équipe",
 };
 
 const LEVEL_COLORS: Record<MemberLevel, string> = {
@@ -62,6 +64,7 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     ruban_blanc: "#e6e6e6",
     ruban_rouge: "#ef6b6b",
     ruban_noir: "#2b2b2b",
+    equipe: "#e6b800",
 };
 
 function getMembershipStatus(member: MemberItem): "ok" | "expiring" | "expired" {

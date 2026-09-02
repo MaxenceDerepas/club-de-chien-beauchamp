@@ -32,6 +32,8 @@ function getLevelLabel(level?: string) {
             return "Ruban rouge";
         case "ruban_noir":
             return "Ruban noir";
+        case "equipe":
+            return "Équipe";
         default:
             return "—";
     }

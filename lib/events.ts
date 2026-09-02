@@ -9,6 +9,7 @@ export const EVENT_LEVELS = [
     "ruban_blanc",
     "ruban_rouge",
     "ruban_noir",
+    "equipe",
 ] as const;
 
 export type EventLevel = (typeof EVENT_LEVELS)[number];

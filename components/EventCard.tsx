@@ -48,6 +48,7 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     ruban_blanc: "#e6e6e6",
     ruban_rouge: "#ef6b6b",
     ruban_noir: "#2b2b2b",
+    equipe: "#e6b800",
 };
 
 function formatDate(iso: string | null) {

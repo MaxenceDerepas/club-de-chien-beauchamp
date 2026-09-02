@@ -2,10 +2,12 @@ import Image from "next/image";
 import styles from "./home.module.css";
 import { getHomepageAnnouncement } from "@/lib/content";
 import { getCurrentMember } from "@/lib/member-auth";
+import { listPublishedUpcomingEvents } from "@/lib/events";
 import ImageCluster from "@/components/ImageCluster";
 import CoursesSection from "@/components/CoursesSection";
 import TeamSection from "@/components/TeamSection";
 import MobileNav from "@/components/MobileNav";
+import PublicEventCarousel from "@/components/PublicEventCarousel";
 
 export const dynamic = "force-dynamic";
 
@@ -50,16 +52,28 @@ const jsonLd = {
 };
 
 export default async function HomePage() {
-    const [announcement, member] = await Promise.all([
+    const [announcement, member, upcomingEvents] = await Promise.all([
         getHomepageAnnouncement(),
         getCurrentMember(),
+        listPublishedUpcomingEvents(),
     ]);
+
+    const publicEvents = upcomingEvents.map((e) => ({
+        id: e._id?.toString() ?? "",
+        title: e.title,
+        eventDate: e.eventDate ? e.eventDate.toISOString() : null,
+        description: e.description || "",
+        imageUrl: e.imageUrl || "",
+        location: e.location || "",
+    }));
 
     const navItems = [
         { href: "#accueil", label: "Accueil", dotClass: "dotWhite" },
         { href: "#cours", label: "Les cours", dotClass: "dotGreen" },
         { href: "#adhesion", label: "Adhésion", dotClass: "dotPink" },
-        { href: "#evenements", label: "Événements", dotClass: "dotYellow" },
+        ...(publicEvents.length > 0
+            ? [{ href: "#evenements", label: "Événements", dotClass: "dotYellow" }]
+            : []),
         { href: "#contacts", label: "Contacts", dotClass: "dotPurple" },
         member
             ? {
@@ -340,20 +354,17 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            <section id="evenements" className={styles.eventsSection}>
-                <div className={styles.eventsInner}>
-                    <h2 className={styles.eventsTitle}>ÉVÉNEMENTS</h2>
+            {publicEvents.length > 0 && (
+                <section id="evenements" className={styles.eventsSection}>
+                    <div className={styles.eventsInner}>
+                        <h2 className={styles.eventsTitle}>ÉVÉNEMENTS</h2>
 
-                    <div className={styles.eventsContent}>
-                        <p>
-                            pour les événements qui ne sont pas exclusifs aux
-                            adhérents (concours d’obéissance, portes ouvertes,
-                            démonstrations au stade, etc.)
-                        </p>
-                        <p>événements ring/obé des clubs voisins ?</p>
+                        <div className={styles.eventsContent}>
+                            <PublicEventCarousel events={publicEvents} />
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             <TeamSection />
 

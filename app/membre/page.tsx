@@ -122,9 +122,9 @@ export default async function MembrePage() {
     const displayName = member.dogName || member.firstName || "Adhérent";
     const avatarSrc = member.dogPhotoUrl?.trim() || null;
     const memberId = member._id?.toString();
-    const hasHealthCourse = member.healthCourse ?? false;
-    const hasObedience = member.obedience ?? false;
     const isAdmin = member.isAdmin ?? false;
+    const hasHealthCourse = isAdmin || (member.healthCourse ?? false);
+    const hasObedience = isAdmin || (member.obedience ?? false);
 
     const [allAlbums, allEvents, events, memberAnnouncement] = await Promise.all([
         listAlbums(),

@@ -70,7 +70,8 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
             | "ruban_bleu"
             | "ruban_blanc"
             | "ruban_rouge"
-            | "ruban_noir",
+            | "ruban_noir"
+            | "equipe",
     };
 }
 
@@ -276,7 +277,8 @@ export async function updateMemberAction(id: string, formData: FormData) {
             | "ruban_bleu"
             | "ruban_blanc"
             | "ruban_rouge"
-            | "ruban_noir",
+            | "ruban_noir"
+            | "equipe",
         healthCourse: formData.get("healthCourse") === "on",
         obedience: formData.get("obedience") === "on",
         imageRightsClub: formData.get("imageRightsClub") === "on",
