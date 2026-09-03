@@ -118,7 +118,7 @@
 
 .input:focus,
 .select:focus {
-    border-color: #11b7e5;
+    border-color: #06607b;
     box-shadow: 0 0 0 3px rgba(17, 183, 229, 0.15);
 }
 
@@ -142,7 +142,7 @@
     padding: 0 22px;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(180deg, #1ec8f5 0%, #11b7e5 100%);
+    background: linear-gradient(180deg, #1ec8f5 0%, #06607b 100%);
     color: #ffffff;
     font-size: 0.98rem;
     font-weight: 800;

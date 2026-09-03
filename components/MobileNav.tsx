@@ -10,7 +10,12 @@ type NavItem = {
     sublabel?: string;
 };
 
-export default function MobileNav({ items }: { items: NavItem[] }) {
+type Props = {
+    items: NavItem[];
+    logoutAction?: () => void | Promise<void>;
+};
+
+export default function MobileNav({ items, logoutAction }: Props) {
     const [open, setOpen] = useState(false);
 
     const close = useCallback(() => setOpen(false), []);
@@ -69,6 +74,16 @@ export default function MobileNav({ items }: { items: NavItem[] }) {
                         </span>
                     </a>
                 ))}
+                {logoutAction && (
+                    <form action={logoutAction}>
+                        <button type="submit" className={styles.drawerItem} onClick={close}>
+                            <span className={`${styles.dot} ${styles.dotWhite}`} />
+                            <span className={styles.drawerTextBlock}>
+                                <span className={styles.drawerLabel}>Se déconnecter</span>
+                            </span>
+                        </button>
+                    </form>
+                )}
             </nav>
         </>
     );

@@ -209,7 +209,7 @@
     bottom: 22px;
     width: 4px;
     border-radius: 0 4px 4px 0;
-    background: linear-gradient(180deg, #11b7e5 0%, #0c8fb4 100%);
+    background: linear-gradient(180deg, #06607b 0%, #0c8fb4 100%);
 }
 
 .sectionTitle {
@@ -232,7 +232,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #11b7e5;
+    background: #06607b;
     box-shadow: 0 0 0 4px rgba(17, 183, 229, 0.18);
 }
 
@@ -323,7 +323,7 @@
 .input:focus,
 .select:focus,
 .textarea:focus {
-    border-color: #11b7e5;
+    border-color: #06607b;
     box-shadow: 0 0 0 3px rgba(17, 183, 229, 0.15);
 }
 
@@ -363,7 +363,7 @@
 .checkboxRow input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: #11b7e5;
+    accent-color: #06607b;
     cursor: pointer;
 }
 
@@ -390,7 +390,7 @@
     padding: 0 22px;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(180deg, #1ec8f5 0%, #11b7e5 100%);
+    background: linear-gradient(180deg, #1ec8f5 0%, #06607b 100%);
     color: #ffffff;
     font-size: 0.98rem;
     font-weight: 800;
@@ -497,7 +497,7 @@
     border-radius: 12px;
     background: linear-gradient(180deg, #f0f9fd 0%, #e7f4fa 100%);
     border: 1px solid #cfe5ef;
-    border-left: 4px solid #11b7e5;
+    border-left: 4px solid #06607b;
     color: #355060;
     font-size: 0.94rem;
     line-height: 1.55;
@@ -513,7 +513,7 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #11b7e5;
+    background: #06607b;
     color: #ffffff;
     font-size: 0.78rem;
     font-weight: 800;
@@ -594,7 +594,7 @@
 }
 
 .searchInput:focus {
-    border-color: #11b7e5;
+    border-color: #06607b;
 }
 
 .filterSelect {
@@ -611,7 +611,7 @@
 }
 
 .filterSelect:focus {
-    border-color: #11b7e5;
+    border-color: #06607b;
 }
 
 .filterCount {
@@ -949,7 +949,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #11b7e5;
+    background: #06607b;
     box-shadow: 0 0 0 4px rgba(17, 183, 229, 0.18);
 }
 

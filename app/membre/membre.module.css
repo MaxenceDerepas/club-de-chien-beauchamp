@@ -1,5 +1,5 @@
 .pageBlue {
-    background: #11b7e5;
+    background: #06607b;
     min-height: 100vh;
     color: #ffffff;
 }
@@ -232,7 +232,7 @@
 }
 
 .docSidebar {
-    background: #11b7e5;
+    background: #06607b;
     padding: 32px 18px;
     display: flex;
     align-items: flex-start;
@@ -432,7 +432,7 @@
     padding: 10px 14px;
     min-height: 56px;
     gap: 10px;
-    background: #11b7e5;
+    background: #06607b;
 }
 
 .galleryCardTitle {
@@ -980,14 +980,14 @@
 
 .passwordInput:focus {
     outline: none;
-    border-color: #11b7e5;
+    border-color: #06607b;
     background: #fff;
 }
 
 .passwordSubmit {
     align-self: flex-start;
     padding: 10px 24px;
-    background: #11b7e5;
+    background: #06607b;
     color: #fff;
     border: 3px solid #0e9dc4;
     border-radius: 10px;

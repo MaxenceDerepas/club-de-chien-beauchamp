@@ -25,14 +25,14 @@ export type AdminCalendarMemberInfo = {
 };
 
 const LEVEL_COLORS: Record<MemberLevel, string> = {
-    chiot: "#f5d957",
+    chiot: "#d94f9a",
     premier_cours: "#9ad84c",
     ruban_violet: "#b08fd6",
     ruban_bleu: "#11b7e5",
     ruban_blanc: "#e6e6e6",
     ruban_rouge: "#ef6b6b",
     ruban_noir: "#2b2b2b",
-    equipe: "#e6b800",
+    equipe: "#f5d957",
 };
 
 type Props = {

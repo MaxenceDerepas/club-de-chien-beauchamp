@@ -208,7 +208,8 @@ export async function createMemberAction(
             sendTransactionalMail({
                 to: { email: values.email, name: `${values.firstName} ${values.lastName}` },
                 subject: "Bienvenue au Club Beauchampois d'Éducation Canine",
-                text: `Bonjour ${values.firstName},\n\nBienvenue au Club Beauchampois d'Éducation Canine !\n\nVotre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :\n\n  Identifiant : ${values.username}\n  Mot de passe : ${password}\n\nNous vous conseillons de changer votre mot de passe lors de votre première connexion.\n\nÀ bientôt sur le terrain !\nClub Beauchampois d'Éducation Canine`,
+                text: `Bonjour ${values.firstName},\n\nBienvenue au Club Beauchampois d'Éducation Canine !\n\nVotre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :\n\n  Identifiant : ${values.username}\n  Mot de passe : ${password}\n\nConnectez-vous ici : https://www.clubcaninbeauchamp.fr/login\n\nNous vous conseillons de changer votre mot de passe lors de votre première connexion.\n\nÀ bientôt sur le terrain !\nClub Beauchampois d'Éducation Canine`,
+                html: `<p>Bonjour ${values.firstName},</p><p>Bienvenue au Club Beauchampois d'Éducation Canine !</p><p>Votre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :</p><p><strong>Identifiant :</strong> ${values.username}<br/><strong>Mot de passe :</strong> ${password}</p><p><a href="https://www.clubcaninbeauchamp.fr/login" style="display:inline-block;padding:12px 28px;background:#06607b;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;">Se connecter</a></p><p>Nous vous conseillons de changer votre mot de passe lors de votre première connexion.</p><p>À bientôt sur le terrain !<br/>Club Beauchampois d'Éducation Canine</p>`,
             }).catch((err) =>
                 console.error("Welcome email error", err),
             );
@@ -355,7 +356,22 @@ export async function updateMemberAction(id: string, formData: FormData) {
             sendTransactionalMail({
                 to: { email, name },
                 subject: "Votre mot de passe a été modifié",
-                text: `Bonjour ${firstName},\n\nVotre mot de passe pour l'espace membre du Club Beauchampois d'Éducation Canine a été modifié.\n\nVos identifiants de connexion :\n\n  Identifiant : ${username}\n  Nouveau mot de passe : ${newPassword}\n\nNous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.\n\nÀ bientôt !\nClub Beauchampois d'Éducation Canine`,
+                text: `Bonjour ${firstName},\n\nVotre mot de passe pour l'espace membre du Club Beauchampois d'Éducation Canine a été modifié.\n\nVos identifiants de connexion :\n\n  Identifiant : ${username}\n  Nouveau mot de passe : ${newPassword}\n\nConnectez-vous ici : https://www.clubcaninbeauchamp.fr/login\n\nNous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.\n\nÀ bientôt !\nClub Beauchampois d'Éducation Canine`,
+                html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+<h2 style="color:#06607b;">Club Beauchampois d'Éducation Canine</h2>
+<p>Bonjour ${firstName},</p>
+<p>Votre mot de passe pour l'espace membre a été modifié.</p>
+<p><strong>Vos identifiants de connexion :</strong></p>
+<table style="margin:16px 0;border-collapse:collapse;">
+<tr><td style="padding:4px 12px 4px 0;color:#555;">Identifiant</td><td style="padding:4px 0;font-weight:bold;">${username}</td></tr>
+<tr><td style="padding:4px 12px 4px 0;color:#555;">Nouveau mot de passe</td><td style="padding:4px 0;font-weight:bold;">${newPassword}</td></tr>
+</table>
+<p style="text-align:center;margin:28px 0;">
+<a href="https://www.clubcaninbeauchamp.fr/login" style="display:inline-block;padding:12px 28px;background:#06607b;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;">Se connecter</a>
+</p>
+<p style="color:#888;font-size:13px;">Nous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.</p>
+<p>À bientôt !<br/>Club Beauchampois d'Éducation Canine</p>
+</div>`,
             }).catch((err) =>
                 console.error("Password change email error", err),
             );

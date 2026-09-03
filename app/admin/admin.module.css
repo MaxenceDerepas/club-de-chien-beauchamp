@@ -103,7 +103,7 @@
 }
 
 .input:focus {
-    border-color: #11b7e5;
+    border-color: #06607b;
     box-shadow: 0 0 0 5px rgba(17, 183, 229, 0.14);
 }
 
@@ -334,7 +334,7 @@
 }
 
 .textarea:focus {
-    border-color: #11b7e5;
+    border-color: #06607b;
     box-shadow: 0 0 0 5px rgba(17, 183, 229, 0.14);
 }
 
@@ -393,7 +393,7 @@
     padding: 0 18px;
     display: inline-flex;
     align-items: center;
-    background: #11b7e5;
+    background: #06607b;
     color: #fff;
     border: 3px solid #0e9dc4;
     border-radius: 14px;

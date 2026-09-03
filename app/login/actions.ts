@@ -53,6 +53,6 @@ export async function loginMemberAction(
 
 export async function logoutMemberAction() {
     const cookieStore = await cookies();
-    cookieStore.delete(memberSession.name);
+    cookieStore.delete({ name: memberSession.name, path: "/" });
     redirect("/login");
 }

@@ -7,7 +7,7 @@
     position: sticky;
     top: 0;
     z-index: 60;
-    background: #11b7e5;
+    background: #06607b;
     border-bottom: 6px solid #ffffff;
 }
 
@@ -222,7 +222,7 @@
 }
 
 .adhesionSection {
-    background: #11b7e5;
+    background: #06607b;
 
     background-size:
         100% 48px,
@@ -389,7 +389,7 @@
     text-align: center;
 }
 .eventsSection {
-    background: #11b7e5;
+    background: #06607b;
     border-bottom: 6px solid #ffffff;
 }
 
@@ -418,7 +418,7 @@
 }
 
 .contactsSection {
-    background: #11b7e5;
+    background: #06607b;
     border-bottom: 6px solid #ffffff;
 }
 

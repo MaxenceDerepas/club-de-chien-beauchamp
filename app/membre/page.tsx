@@ -268,10 +268,10 @@ export default async function MembrePage() {
                         </form>
                     </nav>
 
-                    <MobileNav items={[
-                        ...getNavItems(hasHealthCourse, isAdmin),
-                        { href: "/login", label: "Se déconnecter", dotClass: "dotWhite" },
-                    ]} />
+                    <MobileNav
+                        items={getNavItems(hasHealthCourse, isAdmin)}
+                        logoutAction={logoutMemberAction}
+                    />
                 </div>
             </header>
 
