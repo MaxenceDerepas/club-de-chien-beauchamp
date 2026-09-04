@@ -294,6 +294,20 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 événements et au parcours de santé.
                             </p>
                         </Link>
+
+                        <Link
+                            href="/admin/cours-photos"
+                            className={styles.featureCard}
+                        >
+                            <h2 className={styles.featureTitle}>
+                                Photos des cours
+                            </h2>
+                            <p className={styles.text}>
+                                Choisir et ordonner les photos affichées
+                                dans la section des cours sur la page
+                                d&apos;accueil.
+                            </p>
+                        </Link>
                     </div>
 
                     <AnnouncementEditor

@@ -3,6 +3,7 @@ import styles from "./home.module.css";
 import { getHomepageAnnouncement } from "@/lib/content";
 import { getCurrentMember } from "@/lib/member-auth";
 import { listPublishedUpcomingEvents } from "@/lib/events";
+import { getAllCourseImages } from "@/lib/course-images";
 import ImageCluster from "@/components/ImageCluster";
 import CoursesSection from "@/components/CoursesSection";
 import TeamSection from "@/components/TeamSection";
@@ -52,11 +53,18 @@ const jsonLd = {
 };
 
 export default async function HomePage() {
-    const [announcement, member, upcomingEvents] = await Promise.all([
+    const [announcement, member, upcomingEvents, allCourseImages] = await Promise.all([
         getHomepageAnnouncement(),
         getCurrentMember(),
         listPublishedUpcomingEvents(),
+        getAllCourseImages(),
     ]);
+
+    // Convert CourseImage[] to string[] (just URLs) for the client component
+    const courseImageUrls: Record<string, string[]> = {};
+    for (const [courseId, images] of Object.entries(allCourseImages)) {
+        courseImageUrls[courseId] = images.map((img) => img.url);
+    }
 
     const publicEvents = upcomingEvents.map((e) => ({
         id: e._id?.toString() ?? "",
@@ -174,7 +182,7 @@ export default async function HomePage() {
 
             <ImageCluster />
 
-            <CoursesSection />
+            <CoursesSection courseImages={courseImageUrls} />
 
             <section id="adhesion" className={styles.adhesionSection}>
                 <div className={styles.adhesionInner}>

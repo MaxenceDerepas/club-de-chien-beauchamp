@@ -75,7 +75,7 @@ export default function MobileNav({ items, logoutAction }: Props) {
                     </a>
                 ))}
                 {logoutAction && (
-                    <form action={logoutAction}>
+                    <form action={logoutAction} className={styles.logoutForm}>
                         <button type="submit" className={styles.drawerItem} onClick={close}>
                             <span className={`${styles.dot} ${styles.dotWhite}`} />
                             <span className={styles.drawerTextBlock}>

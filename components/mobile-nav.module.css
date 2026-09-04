@@ -63,6 +63,13 @@
 .dotYellow { background: #f1c04e; }
 .dotPurple { background: #d6b0dd; }
 
+.logoutForm {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
 .drawerItem {
     display: flex;
     align-items: center;
@@ -71,6 +78,12 @@
     color: #ffffff;
     text-decoration: none;
     transition: background 0.15s ease;
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
 }
 
 .drawerItem:hover {

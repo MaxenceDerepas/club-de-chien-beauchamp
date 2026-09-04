@@ -305,13 +305,31 @@ const courses = [
     },
 ] as const;
 
-export default function CoursesSection() {
+type Props = {
+    /** Map of courseId -> image URLs from admin. Overrides hardcoded images when present. */
+    courseImages?: Record<string, string[]>;
+};
+
+export default function CoursesSection({ courseImages }: Props) {
     const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
     const [slideIndex, setSlideIndex] = useState(0);
 
+    /** Resolve images: use admin-configured images when available, fallback to hardcoded */
+    const resolvedCourses = useMemo(
+        () =>
+            courses.map((course) => {
+                const dbImages = courseImages?.[course.id];
+                return {
+                    ...course,
+                    images: dbImages && dbImages.length > 0 ? dbImages : [...course.images],
+                };
+            }),
+        [courseImages],
+    );
+
     const activeCourse = useMemo(
-        () => courses.find((course) => course.id === activeCourseId) ?? null,
-        [activeCourseId],
+        () => resolvedCourses.find((course) => course.id === activeCourseId) ?? null,
+        [activeCourseId, resolvedCourses],
     );
 
     const openCourse = useCallback((id: string) => {
@@ -340,7 +358,7 @@ export default function CoursesSection() {
 
                 {!activeCourse ? (
                     <div className={styles.coursesGrid}>
-                        {courses.map((course) => (
+                        {resolvedCourses.map((course) => (
                             <article
                                 key={course.id}
                                 className={styles.courseCard}
@@ -392,12 +410,16 @@ export default function CoursesSection() {
                             <div
                                 className={`${styles.courseImageWrap} ${styles.courseDetailImageWrap}`}
                             >
-                                <Image
-                                    src={activeCourse.images[slideIndex]}
-                                    alt={`${activeCourse.alt} - ${slideIndex + 1}`}
-                                    fill
-                                    className={styles.courseImage}
-                                />
+                                {activeCourse.images.map((imgSrc, idx) => (
+                                    <Image
+                                        key={imgSrc}
+                                        src={imgSrc}
+                                        alt={`${activeCourse.alt} - ${idx + 1}`}
+                                        fill
+                                        className={styles.courseImage}
+                                        style={{ opacity: idx === slideIndex ? 1 : 0 }}
+                                    />
+                                ))}
 
                                 {activeCourse.images.length > 1 && (
                                     <>
