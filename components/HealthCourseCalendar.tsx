@@ -90,7 +90,8 @@ export default function HealthCourseCalendar({
         const map = new Map<string, CalendarSession>();
         for (const s of sessions) {
             const d = new Date(s.sessionDate);
-            const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+            // Use UTC to match the server-stored UTC dates
+            const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
             map.set(key, s);
         }
         return map;
@@ -169,6 +170,7 @@ export default function HealthCourseCalendar({
                 ) : (
                     <div className={styles.grid}>
                         {sundays.map((sunday) => {
+                            // Use local date parts to match UTC-stored session keys
                             const key = `${sunday.getFullYear()}-${sunday.getMonth()}-${sunday.getDate()}`;
                             const session = sessionsByDateKey.get(key);
                             const myReg = session?.registrations.find(
@@ -185,7 +187,8 @@ export default function HealthCourseCalendar({
                             sevenDaysBefore.setHours(23, 59, 59, 999);
                             const isClosedForRegistration = !isPast && new Date() > sevenDaysBefore;
 
-                            const sundayISO = sunday.toISOString();
+                            // Send date as YYYY-MM-DD to avoid timezone shift
+                            const sundayDateStr = `${sunday.getFullYear()}-${String(sunday.getMonth() + 1).padStart(2, "0")}-${String(sunday.getDate()).padStart(2, "0")}`;
 
                             return (
                                 <div
@@ -248,7 +251,7 @@ export default function HealthCourseCalendar({
                                                 <input
                                                     type="hidden"
                                                     name="date"
-                                                    value={sundayISO}
+                                                    value={sundayDateStr}
                                                 />
                                                 <button
                                                     type="submit"

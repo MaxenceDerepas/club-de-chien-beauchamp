@@ -578,6 +578,69 @@ export default async function MembrePage() {
                             <ChangePasswordForm />
                         </div>
                     </section>
+
+                    <section id="contacts" className={homeStyles.contactsSection}>
+                        <div className={homeStyles.contactsInner}>
+                            <h2 className={homeStyles.contactsTitle}>CONTACTS</h2>
+
+                            <div className={homeStyles.contactsContent}>
+                                <p className={homeStyles.contactsIntro}>
+                                    Une question sur nos cours, l&apos;adhésion ou le
+                                    fonctionnement du club ? Notre équipe est à votre
+                                    disposition pour vous répondre.
+                                </p>
+
+                                <div className={homeStyles.contactGrid}>
+                                    <a
+                                        href="tel:+33684908750"
+                                        className={homeStyles.contactCard}
+                                        aria-label="Téléphoner au club"
+                                    >
+                                        <span className={homeStyles.contactLabel}>
+                                            Téléphone
+                                        </span>
+                                        <span className={homeStyles.contactValue}>
+                                            06 84 90 87 50
+                                        </span>
+                                        <span className={homeStyles.contactHint}>
+                                            Du lundi au samedi · 9h00 à 18h00
+                                        </span>
+                                    </a>
+
+                                    <a
+                                        href="mailto:clubcaninbeauchamp@hotmail.com"
+                                        className={homeStyles.contactCard}
+                                        aria-label="Envoyer un email au club"
+                                    >
+                                        <span className={homeStyles.contactLabel}>
+                                            Email
+                                        </span>
+                                        <span className={homeStyles.contactValue}>
+                                            clubcaninbeauchamp@hotmail.com
+                                        </span>
+                                    </a>
+
+                                    <a
+                                        href="https://www.google.com/maps/search/?api=1&query=49.003558,2.212043"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={homeStyles.contactCard}
+                                        aria-label="Ouvrir l'adresse sur Google Maps"
+                                    >
+                                        <span className={homeStyles.contactLabel}>
+                                            Adresse
+                                        </span>
+                                        <span className={homeStyles.contactValue}>
+                                            49 Chaussée Jules César
+                                        </span>
+                                        <span className={homeStyles.contactHint}>
+                                            95250 Beauchamp · Voir l&apos;itinéraire
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
         </main>

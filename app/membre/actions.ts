@@ -55,17 +55,18 @@ export async function preregisterForHealthCourseAction(formData: FormData) {
 
     if (!member.healthCourse) return;
 
-    // Accept either a date (new auto-generated calendar) or sessionId (legacy)
+    // Accept date as YYYY-MM-DD string (timezone-safe)
     const dateStr = String(formData.get("date") || "");
     if (!dateStr) return;
 
-    const sundayDate = new Date(dateStr);
+    // Parse as UTC noon to avoid any day-boundary timezone shifts
+    const sundayDate = new Date(dateStr + "T12:00:00.000Z");
     if (Number.isNaN(sundayDate.getTime())) return;
 
-    // Check 7-day cutoff
+    // Check 7-day cutoff (use UTC to stay consistent)
     const sevenDaysBefore = new Date(sundayDate);
-    sevenDaysBefore.setDate(sevenDaysBefore.getDate() - 7);
-    sevenDaysBefore.setHours(23, 59, 59, 999);
+    sevenDaysBefore.setUTCDate(sevenDaysBefore.getUTCDate() - 7);
+    sevenDaysBefore.setUTCHours(23, 59, 59, 999);
     if (new Date() > sevenDaysBefore) return;
 
     // Auto-create session if it doesn't exist

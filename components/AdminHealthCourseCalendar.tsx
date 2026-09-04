@@ -88,7 +88,8 @@ export default function AdminHealthCourseCalendar({
         const map = new Map<string, AdminCalendarSession>();
         for (const s of sessions) {
             const d = new Date(s.sessionDate);
-            const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+            // Use UTC to match the server-stored UTC dates
+            const key = `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
             map.set(key, s);
         }
         return map;

@@ -100,11 +100,11 @@ export async function updateHealthCourse(
 export async function getOrCreateHealthCourseForDate(sundayDate: Date) {
     const collection = await getHealthCoursesCollection();
 
-    // Normalize to start of day
+    // Normalize to start/end of day in UTC
     const start = new Date(sundayDate);
-    start.setHours(0, 0, 0, 0);
+    start.setUTCHours(0, 0, 0, 0);
     const end = new Date(start);
-    end.setHours(23, 59, 59, 999);
+    end.setUTCHours(23, 59, 59, 999);
 
     const existing = await collection.findOne({
         sessionDate: { $gte: start, $lte: end },
