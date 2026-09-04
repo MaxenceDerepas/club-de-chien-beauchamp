@@ -11,13 +11,15 @@
 }
 
 .headerInnerNoLogo {
-    padding-left: 22px;
+    padding-left: 22px !important;
+    padding-right: 22px;
     justify-content: center;
 }
 
 @media (max-width: 980px) {
     .headerInnerNoLogo {
-        padding-left: 18px;
+        padding-left: 18px !important;
+        padding-right: 18px;
     }
 }
 
