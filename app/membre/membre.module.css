@@ -12,6 +12,7 @@
 
 .headerInnerNoLogo {
     padding-left: 22px;
+    justify-content: center;
 }
 
 @media (max-width: 980px) {
