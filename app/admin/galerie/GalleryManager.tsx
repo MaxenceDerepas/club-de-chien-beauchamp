@@ -188,18 +188,18 @@ export default function GalleryManager({ albums, events, members }: Props) {
                                     onChange={(e) => setMemberSearch(e.target.value)}
                                 />
 
-                                {memberSearch.trim() && (
-                                    <div className={styles.memberDropdown}>
-                                        {members
-                                            .filter(
-                                                (m) =>
-                                                    !selectedMemberIds.includes(m.id) &&
-                                                    (`${m.name} ${m.dogName}`
+                                <div className={styles.memberDropdown}>
+                                    {(() => {
+                                        const filtered = members.filter(
+                                            (m) =>
+                                                !selectedMemberIds.includes(m.id) &&
+                                                (!memberSearch.trim() ||
+                                                    `${m.name} ${m.dogName}`
                                                         .toLowerCase()
                                                         .includes(memberSearch.toLowerCase())),
-                                            )
-                                            .slice(0, 10)
-                                            .map((m) => (
+                                        );
+                                        return filtered.length > 0 ? (
+                                            filtered.map((m) => (
                                                 <button
                                                     key={m.id}
                                                     type="button"
@@ -211,20 +211,14 @@ export default function GalleryManager({ albums, events, members }: Props) {
                                                 >
                                                     {m.name} — {m.dogName}
                                                 </button>
-                                            ))}
-                                        {members.filter(
-                                            (m) =>
-                                                !selectedMemberIds.includes(m.id) &&
-                                                (`${m.name} ${m.dogName}`
-                                                    .toLowerCase()
-                                                    .includes(memberSearch.toLowerCase())),
-                                        ).length === 0 && (
+                                            ))
+                                        ) : (
                                             <div className={styles.memberDropdownEmpty}>
                                                 Aucun résultat
                                             </div>
-                                        )}
-                                    </div>
-                                )}
+                                        );
+                                    })()}
+                                </div>
 
                                 {selectedMemberIds.map((mid) => (
                                     <input
