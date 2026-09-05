@@ -3,55 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { requireAdminSession } from "@/lib/admin-auth";
 import {
-    approveObedienceRegistration,
-    rejectObedienceRegistration,
-    getObedienceSessionById,
     setObedienceNotifConfig,
     deleteObedienceNotifConfig,
 } from "@/lib/obedience";
-import { markNotificationsByKeyRead } from "@/lib/notifications";
-
-export async function approveObedienceRegistrationAction(formData: FormData) {
-    await requireAdminSession();
-
-    const courseId = String(formData.get("courseId") || "");
-    const memberId = String(formData.get("memberId") || "");
-    if (!courseId || !memberId) return;
-
-    await approveObedienceRegistration(courseId, memberId);
-
-    // Mark related notifications as read for all admins
-    const session = await getObedienceSessionById(courseId);
-    if (session) {
-        const d = new Date(session.sessionDate);
-        const dateStr = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
-        await markNotificationsByKeyRead(`obedience:${dateStr}:${memberId}`);
-    }
-
-    revalidatePath("/admin/obeissance");
-    revalidatePath("/membre");
-}
-
-export async function rejectObedienceRegistrationAction(formData: FormData) {
-    await requireAdminSession();
-
-    const courseId = String(formData.get("courseId") || "");
-    const memberId = String(formData.get("memberId") || "");
-    if (!courseId || !memberId) return;
-
-    await rejectObedienceRegistration(courseId, memberId);
-
-    // Mark related notifications as read for all admins
-    const session = await getObedienceSessionById(courseId);
-    if (session) {
-        const d = new Date(session.sessionDate);
-        const dateStr = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
-        await markNotificationsByKeyRead(`obedience:${dateStr}:${memberId}`);
-    }
-
-    revalidatePath("/admin/obeissance");
-    revalidatePath("/membre");
-}
 
 export async function saveObedienceNotifConfigAction(formData: FormData) {
     await requireAdminSession();

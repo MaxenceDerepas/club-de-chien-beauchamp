@@ -2,10 +2,6 @@ import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { listObedienceSessions } from "@/lib/obedience";
 import { listMembers } from "@/lib/members";
-import {
-    approveObedienceRegistrationAction,
-    rejectObedienceRegistrationAction,
-} from "./actions";
 import AdminObedienceView from "./AdminObedienceView";
 import type { AdminObedienceMemberInfo } from "@/components/AdminObedienceCalendar";
 import styles from "../parcours-sante/parcours-sante.module.css";
@@ -56,8 +52,6 @@ export default async function AdminObediencePage() {
                 <AdminObedienceView
                     sessions={sessions}
                     memberInfoById={memberInfoById}
-                    approveAction={approveObedienceRegistrationAction}
-                    rejectAction={rejectObedienceRegistrationAction}
                 />
             </div>
         </main>

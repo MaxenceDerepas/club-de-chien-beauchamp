@@ -6,8 +6,6 @@ import { getCurrentMember } from "@/lib/member-auth";
 import { getHomepageAnnouncement, getMemberAnnouncement } from "@/lib/content";
 import { listMembers } from "@/lib/members";
 import { listEvents } from "@/lib/events";
-import { listHealthCourses } from "@/lib/health-courses";
-import { listObedienceSessions } from "@/lib/obedience";
 import { MEMBER_LEVELS } from "@/lib/levels";
 import { loginAdmin, logoutAdmin } from "./actions";
 import AnnouncementEditor from "./AnnouncementEditor";
@@ -34,13 +32,11 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
     const isAuthenticated = isAdminSession || isMemberAdmin;
 
     if (isAuthenticated) {
-        const [announcement, memberAnnouncement, members, events, healthCourses, obedienceSessions] = await Promise.all([
+        const [announcement, memberAnnouncement, members, events] = await Promise.all([
             getHomepageAnnouncement(),
             getMemberAnnouncement(),
             listMembers(),
             listEvents(),
-            listHealthCourses(),
-            listObedienceSessions(),
         ]);
 
         const now = new Date();
@@ -92,28 +88,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             0,
         );
 
-        // Stats parcours de santé
-        const upcomingHealthCourses = healthCourses.filter(
-            (h) => h.sessionDate && new Date(h.sessionDate) >= now,
-        );
-        const pendingHealthRegs = healthCourses.reduce(
-            (sum, h) =>
-                sum +
-                (h.registrations?.filter((r: { status: string }) => r.status === "pending")
-                    .length ?? 0),
-            0,
-        );
-
-        // Stats obéissance
-        const pendingObedienceRegs = obedienceSessions.reduce(
-            (sum, s) =>
-                sum +
-                ((s.registrations as { status: string }[])?.filter((r) => r.status === "pending")
-                    .length ?? 0),
-            0,
-        );
-
-        const totalPending = pendingEventRegs + pendingHealthRegs + pendingObedienceRegs;
+        const totalPending = pendingEventRegs;
 
         return (
             <main className={styles.page}>
@@ -168,22 +143,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 {upcomingEvents.length}
                             </span>
                             <span className={styles.statLabel}>
-                                Événements à venir
+                                Événements programmés
                             </span>
                             <span className={styles.statSub}>
-                                {events.length} au total
-                            </span>
-                        </div>
-
-                        <div className={styles.statCard}>
-                            <span className={styles.statNumber}>
-                                {upcomingHealthCourses.length}
-                            </span>
-                            <span className={styles.statLabel}>
-                                Parcours à venir
-                            </span>
-                            <span className={styles.statSub}>
-                                {healthCourses.length} au total
+                                {events.length} au total · {upcomingEvents.length} à venir
                             </span>
                         </div>
 
@@ -194,11 +157,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 {totalPending}
                             </span>
                             <span className={styles.statLabel}>
-                                En attente
+                                Inscriptions à valider
                             </span>
                             <span className={styles.statSub}>
-                                {pendingEventRegs} évén. · {pendingHealthRegs}{" "}
-                                parcours · {pendingObedienceRegs} obéis.
+                                pré-inscriptions événements
                             </span>
                         </div>
                     </div>
@@ -288,7 +250,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 Obéissance
                             </h2>
                             <p className={styles.text}>
-                                Gérer les séances d&apos;obéissance et valider
+                                Gérer les séances d&apos;obéissance et consulter
                                 les inscriptions des adhérents.
                             </p>
                         </Link>

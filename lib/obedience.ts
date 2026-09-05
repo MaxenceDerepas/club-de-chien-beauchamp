@@ -157,7 +157,7 @@ export async function requestObedienceRegistration(
                 { _id, "registrations.memberId": registration.memberId },
                 {
                     $set: {
-                        "registrations.$.status": "pending",
+                        "registrations.$.status": "approved",
                         "registrations.$.requestedAt": new Date(),
                         updatedAt: new Date(),
                     },
@@ -174,7 +174,7 @@ export async function requestObedienceRegistration(
                 registrations: {
                     ...registration,
                     requestedAt: new Date(),
-                    status: "pending",
+                    status: "approved",
                 },
             },
             $set: { updatedAt: new Date() },

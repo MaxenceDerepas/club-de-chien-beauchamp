@@ -156,8 +156,7 @@ export default function ObedienceCalendar({
                     />
                 </div>
                 <p className={styles.sidebarText}>
-                    Choisissez une séance et préinscrivez-vous.
-                    L&apos;équipe d&apos;éducation validera votre inscription.
+                    Choisissez une séance et inscrivez-vous.
                 </p>
                 <p className={styles.sidebarText}>
                     Si vous savez que vous ne pourrez pas venir,
@@ -244,24 +243,16 @@ export default function ObedienceCalendar({
                                         <>
                                             <div
                                                 className={`${styles.statusBadge} ${
-                                                    myReg.status === "approved"
-                                                        ? styles.statusApproved
-                                                        : myReg.status === "rejected"
-                                                          ? styles.statusRejected
-                                                          : myReg.status === "absent"
-                                                            ? styles.statusAbsent
-                                                            : styles.statusPending
+                                                    myReg.status === "absent"
+                                                        ? styles.statusAbsent
+                                                        : styles.statusApproved
                                                 }`}
                                             >
-                                                {myReg.status === "approved"
-                                                    ? "Validé(e)"
-                                                    : myReg.status === "rejected"
-                                                      ? "Non validé(e)"
-                                                      : myReg.status === "absent"
-                                                        ? "Absent(e)"
-                                                        : "⏳ Préinscrit(e)"}
+                                                {myReg.status === "absent"
+                                                    ? "Absent(e)"
+                                                    : "Inscrit(e)"}
                                             </div>
-                                            {!isPast && myReg.status !== "absent" && myReg.status !== "rejected" && (
+                                            {!isPast && myReg.status !== "absent" && (
                                                 <>
                                                     <form action={cancelAction}>
                                                         <input type="hidden" name="sessionId" value={session!.id} />
@@ -300,7 +291,7 @@ export default function ObedienceCalendar({
                                             <input type="hidden" name="dayOfWeek" value={String(dayDate.dayOfWeek)} />
                                             <input type="hidden" name="time" value={dayDate.time} />
                                             <button type="submit" className={styles.registerButton}>
-                                                Se préinscrire
+                                                S'inscrire
                                             </button>
                                         </form>
                                     )}
