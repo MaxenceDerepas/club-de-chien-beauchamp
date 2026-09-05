@@ -292,6 +292,18 @@ export default function AdminObedienceCalendar({
                                                                     {dogName.charAt(0).toUpperCase()}
                                                                 </span>
                                                             )}
+                                                            {info?.healthCourse && (
+                                                                <span className={styles.avatarTagHealth}>
+                                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                                    <img src="/images/Tag-Parcours-de-sante.png" alt="Parcours de santé" />
+                                                                </span>
+                                                            )}
+                                                            {info?.obedience && (
+                                                                <span className={styles.avatarTagObedience}>
+                                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                                    <img src="/images/Tag-Obeissance.png" alt="Obéissance" />
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 );

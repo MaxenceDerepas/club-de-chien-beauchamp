@@ -187,6 +187,7 @@ export async function createMemberAction(
             membershipActive: values.membershipActive,
             siteAccessEnabled: values.siteAccessEnabled,
             isAdmin: values.isAdmin,
+            hasChangedPassword: false,
             healthCourse: values.healthCourse,
             obedience: values.obedience,
             imageRightsClub: values.imageRightsClub,

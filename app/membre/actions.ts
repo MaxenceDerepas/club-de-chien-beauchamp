@@ -286,6 +286,7 @@ export async function changePasswordAction(
     await updateMember(member._id.toString(), {
         passwordHash: hash,
         passwordSalt: salt,
+        hasChangedPassword: true,
     });
 
     return { success: true };

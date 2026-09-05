@@ -256,6 +256,20 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                         </Link>
 
                         <Link
+                            href="/admin/presences"
+                            className={styles.featureCard}
+                        >
+                            <h2 className={styles.featureTitle}>
+                                Feuille de présence
+                            </h2>
+                            <p className={styles.text}>
+                                Saisir les présences aux cours du samedi et
+                                dimanche, rechercher le taux de participation
+                                d&apos;un adhérent.
+                            </p>
+                        </Link>
+
+                        <Link
                             href="/admin/galerie"
                             className={styles.featureCard}
                         >

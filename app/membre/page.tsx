@@ -32,8 +32,10 @@ import ObedienceCalendar, {
     type ObedienceMemberInfo,
 } from "@/components/ObedienceCalendar";
 import AdminNotifications from "@/components/AdminNotifications";
+import FirstLoginModal from "@/components/FirstLoginModal";
 import { getUnreadNotifications } from "@/lib/notifications";
 import MobileNav from "@/components/MobileNav";
+import ScrollToTop from "@/components/ScrollToTop";
 import homeStyles from "@/app/home.module.css";
 import styles from "./membre.module.css";
 
@@ -145,6 +147,7 @@ export default async function MembrePage() {
     const isAdmin = member.isAdmin ?? false;
     const hasHealthCourse = isAdmin || (member.healthCourse ?? false);
     const hasObedience = isAdmin || (member.obedience ?? false);
+    const showFirstLoginModal = !(member.hasChangedPassword ?? false);
 
     const [allAlbums, allEvents, events, memberAnnouncement] = await Promise.all([
         listAlbums(),
@@ -281,6 +284,7 @@ export default async function MembrePage() {
 
     return (
         <main className={styles.pageBlue}>
+            {showFirstLoginModal && <FirstLoginModal />}
             <header className={homeStyles.header}>
                 <div className={`${homeStyles.headerInner} ${styles.headerInnerNoLogo}`}>
                     <nav className={homeStyles.nav}>
@@ -727,6 +731,8 @@ export default async function MembrePage() {
                     </section>
                 </div>
             </div>
+
+            <ScrollToTop />
         </main>
     );
 }

@@ -64,6 +64,7 @@ export type MemberRecord = {
     passwordSalt: string;
 
     isAdmin: boolean;
+    hasChangedPassword: boolean;
     notes: string;
     createdAt: Date;
     updatedAt: Date;

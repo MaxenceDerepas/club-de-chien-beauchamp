@@ -6,7 +6,19 @@ import AdminObedienceCalendar, {
     type AdminObedienceSession,
     type AdminObedienceMemberInfo,
 } from "@/components/AdminObedienceCalendar";
+import type { MemberLevel } from "@/lib/members";
 import styles from "../parcours-sante/parcours-sante.module.css";
+
+const LEVEL_COLORS: Record<MemberLevel, string> = {
+    chiot: "#d94f9a",
+    premier_cours: "#9ad84c",
+    ruban_violet: "#b08fd6",
+    ruban_bleu: "#11b7e5",
+    ruban_blanc: "#e6e6e6",
+    ruban_rouge: "#ef6b6b",
+    ruban_noir: "#2b2b2b",
+    equipe: "#f5d957",
+};
 
 type Registration = {
     memberId: string;
@@ -33,6 +45,41 @@ function formatDate(iso: string, dayOfWeek: number) {
         year: "numeric",
         timeZone: "UTC",
     }).format(d)}`;
+}
+
+function renderAvatar(displayName: string, info: AdminObedienceMemberInfo | undefined, levelColor: string) {
+    return (
+        <div className={styles.registrationCardAvatarWrap}>
+            {info?.dogPhotoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                    src={info.dogPhotoUrl}
+                    alt={displayName}
+                    className={styles.registrationCardAvatar}
+                    style={{ borderColor: levelColor }}
+                />
+            ) : (
+                <span
+                    className={styles.registrationCardInitial}
+                    style={{ background: levelColor }}
+                >
+                    {displayName.charAt(0).toUpperCase() || "?"}
+                </span>
+            )}
+            {info?.healthCourse && (
+                <span className={styles.registrationCardTagHealth} title="Parcours de santé">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/Tag-Parcours-de-sante.png" alt="Parcours de santé" />
+                </span>
+            )}
+            {info?.obedience && (
+                <span className={styles.registrationCardTagObedience} title="Obéissance">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/images/Tag-Obeissance.png" alt="Obéissance" />
+                </span>
+            )}
+        </div>
+    );
 }
 
 export default function AdminObedienceView({
@@ -79,23 +126,22 @@ export default function AdminObedienceView({
                             <div className={styles.registrationCards}>
                                 {approved.map((reg) => {
                                     const info = memberInfoById[reg.memberId];
-                                    const name = info?.dogName || reg.memberName;
+                                    const displayName = info?.dogName || reg.memberName;
+                                    const levelColor = info?.level ? LEVEL_COLORS[info.level] : "#1cc8f5";
                                     return (
                                         <div
                                             key={reg.memberId}
                                             className={`${styles.registrationCard} ${styles.registrationCardApproved}`}
                                         >
                                             <div className={styles.registrationCardInfo}>
-                                                <span className={styles.registrationCardInitial}>
-                                                    {name.charAt(0).toUpperCase() || "?"}
-                                                </span>
+                                                {renderAvatar(displayName, info, levelColor)}
                                                 <div>
                                                     <div className={styles.registrationCardName}>
-                                                        {reg.memberName}
+                                                        {displayName}
                                                     </div>
                                                     {info?.dogName && (
                                                         <div className={styles.registrationCardLevel}>
-                                                            {info.dogName}
+                                                            ({reg.memberName})
                                                         </div>
                                                     )}
                                                 </div>
@@ -114,27 +160,30 @@ export default function AdminObedienceView({
                                 Absent(e)s ({absent.length})
                             </h2>
                             <div className={styles.registrationCards}>
-                                {absent.map((reg) => (
-                                    <div
-                                        key={reg.memberId}
-                                        className={styles.registrationCard}
-                                        style={{ background: "#fff8e6" }}
-                                    >
-                                        <div className={styles.registrationCardInfo}>
-                                            <span className={styles.registrationCardInitial}>
-                                                {reg.memberName?.charAt(0).toUpperCase() || "?"}
-                                            </span>
-                                            <div>
-                                                <div className={styles.registrationCardName}>
-                                                    {reg.memberName}
-                                                </div>
-                                                <div className={styles.registrationCardLevel}>
-                                                    Absent(e)
+                                {absent.map((reg) => {
+                                    const info = memberInfoById[reg.memberId];
+                                    const displayName = info?.dogName || reg.memberName;
+                                    const levelColor = info?.level ? LEVEL_COLORS[info.level] : "#1cc8f5";
+                                    return (
+                                        <div
+                                            key={reg.memberId}
+                                            className={styles.registrationCard}
+                                            style={{ background: "#fff8e6" }}
+                                        >
+                                            <div className={styles.registrationCardInfo}>
+                                                {renderAvatar(displayName, info, levelColor)}
+                                                <div>
+                                                    <div className={styles.registrationCardName}>
+                                                        {displayName}
+                                                    </div>
+                                                    <div className={styles.registrationCardLevel}>
+                                                        {info?.dogName ? `(${reg.memberName}) · ` : ""}Absent(e)
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
