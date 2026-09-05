@@ -135,6 +135,7 @@ async function sendObedienceNotification(
     dayOfWeek: number,
     dateStr: string,
     memberName: string,
+    memberId: string,
     action: "inscription" | "désinscription" | "absent",
 ) {
     try {
@@ -149,9 +150,10 @@ async function sendObedienceNotification(
                   ? "s'est désinscrit(e)"
                   : "s'est signalé(e) absent(e)";
         const message = `${memberName} ${actionLabel} — Obéissance ${dayLabel} ${dateStr}`;
+        const key = `obedience:${dateStr}:${memberId}`;
 
         for (const admin of admins) {
-            await createNotification(admin.id, message, "/admin/obeissance");
+            await createNotification(admin.id, message, "/admin/obeissance", key);
         }
     } catch (err) {
         console.error("Obedience notification error", err);
@@ -183,7 +185,7 @@ export async function preregisterForObedienceAction(formData: FormData) {
             memberName,
         });
 
-        await sendObedienceNotification(dayOfWeek, dateStr, memberName, "inscription");
+        await sendObedienceNotification(dayOfWeek, dateStr, memberName, member._id.toString(), "inscription");
     } catch (err) {
         console.error("Obedience preregistration error", err);
     }
@@ -211,7 +213,7 @@ export async function cancelObedienceRegistrationAction(formData: FormData) {
         if (session) {
             const d = new Date(session.sessionDate);
             const dateStr = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
-            await sendObedienceNotification(session.dayOfWeek, dateStr, memberName, "désinscription");
+            await sendObedienceNotification(session.dayOfWeek, dateStr, memberName, member._id.toString(), "désinscription");
         }
     } catch (err) {
         console.error("Obedience cancel error", err);
@@ -242,7 +244,7 @@ export async function markAbsentObedienceAction(formData: FormData) {
 
     try {
         await markObedienceAbsent(sessionId, member._id.toString(), memberName);
-        await sendObedienceNotification(dayOfWeek, dateStr, memberName, "absent");
+        await sendObedienceNotification(dayOfWeek, dateStr, memberName, member._id.toString(), "absent");
     } catch (err) {
         console.error("Obedience absent error", err);
     }
