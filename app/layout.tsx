@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://club-de-chien-beauchamp.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.clubcaninbeauchamp.fr";
 
 export const viewport: Viewport = {
     width: "device-width",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     },
     manifest: "/manifest.json",
     alternates: {
-        canonical: SITE_URL,
+        canonical: "/",
     },
 };
 

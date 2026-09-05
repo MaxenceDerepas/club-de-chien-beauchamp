@@ -7,9 +7,14 @@ import {
     preregisterForEventAction,
     preregisterForHealthCourseAction,
     cancelHealthCourseRegistrationAction,
+    preregisterForObedienceAction,
+    cancelObedienceRegistrationAction,
+    markAbsentObedienceAction,
+    markNotificationsReadAction,
 } from "./actions";
 import { listPublishedUpcomingEvents } from "@/lib/events";
 import { listHealthCourses } from "@/lib/health-courses";
+import { listObedienceSessions } from "@/lib/obedience";
 import { listMembers } from "@/lib/members";
 import { listAlbums } from "@/lib/gallery";
 import { getMemberAnnouncement } from "@/lib/content";
@@ -22,6 +27,12 @@ import HealthCourseCalendar, {
     type CalendarSession,
     type CalendarMemberInfo,
 } from "@/components/HealthCourseCalendar";
+import ObedienceCalendar, {
+    type ObedienceCalendarSession,
+    type ObedienceMemberInfo,
+} from "@/components/ObedienceCalendar";
+import AdminNotifications from "@/components/AdminNotifications";
+import { getUnreadNotifications } from "@/lib/notifications";
 import MobileNav from "@/components/MobileNav";
 import homeStyles from "@/app/home.module.css";
 import styles from "./membre.module.css";
@@ -33,7 +44,7 @@ export const metadata: Metadata = {
     robots: { index: false, follow: false },
 };
 
-function getNavItems(showHealthCourse: boolean, isAdmin: boolean) {
+function getNavItems(showHealthCourse: boolean, showObedience: boolean, isAdmin: boolean) {
     const items = [
         { href: "#galerie", label: "Galerie", dotClass: "dotGreen" },
         { href: "#evenement", label: "Évènement", dotClass: "dotYellow" },
@@ -43,6 +54,15 @@ function getNavItems(showHealthCourse: boolean, isAdmin: boolean) {
                       href: "#parcours",
                       label: "Parcours de santé",
                       dotClass: "dotPink",
+                  },
+              ]
+            : []),
+        ...(showObedience
+            ? [
+                  {
+                      href: "#obeissance",
+                      label: "Obéissance",
+                      dotClass: "dotPurple",
                   },
               ]
             : []),
@@ -133,6 +153,16 @@ export default async function MembrePage() {
         getMemberAnnouncement(),
     ]);
 
+    // Admin notifications
+    const adminNotifications = isAdmin && memberId
+        ? (await getUnreadNotifications(memberId)).map((n) => ({
+              id: n._id!.toString(),
+              message: n.message,
+              link: n.link,
+              createdAt: n.createdAt.toISOString(),
+          }))
+        : [];
+
     // Filter albums: "all" visible to everyone, "event" only if member is registered, "members" only if in allowedMemberIds
     const visibleAlbums = allAlbums
         .filter((album) => {
@@ -182,13 +212,39 @@ export default async function MembrePage() {
             })),
         }));
 
+    // Obedience sessions
+    const obedienceRaw = hasObedience
+        ? await listObedienceSessions()
+        : [];
+
+    const obedienceSessions: ObedienceCalendarSession[] = obedienceRaw
+        .map((s) => ({
+            id: s._id?.toString() ?? "",
+            sessionDate: new Date(s.sessionDate).toISOString(),
+            dayOfWeek: s.dayOfWeek,
+            time: s.time,
+            registrations: s.registrations.map((r) => ({
+                memberId: r.memberId,
+                memberName: r.memberName,
+                status: r.status,
+            })),
+        }));
+
     const allMembers = await listMembers();
     const memberInfoById: Record<string, CalendarMemberInfo> = {};
+    const obedienceMemberInfoById: Record<string, ObedienceMemberInfo> = {};
     const eventMemberInfoById: Record<string, EventCardMemberInfo> = {};
     for (const m of allMembers) {
         if (!m._id) continue;
         const id = m._id.toString();
         memberInfoById[id] = {
+            dogName: m.dogName || "",
+            dogPhotoUrl: m.dogPhotoUrl || "",
+            level: m.level,
+            healthCourse: m.healthCourse ?? false,
+            obedience: m.obedience ?? false,
+        };
+        obedienceMemberInfoById[id] = {
             dogName: m.dogName || "",
             dogPhotoUrl: m.dogPhotoUrl || "",
             level: m.level,
@@ -228,7 +284,7 @@ export default async function MembrePage() {
             <header className={homeStyles.header}>
                 <div className={`${homeStyles.headerInner} ${styles.headerInnerNoLogo}`}>
                     <nav className={homeStyles.nav}>
-                        {getNavItems(hasHealthCourse, isAdmin).map((item) => (
+                        {getNavItems(hasHealthCourse, hasObedience, isAdmin).map((item) => (
                             <a
                                 key={item.label}
                                 href={item.href}
@@ -269,7 +325,7 @@ export default async function MembrePage() {
                     </nav>
 
                     <MobileNav
-                        items={getNavItems(hasHealthCourse, isAdmin)}
+                        items={getNavItems(hasHealthCourse, hasObedience, isAdmin)}
                         logoutAction={logoutMemberAction}
                     />
                 </div>
@@ -348,9 +404,15 @@ export default async function MembrePage() {
                     </div>
                     <h2 className={styles.memberName}>{displayName}</h2>
                     {isAdmin && (
-                        <Link href="/admin" className={styles.adminLink}>
-                            Espace administrateur
-                        </Link>
+                        <>
+                            <Link href="/admin" className={styles.adminLink}>
+                                Espace administrateur
+                            </Link>
+                            <AdminNotifications
+                                notifications={adminNotifications}
+                                markReadAction={markNotificationsReadAction}
+                            />
+                        </>
                     )}
                 </aside>
 
@@ -403,6 +465,28 @@ export default async function MembrePage() {
                                 }
                                 cancelAction={
                                     cancelHealthCourseRegistrationAction
+                                }
+                            />
+                        </section>
+                    )}
+
+                    {hasObedience && (
+                        <section
+                            id="obeissance"
+                            className={styles.eventSection}
+                        >
+                            <ObedienceCalendar
+                                sessions={obedienceSessions}
+                                currentMemberId={memberId || ""}
+                                memberInfoById={obedienceMemberInfoById}
+                                preregisterAction={
+                                    preregisterForObedienceAction
+                                }
+                                cancelAction={
+                                    cancelObedienceRegistrationAction
+                                }
+                                absentAction={
+                                    markAbsentObedienceAction
                                 }
                             />
                         </section>

@@ -18,7 +18,7 @@ const jsonLd = {
     name: "Club Beauchampois d'Éducation Canine",
     description:
         "Club d'éducation canine à Beauchamp (Val-d'Oise). Cours chiots, ados, collectifs, obéissance, ring et parcours de santé.",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://club-de-chien-beauchamp.vercel.app",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.clubcaninbeauchamp.fr",
     telephone: "+33684908750",
     email: "clubcaninbeauchamp@hotmail.com",
     address: {

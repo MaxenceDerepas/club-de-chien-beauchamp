@@ -15,6 +15,15 @@ import {
     getOrCreateHealthCourseForDate,
 } from "@/lib/health-courses";
 import { meetsMinLevel } from "@/lib/members";
+import {
+    getOrCreateObedienceForDate,
+    requestObedienceRegistration,
+    cancelObedienceRegistration,
+    markObedienceAbsent,
+    getAdminsToNotifyForDay,
+    DAY_LABELS,
+} from "@/lib/obedience";
+import { createNotification, markAllNotificationsRead } from "@/lib/notifications";
 
 export async function preregisterForEventAction(formData: FormData) {
     const member = await requireMemberSession();
@@ -112,6 +121,136 @@ export async function cancelHealthCourseRegistrationAction(
     revalidatePath("/admin/parcours-sante");
 }
 
+// ── Obéissance actions ─────────────────────────────────────────────
+
+function getMemberName(member: { firstName: string; lastName: string; dogName: string }) {
+    return (
+        [member.firstName, member.lastName].filter(Boolean).join(" ").trim() ||
+        member.dogName ||
+        "Adhérent"
+    );
+}
+
+async function sendObedienceNotification(
+    dayOfWeek: number,
+    dateStr: string,
+    memberName: string,
+    action: "inscription" | "désinscription" | "absent",
+) {
+    try {
+        const admins = await getAdminsToNotifyForDay(dayOfWeek);
+        if (admins.length === 0) return;
+
+        const dayLabel = DAY_LABELS[dayOfWeek] || "Jour";
+        const actionLabel =
+            action === "inscription"
+                ? "s'est inscrit(e)"
+                : action === "désinscription"
+                  ? "s'est désinscrit(e)"
+                  : "s'est signalé(e) absent(e)";
+        const message = `${memberName} ${actionLabel} — Obéissance ${dayLabel} ${dateStr}`;
+
+        for (const admin of admins) {
+            await createNotification(admin.id, message, "/admin/obeissance");
+        }
+    } catch (err) {
+        console.error("Obedience notification error", err);
+    }
+}
+
+export async function preregisterForObedienceAction(formData: FormData) {
+    const member = await requireMemberSession();
+    if (!member._id) return;
+
+    if (!member.obedience && !member.isAdmin) return;
+
+    const dateStr = String(formData.get("date") || "");
+    const dayOfWeek = Number(formData.get("dayOfWeek") || "0");
+    const time = String(formData.get("time") || "");
+    if (!dateStr || !dayOfWeek || !time) return;
+
+    const sessionDate = new Date(dateStr + "T12:00:00.000Z");
+    if (Number.isNaN(sessionDate.getTime())) return;
+
+    const session = await getOrCreateObedienceForDate(sessionDate, dayOfWeek, time);
+    const sessionId = session._id!.toString();
+
+    const memberName = getMemberName(member);
+
+    try {
+        await requestObedienceRegistration(sessionId, {
+            memberId: member._id.toString(),
+            memberName,
+        });
+
+        await sendObedienceNotification(dayOfWeek, dateStr, memberName, "inscription");
+    } catch (err) {
+        console.error("Obedience preregistration error", err);
+    }
+
+    revalidatePath("/membre");
+    revalidatePath("/admin/obeissance");
+}
+
+export async function cancelObedienceRegistrationAction(formData: FormData) {
+    const member = await requireMemberSession();
+    if (!member._id) return;
+
+    const sessionId = String(formData.get("sessionId") || "");
+    if (!sessionId) return;
+
+    const memberName = getMemberName(member);
+
+    // Get session info for notification
+    const { getObedienceSessionById } = await import("@/lib/obedience");
+    const session = await getObedienceSessionById(sessionId);
+
+    try {
+        await cancelObedienceRegistration(sessionId, member._id.toString());
+
+        if (session) {
+            const d = new Date(session.sessionDate);
+            const dateStr = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+            await sendObedienceNotification(session.dayOfWeek, dateStr, memberName, "désinscription");
+        }
+    } catch (err) {
+        console.error("Obedience cancel error", err);
+    }
+
+    revalidatePath("/membre");
+    revalidatePath("/admin/obeissance");
+}
+
+export async function markAbsentObedienceAction(formData: FormData) {
+    const member = await requireMemberSession();
+    if (!member._id) return;
+
+    if (!member.obedience && !member.isAdmin) return;
+
+    const dateStr = String(formData.get("date") || "");
+    const dayOfWeek = Number(formData.get("dayOfWeek") || "0");
+    const time = String(formData.get("time") || "");
+    if (!dateStr || !dayOfWeek || !time) return;
+
+    const sessionDate = new Date(dateStr + "T12:00:00.000Z");
+    if (Number.isNaN(sessionDate.getTime())) return;
+
+    const session = await getOrCreateObedienceForDate(sessionDate, dayOfWeek, time);
+    const sessionId = session._id!.toString();
+
+    const memberName = getMemberName(member);
+
+    try {
+        await markObedienceAbsent(sessionId, member._id.toString(), memberName);
+        await sendObedienceNotification(dayOfWeek, dateStr, memberName, "absent");
+    } catch (err) {
+        console.error("Obedience absent error", err);
+    }
+
+    revalidatePath("/membre");
+    revalidatePath("/admin/obeissance");
+}
+
 export async function changePasswordAction(
     formData: FormData,
 ): Promise<{ success: boolean; error?: string }> {
@@ -148,4 +287,11 @@ export async function changePasswordAction(
     });
 
     return { success: true };
+}
+
+export async function markNotificationsReadAction() {
+    const member = await requireMemberSession();
+    if (!member._id || !member.isAdmin) return;
+    await markAllNotificationsRead(member._id.toString());
+    revalidatePath("/membre");
 }

@@ -1,0 +1,112 @@
+.wrapper {
+    position: relative;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: #ef6b6b;
+    color: #fff;
+    border: 2px solid #1f1f1f;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #1f1f1f;
+    transition: transform 0.15s ease;
+}
+
+.badge:hover {
+    transform: translateY(-1px);
+}
+
+.panel {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    width: 300px;
+    max-height: 340px;
+    overflow-y: auto;
+    background: #fff;
+    border: 2px solid #1f1f1f;
+    border-radius: 14px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.12);
+    z-index: 100;
+}
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.panelTitle {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: #163040;
+}
+
+.markRead {
+    background: none;
+    border: none;
+    color: #06607b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.markRead:hover {
+    color: #04495d;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.item {
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.itemLink {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 14px;
+    text-decoration: none;
+    transition: background 0.12s ease;
+}
+
+.itemLink:hover {
+    background: #f0f8fb;
+}
+
+.itemMsg {
+    font-size: 0.84rem;
+    color: #163040;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.itemTime {
+    font-size: 0.72rem;
+    color: #888;
+    font-weight: 500;
+}
