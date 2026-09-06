@@ -17,6 +17,7 @@ type EventData = {
     imageUrl: string;
     minLevel: string;
     maxParticipants: number;
+    visibility: string;
 };
 
 type Props = {
@@ -148,6 +149,27 @@ export default function EditEventForm({ event }: Props) {
                             className={styles.input}
                             defaultValue={event.location}
                         />
+                    </div>
+                </div>
+            </section>
+
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Visibilité</h2>
+                <div className={styles.grid}>
+                    <div className={styles.field}>
+                        <label className={styles.label} htmlFor="visibility">
+                            Qui peut voir cet événement ?
+                        </label>
+                        <select
+                            id="visibility"
+                            name="visibility"
+                            className={styles.select}
+                            defaultValue={event.visibility}
+                        >
+                            <option value="both">Page visiteur + adhérent</option>
+                            <option value="public">Page visiteur uniquement</option>
+                            <option value="members">Adhérents uniquement</option>
+                        </select>
                     </div>
                 </div>
             </section>

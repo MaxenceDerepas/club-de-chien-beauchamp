@@ -155,7 +155,11 @@ export default async function AdminEventDetailPage({
                                 : ` / ${event.maxParticipants}`}
                         </span>
                         <span>
-                            {event.isPublished ? "✓ Publié" : "Brouillon"}
+                            {(event.visibility || "both") === "both"
+                                ? "Visiteur + Adhérent"
+                                : (event.visibility || "both") === "public"
+                                  ? "Visiteur uniquement"
+                                  : "Adhérents uniquement"}
                         </span>
                     </div>
 

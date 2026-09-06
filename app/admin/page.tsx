@@ -308,6 +308,19 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 d&apos;accueil.
                             </p>
                         </Link>
+
+                        <Link
+                            href="/admin/documents"
+                            className={styles.featureCard}
+                        >
+                            <h2 className={styles.featureTitle}>
+                                Documents adhérents
+                            </h2>
+                            <p className={styles.text}>
+                                Gérer les documents disponibles dans
+                                l&apos;espace membre (PV, guides, formulaires…).
+                            </p>
+                        </Link>
                     </div>
 
                     <AnnouncementEditor

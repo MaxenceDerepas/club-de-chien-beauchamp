@@ -46,6 +46,55 @@ export async function uploadImage(
 }
 
 /**
+ * Upload a raw file (PDF, Word, etc.) to Cloudinary.
+ */
+export async function uploadFile(
+    buffer: Buffer,
+    folder: string,
+    originalName?: string,
+): Promise<UploadResult> {
+    return new Promise((resolve, reject) => {
+        const opts: Record<string, unknown> = {
+            folder: `club-canin/${folder}`,
+            resource_type: "raw",
+        };
+        if (originalName) {
+            // Keep original filename for nicer download URLs
+            const baseName = originalName.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_");
+            opts.public_id = baseName;
+            opts.use_filename = true;
+            opts.unique_filename = true;
+        }
+        const stream = cloudinary.uploader.upload_stream(
+            opts,
+            (error, result) => {
+                if (error || !result) {
+                    reject(error || new Error("Upload failed"));
+                    return;
+                }
+                resolve({
+                    url: result.secure_url,
+                    publicId: result.public_id,
+                });
+            },
+        );
+        stream.end(buffer);
+    });
+}
+
+/**
+ * Delete a raw file from Cloudinary by its public_id.
+ */
+export async function deleteFile(publicId: string): Promise<void> {
+    if (!publicId) return;
+    try {
+        await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+    } catch (err) {
+        console.error("Cloudinary delete file error:", err);
+    }
+}
+
+/**
  * Delete an image from Cloudinary by its public_id.
  */
 export async function deleteImage(publicId: string): Promise<void> {

@@ -112,7 +112,28 @@ export default function NewEventForm() {
             </section>
 
             <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>Paramètres d’inscription</h2>
+                <h2 className={styles.sectionTitle}>Visibilité</h2>
+                <div className={styles.grid}>
+                    <div className={styles.field}>
+                        <label className={styles.label} htmlFor="visibility">
+                            Qui peut voir cet événement ?
+                        </label>
+                        <select
+                            id="visibility"
+                            name="visibility"
+                            className={styles.select}
+                            defaultValue="both"
+                        >
+                            <option value="both">Page visiteur + adhérent</option>
+                            <option value="public">Page visiteur uniquement</option>
+                            <option value="members">Adhérents uniquement</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Paramètres d&apos;inscription</h2>
                 <div className={styles.gridTwo}>
                     <div className={styles.field}>
                         <label className={styles.label} htmlFor="minLevel">

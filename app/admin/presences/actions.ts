@@ -5,22 +5,25 @@ import { requireAdminSession } from "@/lib/admin-auth";
 import {
     saveAttendance,
     searchMemberAttendance,
-    countWeekendDays,
+    countSessionsInRange,
     type AttendanceMember,
+    type AttendanceSourceType,
     type GuestDog,
 } from "@/lib/attendance";
 
 export async function saveAttendanceAction(formData: FormData) {
     await requireAdminSession();
 
-    const dateStr = String(formData.get("date") || "");
-    const dayOfWeek = Number(formData.get("dayOfWeek") || "0");
-    if (!dateStr) return;
+    const sourceType = String(formData.get("sourceType") || "") as AttendanceSourceType;
+    const sourceId = String(formData.get("sourceId") || "");
+    const sessionLabel = String(formData.get("sessionLabel") || "");
+    const dateStr = String(formData.get("sessionDate") || "");
 
-    const sessionDate = new Date(dateStr + "T12:00:00.000Z");
+    if (!sourceType || !sourceId || !dateStr) return;
+
+    const sessionDate = new Date(dateStr);
     if (Number.isNaN(sessionDate.getTime())) return;
 
-    // Parse present members from JSON
     const membersJson = String(formData.get("presentMembers") || "[]");
     const guestsJson = String(formData.get("guestDogs") || "[]");
 
@@ -34,7 +37,7 @@ export async function saveAttendanceAction(formData: FormData) {
         return;
     }
 
-    await saveAttendance(sessionDate, dayOfWeek, presentMembers, guestDogs);
+    await saveAttendance(sourceType, sourceId, sessionLabel, sessionDate, presentMembers, guestDogs);
     revalidatePath("/admin/presences");
 }
 
@@ -42,6 +45,7 @@ export async function searchAttendanceAction(
     memberId: string,
     fromStr: string,
     toStr: string,
+    sourceType?: AttendanceSourceType,
 ) {
     await requireAdminSession();
 
@@ -49,20 +53,21 @@ export async function searchAttendanceAction(
     const to = new Date(toStr + "T23:59:59.999Z");
 
     if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
-        return { sessions: [], totalWeekendDays: 0, presentCount: 0, rate: 0 };
+        return { sessions: [], totalSessions: 0, presentCount: 0, rate: 0 };
     }
 
-    const sessions = await searchMemberAttendance(memberId, from, to);
-    const totalWeekendDays = countWeekendDays(from, to);
+    const sessions = await searchMemberAttendance(memberId, from, to, sourceType);
+    const totalSessions = await countSessionsInRange(from, to, sourceType);
     const presentCount = sessions.length;
-    const rate = totalWeekendDays > 0 ? Math.round((presentCount / totalWeekendDays) * 100) : 0;
+    const rate = totalSessions > 0 ? Math.round((presentCount / totalSessions) * 100) : 0;
 
     return {
         sessions: sessions.map((s) => ({
             date: s.sessionDate.toISOString(),
-            dayOfWeek: s.dayOfWeek,
+            sourceType: s.sourceType,
+            sessionLabel: s.sessionLabel,
         })),
-        totalWeekendDays,
+        totalSessions,
         presentCount,
         rate,
     };

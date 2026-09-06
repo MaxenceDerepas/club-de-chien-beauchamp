@@ -34,6 +34,7 @@ export default async function EditEventPage({ params }: Props) {
         imageUrl: event.imageUrl || "",
         minLevel: event.minLevel || "chiot",
         maxParticipants: event.maxParticipants,
+        visibility: event.visibility || "both",
     };
 
     return (

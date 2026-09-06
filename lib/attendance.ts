@@ -4,6 +4,8 @@ import type { MemberLevel } from "@/lib/levels";
 
 // ── Types ─────────────────────────────────────────────────────────
 
+export type AttendanceSourceType = "event" | "parcours" | "obeissance";
+
 export type AttendanceMember = {
     memberId: string;
     memberName: string;
@@ -15,12 +17,19 @@ export type GuestDog = {
     ownerName: string;
 };
 
-export type AttendanceSession = {
+export type AttendanceRecord = {
     _id?: ObjectId;
+    /** Which type of activity */
+    sourceType: AttendanceSourceType;
+    /** ObjectId string of the source (event / health-course / obedience session) */
+    sourceId: string;
+    /** Denormalised label shown in lists & search results */
+    sessionLabel: string;
+    /** Date of the session */
     sessionDate: Date;
-    /** 6=Samedi, 0=Dimanche */
-    dayOfWeek: number;
+    /** Members who were actually present (subset of registered) */
     presentMembers: AttendanceMember[];
+    /** Guest dogs (non-members doing trial class) */
     guestDogs: GuestDog[];
     createdAt: Date;
     updatedAt: Date;
@@ -34,48 +43,44 @@ function getDb() {
 
 export async function getAttendanceCollection() {
     const db = await getDb();
-    return db.collection<AttendanceSession>("attendance_sessions");
+    return db.collection<AttendanceRecord>("attendance_records");
 }
 
 // ── CRUD ──────────────────────────────────────────────────────────
 
 /**
- * Get attendance session for a specific date.
+ * Get attendance for a specific source session.
  */
-export async function getAttendanceByDate(date: Date) {
+export async function getAttendanceBySource(
+    sourceType: AttendanceSourceType,
+    sourceId: string,
+) {
     const col = await getAttendanceCollection();
-    const start = new Date(date);
-    start.setUTCHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setUTCHours(23, 59, 59, 999);
-
-    return col.findOne({ sessionDate: { $gte: start, $lte: end } });
+    return col.findOne({ sourceType, sourceId });
 }
 
 /**
- * Save (create or update) attendance for a date.
+ * Save (create or update) attendance for a source session.
  */
 export async function saveAttendance(
-    date: Date,
-    dayOfWeek: number,
+    sourceType: AttendanceSourceType,
+    sourceId: string,
+    sessionLabel: string,
+    sessionDate: Date,
     presentMembers: AttendanceMember[],
     guestDogs: GuestDog[],
 ) {
     const col = await getAttendanceCollection();
-    const start = new Date(date);
-    start.setUTCHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setUTCHours(23, 59, 59, 999);
-
     const now = new Date();
 
-    const existing = await col.findOne({ sessionDate: { $gte: start, $lte: end } });
+    const existing = await col.findOne({ sourceType, sourceId });
 
     if (existing) {
         await col.updateOne(
             { _id: existing._id },
             {
                 $set: {
+                    sessionLabel,
                     presentMembers,
                     guestDogs,
                     updatedAt: now,
@@ -86,8 +91,10 @@ export async function saveAttendance(
     }
 
     const result = await col.insertOne({
-        sessionDate: start,
-        dayOfWeek,
+        sourceType,
+        sourceId,
+        sessionLabel,
+        sessionDate,
         presentMembers,
         guestDogs,
         createdAt: now,
@@ -97,37 +104,22 @@ export async function saveAttendance(
 }
 
 /**
- * List attendance sessions in a date range.
+ * List all attendance records, optionally filtered by source type.
  */
-export async function listAttendanceSessions(from: Date, to: Date) {
+export async function listAttendanceRecords(sourceType?: AttendanceSourceType) {
     const col = await getAttendanceCollection();
-    const start = new Date(from);
-    start.setUTCHours(0, 0, 0, 0);
-    const end = new Date(to);
-    end.setUTCHours(23, 59, 59, 999);
-
-    return col
-        .find({ sessionDate: { $gte: start, $lte: end } })
-        .sort({ sessionDate: 1 })
-        .toArray();
+    const filter = sourceType ? { sourceType } : {};
+    return col.find(filter).sort({ sessionDate: -1 }).toArray();
 }
 
 /**
- * List all attendance sessions (for calendar overview).
- */
-export async function listAllAttendanceSessions() {
-    const col = await getAttendanceCollection();
-    return col.find({}).sort({ sessionDate: 1 }).toArray();
-}
-
-/**
- * Search attendance for a specific member over a date range.
- * Returns sessions where the member was present.
+ * Search attendance for a specific member, optionally filtered by source type.
  */
 export async function searchMemberAttendance(
     memberId: string,
     from: Date,
     to: Date,
+    sourceType?: AttendanceSourceType,
 ) {
     const col = await getAttendanceCollection();
     const start = new Date(from);
@@ -135,35 +127,54 @@ export async function searchMemberAttendance(
     const end = new Date(to);
     end.setUTCHours(23, 59, 59, 999);
 
-    return col
-        .find({
-            sessionDate: { $gte: start, $lte: end },
-            "presentMembers.memberId": memberId,
-        })
-        .sort({ sessionDate: 1 })
-        .toArray();
+    const filter: Record<string, unknown> = {
+        sessionDate: { $gte: start, $lte: end },
+        "presentMembers.memberId": memberId,
+    };
+    if (sourceType) filter.sourceType = sourceType;
+
+    return col.find(filter).sort({ sessionDate: 1 }).toArray();
 }
 
 /**
- * Count total sessions (Saturdays + Sundays) in a date range.
- * Used to compute participation rate.
+ * Count total sessions of a given type in a date range.
+ * Counts from the actual source collections.
  */
-export function countWeekendDays(from: Date, to: Date): number {
-    let count = 0;
-    const d = new Date(from);
-    d.setUTCHours(0, 0, 0, 0);
+export async function countSessionsInRange(
+    from: Date,
+    to: Date,
+    sourceType?: AttendanceSourceType,
+): Promise<number> {
+    const db = await getDb();
+    const start = new Date(from);
+    start.setUTCHours(0, 0, 0, 0);
     const end = new Date(to);
     end.setUTCHours(23, 59, 59, 999);
 
-    while (d <= end) {
-        const dow = d.getUTCDay();
-        if (dow === 0 || dow === 6) count++;
-        d.setUTCDate(d.getUTCDate() + 1);
+    const dateFilter = { $gte: start, $lte: end };
+    let total = 0;
+
+    if (!sourceType || sourceType === "parcours") {
+        total += await db
+            .collection("health_courses")
+            .countDocuments({ sessionDate: dateFilter });
     }
-    return count;
+    if (!sourceType || sourceType === "obeissance") {
+        total += await db
+            .collection("obedience_sessions")
+            .countDocuments({ sessionDate: dateFilter });
+    }
+    if (!sourceType || sourceType === "event") {
+        total += await db
+            .collection("events")
+            .countDocuments({ eventDate: dateFilter, isPublished: true });
+    }
+
+    return total;
 }
 
-export const DAY_LABELS: Record<number, string> = {
-    0: "Dimanche",
-    6: "Samedi",
+export const SOURCE_LABELS: Record<AttendanceSourceType, string> = {
+    event: "Événement",
+    parcours: "Parcours de santé",
+    obeissance: "Obéissance",
 };

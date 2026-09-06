@@ -3,37 +3,27 @@
 import { useState, useMemo, useTransition } from "react";
 import type { MemberLevel } from "@/lib/levels";
 import { MEMBER_LEVELS } from "@/lib/levels";
+import type { AttendanceSourceType } from "@/lib/attendance";
 import { saveAttendanceAction, searchAttendanceAction } from "./actions";
+import type { PastSession } from "./page";
 import styles from "./presences.module.css";
 
 // ── Types ─────────────────────────────────────────────────────────
 
-type ActiveMember = {
+type AllMember = {
     id: string;
     name: string;
     dogName: string;
-    level: MemberLevel;
-};
-
-type AllMember = ActiveMember & { active: boolean };
-
-type SessionData = {
-    id: string;
-    sessionDate: string;
-    dayOfWeek: number;
-    presentCount: number;
-    guestCount: number;
-    presentMembers: { memberId: string; memberName: string; level: MemberLevel }[];
-    guestDogs: { name: string; ownerName: string }[];
+    level: string;
+    active: boolean;
 };
 
 type GuestDog = { name: string; ownerName: string };
 
 type Props = {
-    activeMembers: ActiveMember[];
+    pastSessions: PastSession[];
     allMembers: AllMember[];
-    sessions: SessionData[];
-    levelLabels: Record<string, string>;
+    memberInfoById: Record<string, { level: string; dogName: string }>;
 };
 
 // ── Constants ─────────────────────────────────────────────────────
@@ -49,56 +39,48 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     equipe: "#f5d957",
 };
 
-const MONTH_NAMES = [
-    "JANVIER", "FÉVRIER", "MARS", "AVRIL", "MAI", "JUIN",
-    "JUILLET", "AOÛT", "SEPTEMBRE", "OCTOBRE", "NOVEMBRE", "DÉCEMBRE",
-];
-
-const DAY_LABELS: Record<number, string> = {
-    0: "Dimanche",
-    6: "Samedi",
+const LEVEL_LABELS: Record<MemberLevel, string> = {
+    chiot: "Chiot",
+    premier_cours: "Premier cours",
+    ruban_violet: "Ruban violet",
+    ruban_bleu: "Ruban bleu",
+    ruban_blanc: "Ruban blanc",
+    ruban_rouge: "Ruban rouge",
+    ruban_noir: "Ruban noir",
+    equipe: "Équipe",
 };
+
+const SOURCE_LABELS: Record<AttendanceSourceType, string> = {
+    event: "Événement",
+    parcours: "Parcours de santé",
+    obeissance: "Obéissance",
+};
+
+type FilterType = "all" | AttendanceSourceType;
 
 // ── Helpers ───────────────────────────────────────────────────────
 
-function getWeekendDatesOfMonth(year: number, month: number) {
-    const dates: { date: Date; dayOfWeek: number }[] = [];
-    const d = new Date(year, month, 1);
-    while (d.getMonth() === month) {
-        const dow = d.getDay();
-        if (dow === 0 || dow === 6) {
-            dates.push({ date: new Date(d), dayOfWeek: dow });
-        }
-        d.setDate(d.getDate() + 1);
-    }
-    return dates;
-}
-
-function dateKey(d: Date) {
-    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-}
-
-function formatDateStr(d: Date) {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
 function formatDateDisplay(iso: string) {
     const d = new Date(iso);
-    return `${d.getUTCDate()} ${new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric", timeZone: "UTC" }).format(d)}`;
+    return `${d.getUTCDate()} ${new Intl.DateTimeFormat("fr-FR", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+    }).format(d)}`;
 }
 
 // ── Component ─────────────────────────────────────────────────────
 
 export default function AttendanceView({
-    activeMembers,
+    pastSessions,
     allMembers,
-    sessions,
-    levelLabels,
+    memberInfoById,
 }: Props) {
     const [tab, setTab] = useState<"saisie" | "recherche">("saisie");
-    const [viewYear, setViewYear] = useState(new Date().getFullYear());
-    const [viewMonth, setViewMonth] = useState(new Date().getMonth());
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+    // ── Saisie state ──────────────────────────────────────────────
+    const [filter, setFilter] = useState<FilterType>("all");
+    const [selectedId, setSelectedId] = useState<string | null>(null);
     const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
     const [guests, setGuests] = useState<GuestDog[]>([]);
     const [guestName, setGuestName] = useState("");
@@ -106,77 +88,112 @@ export default function AttendanceView({
     const [isPending, startTransition] = useTransition();
     const [saved, setSaved] = useState(false);
 
-    // Search state
+    // ── Search state ──────────────────────────────────────────────
     const [searchMemberId, setSearchMemberId] = useState("");
     const [searchFrom, setSearchFrom] = useState("");
     const [searchTo, setSearchTo] = useState("");
+    const [searchSourceType, setSearchSourceType] = useState<FilterType>("all");
     const [searchResult, setSearchResult] = useState<{
-        sessions: { date: string; dayOfWeek: number }[];
-        totalWeekendDays: number;
+        sessions: { date: string; sourceType: string; sessionLabel: string }[];
+        totalSessions: number;
         presentCount: number;
         rate: number;
     } | null>(null);
     const [isSearching, startSearchTransition] = useTransition();
 
-    // Session lookup
-    const sessionsByDateKey = useMemo(() => {
-        const map = new Map<string, SessionData>();
-        for (const s of sessions) {
-            const d = new Date(s.sessionDate);
-            map.set(`${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`, s);
-        }
-        return map;
-    }, [sessions]);
-
-    const weekendDates = useMemo(
-        () => getWeekendDatesOfMonth(viewYear, viewMonth),
-        [viewYear, viewMonth],
+    // ── Filtered sessions ─────────────────────────────────────────
+    const filteredSessions = useMemo(
+        () =>
+            filter === "all"
+                ? pastSessions
+                : pastSessions.filter((s) => s.sourceType === filter),
+        [pastSessions, filter],
     );
 
-    // Selected session data
-    const selectedSession = selectedDate
-        ? (() => {
-              const d = new Date(selectedDate);
-              return sessionsByDateKey.get(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
-          })()
-        : null;
+    // ── Selected session ──────────────────────────────────────────
+    const selectedSession = useMemo(
+        () => (selectedId ? pastSessions.find((s) => `${s.sourceType}:${s.sourceId}` === selectedId) : null),
+        [pastSessions, selectedId],
+    );
 
-    const selectedDow = selectedDate
-        ? new Date(selectedDate).getDay()
-        : null;
+    // ── Members grouped by level for selected session ─────────────
+    const membersByLevel = useMemo(() => {
+        if (!selectedSession) return [];
+        const registeredIds = new Set(selectedSession.registeredMembers.map((r) => r.memberId));
+        const groups: {
+            level: MemberLevel;
+            label: string;
+            color: string;
+            members: { id: string; name: string; dogName: string }[];
+        }[] = [];
 
-    // ── Calendar nav ──────────────────────────────────────────────
+        for (const level of MEMBER_LEVELS) {
+            const members: { id: string; name: string; dogName: string }[] = [];
+            for (const reg of selectedSession.registeredMembers) {
+                const info = memberInfoById[reg.memberId];
+                const memberLevel = (info?.level || "chiot") as MemberLevel;
+                if (memberLevel === level) {
+                    members.push({
+                        id: reg.memberId,
+                        name: reg.memberName,
+                        dogName: info?.dogName || "",
+                    });
+                }
+            }
+            if (members.length > 0) {
+                groups.push({
+                    level,
+                    label: LEVEL_LABELS[level],
+                    color: LEVEL_COLORS[level],
+                    members,
+                });
+            }
+        }
+        return groups;
+    }, [selectedSession, memberInfoById]);
 
-    function goPrev() {
-        if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); }
-        else setViewMonth(viewMonth - 1);
-    }
-    function goNext() {
-        if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); }
-        else setViewMonth(viewMonth + 1);
-    }
+    // ── Summary ───────────────────────────────────────────────────
+    const summary = useMemo(() => {
+        if (!selectedSession) return [];
+        const groups: { level: MemberLevel; label: string; color: string; count: number }[] = [];
+        for (const level of MEMBER_LEVELS) {
+            let count = 0;
+            for (const reg of selectedSession.registeredMembers) {
+                const info = memberInfoById[reg.memberId];
+                if (((info?.level || "chiot") as MemberLevel) === level && checkedIds.has(reg.memberId)) {
+                    count++;
+                }
+            }
+            if (count > 0) {
+                groups.push({ level, label: LEVEL_LABELS[level], color: LEVEL_COLORS[level], count });
+            }
+        }
+        return groups;
+    }, [selectedSession, memberInfoById, checkedIds]);
 
-    // ── Select a date ─────────────────────────────────────────────
+    const totalPresent = checkedIds.size + guests.length;
 
-    function selectDate(d: Date, dow: number) {
-        const ds = formatDateStr(d);
-        setSelectedDate(ds);
+    // ── Select a session ──────────────────────────────────────────
+    function selectSession(session: PastSession) {
+        const key = `${session.sourceType}:${session.sourceId}`;
+        if (key === selectedId) {
+            setSelectedId(null);
+            return;
+        }
+        setSelectedId(key);
         setSaved(false);
 
-        // Pre-fill from existing session if any
-        const key = dateKey(d);
-        const existing = sessionsByDateKey.get(key);
-        if (existing) {
-            setCheckedIds(new Set(existing.presentMembers.map((m) => m.memberId)));
-            setGuests(existing.guestDogs);
+        if (session.attendanceFilled) {
+            setCheckedIds(new Set(session.presentMembers.map((m) => m.memberId)));
+            setGuests(session.guestDogs.map((g) => ({ ...g })));
         } else {
-            setCheckedIds(new Set());
+            // Pre-check all registered members
+            setCheckedIds(new Set(session.registeredMembers.map((r) => r.memberId)));
             setGuests([]);
         }
     }
 
     // ── Toggle member ─────────────────────────────────────────────
-
     function toggleMember(id: string) {
         setCheckedIds((prev) => {
             const next = new Set(prev);
@@ -201,7 +218,6 @@ export default function AttendanceView({
     }
 
     // ── Guests ────────────────────────────────────────────────────
-
     function addGuest() {
         if (!guestName.trim()) return;
         setGuests((prev) => [...prev, { name: guestName.trim(), ownerName: guestOwner.trim() }]);
@@ -216,16 +232,25 @@ export default function AttendanceView({
     }
 
     // ── Save ──────────────────────────────────────────────────────
-
     function handleSave() {
-        if (!selectedDate) return;
-        const presentMembers = activeMembers
-            .filter((m) => checkedIds.has(m.id))
-            .map((m) => ({ memberId: m.id, memberName: m.name, level: m.level }));
+        if (!selectedSession) return;
+
+        const presentMembers = selectedSession.registeredMembers
+            .filter((r) => checkedIds.has(r.memberId))
+            .map((r) => {
+                const info = memberInfoById[r.memberId];
+                return {
+                    memberId: r.memberId,
+                    memberName: r.memberName,
+                    level: (info?.level || "chiot") as MemberLevel,
+                };
+            });
 
         const fd = new FormData();
-        fd.set("date", selectedDate);
-        fd.set("dayOfWeek", String(selectedDow));
+        fd.set("sourceType", selectedSession.sourceType);
+        fd.set("sourceId", selectedSession.sourceId);
+        fd.set("sessionLabel", selectedSession.sessionLabel);
+        fd.set("sessionDate", selectedSession.sessionDate);
         fd.set("presentMembers", JSON.stringify(presentMembers));
         fd.set("guestDogs", JSON.stringify(guests));
 
@@ -236,51 +261,14 @@ export default function AttendanceView({
     }
 
     // ── Search ────────────────────────────────────────────────────
-
     function handleSearch() {
         if (!searchMemberId || !searchFrom || !searchTo) return;
         startSearchTransition(async () => {
-            const result = await searchAttendanceAction(searchMemberId, searchFrom, searchTo);
+            const st = searchSourceType === "all" ? undefined : (searchSourceType as AttendanceSourceType);
+            const result = await searchAttendanceAction(searchMemberId, searchFrom, searchTo, st);
             setSearchResult(result);
         });
     }
-
-    // ── Group by level ────────────────────────────────────────────
-
-    const membersByLevel = useMemo(() => {
-        const groups: { level: MemberLevel; label: string; color: string; members: ActiveMember[] }[] = [];
-        for (const level of MEMBER_LEVELS) {
-            const members = activeMembers.filter((m) => m.level === level);
-            if (members.length > 0) {
-                groups.push({
-                    level,
-                    label: levelLabels[level] || level,
-                    color: LEVEL_COLORS[level],
-                    members,
-                });
-            }
-        }
-        return groups;
-    }, [activeMembers, levelLabels]);
-
-    // Summary of checked members by level
-    const summary = useMemo(() => {
-        const groups: { level: MemberLevel; label: string; color: string; count: number }[] = [];
-        for (const level of MEMBER_LEVELS) {
-            const count = activeMembers.filter((m) => m.level === level && checkedIds.has(m.id)).length;
-            if (count > 0) {
-                groups.push({
-                    level,
-                    label: levelLabels[level] || level,
-                    color: LEVEL_COLORS[level],
-                    count,
-                });
-            }
-        }
-        return groups;
-    }, [activeMembers, checkedIds, levelLabels]);
-
-    const totalPresent = checkedIds.size + guests.length;
 
     // ── Render ────────────────────────────────────────────────────
 
@@ -306,59 +294,76 @@ export default function AttendanceView({
 
             {tab === "saisie" && (
                 <>
-                    {/* Calendar */}
+                    {/* Session list */}
                     <div className={styles.card}>
-                        <div className={styles.monthHeader}>
-                            <button type="button" onClick={goPrev} className={styles.navArrow}>←</button>
-                            <h3 className={styles.monthTitle}>{MONTH_NAMES[viewMonth]} {viewYear}</h3>
-                            <button type="button" onClick={goNext} className={styles.navArrow}>→</button>
+                        <div className={styles.formHeader}>
+                            <h2 className={styles.formTitle}>Séances passées</h2>
                         </div>
 
-                        <div className={styles.calendarGrid}>
-                            {weekendDates.map((wd) => {
-                                const key = dateKey(wd.date);
-                                const session = sessionsByDateKey.get(key);
-                                const ds = formatDateStr(wd.date);
-                                const isSelected = ds === selectedDate;
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
+                        {/* Filter bar */}
+                        <div className={styles.filterBar}>
+                            {(["all", "parcours", "obeissance", "event"] as FilterType[]).map((f) => (
+                                <button
+                                    key={f}
+                                    type="button"
+                                    className={`${styles.filterBtn} ${filter === f ? styles.filterBtnActive : ""}`}
+                                    onClick={() => { setFilter(f); setSelectedId(null); }}
+                                >
+                                    {f === "all" ? "Tout" : SOURCE_LABELS[f as AttendanceSourceType]}
+                                </button>
+                            ))}
+                        </div>
 
-                                return (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        className={`${styles.calendarCell} ${isSelected ? styles.calendarCellSelected : ""} ${session ? styles.calendarCellFilled : ""}`}
-                                        onClick={() => selectDate(wd.date, wd.dayOfWeek)}
-                                    >
-                                        <span className={styles.calendarCellDay}>
-                                            {DAY_LABELS[wd.dayOfWeek]}
-                                        </span>
-                                        <span className={styles.calendarCellDate}>
-                                            {wd.date.getDate()}
-                                        </span>
-                                        {session && (
-                                            <span className={styles.calendarCellCount}>
-                                                {session.presentCount + session.guestCount} présent{(session.presentCount + session.guestCount) > 1 ? "s" : ""}
+                        {/* Session rows */}
+                        {filteredSessions.length > 0 ? (
+                            <div className={styles.sessionList}>
+                                {filteredSessions.map((s) => {
+                                    const key = `${s.sourceType}:${s.sourceId}`;
+                                    const isSelected = key === selectedId;
+                                    const count = s.attendanceFilled
+                                        ? s.presentMembers.length + s.guestDogs.length
+                                        : null;
+
+                                    return (
+                                        <button
+                                            key={key}
+                                            type="button"
+                                            className={`${styles.sessionRow} ${isSelected ? styles.sessionRowSelected : ""} ${s.attendanceFilled ? styles.sessionRowFilled : ""}`}
+                                            onClick={() => selectSession(s)}
+                                        >
+                                            <div className={styles.sessionInfo}>
+                                                <span className={styles.sessionLabel}>{s.sessionLabel}</span>
+                                                <span className={styles.sessionType}>
+                                                    {SOURCE_LABELS[s.sourceType]}
+                                                </span>
+                                            </div>
+                                            <span className={`${styles.sessionStatus} ${s.attendanceFilled ? styles.statusFilled : styles.statusEmpty}`}>
+                                                {s.attendanceFilled
+                                                    ? `${count} présent${count! > 1 ? "s" : ""}`
+                                                    : "À saisir"}
                                             </span>
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <p className={styles.noSessions}>Aucune séance passée pour ce filtre.</p>
+                        )}
                     </div>
 
                     {/* Attendance form */}
-                    {selectedDate && (
+                    {selectedSession && (
                         <div className={styles.card} style={{ marginTop: 20 }}>
                             <div className={styles.formHeader}>
-                                <h2 className={styles.formTitle}>
-                                    {DAY_LABELS[selectedDow!]} {new Date(selectedDate).getDate()}{" "}
-                                    {new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric" }).format(new Date(selectedDate))}
-                                </h2>
+                                <h2 className={styles.formTitle}>{selectedSession.sessionLabel}</h2>
                                 <div className={styles.totalBadge}>
                                     {totalPresent} présent{totalPresent > 1 ? "s" : ""}
                                 </div>
                             </div>
+
+                            {membersByLevel.length === 0 && (
+                                <p className={styles.noSessions}>Aucun inscrit pour cette séance.</p>
+                            )}
 
                             {/* Members by level */}
                             {membersByLevel.map((group) => {
@@ -373,9 +378,7 @@ export default function AttendanceView({
                                                 className={styles.levelDot}
                                                 style={{ background: group.color }}
                                             />
-                                            <span className={styles.levelLabel}>
-                                                {group.label}
-                                            </span>
+                                            <span className={styles.levelLabel}>{group.label}</span>
                                             <span className={styles.levelCount}>
                                                 {checkedCount}/{group.members.length}
                                             </span>
@@ -388,24 +391,36 @@ export default function AttendanceView({
                                             </button>
                                         </div>
                                         <div className={styles.membersList}>
-                                            {group.members.map((m) => (
-                                                <label key={m.id} className={styles.memberRow}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={checkedIds.has(m.id)}
-                                                        onChange={() => toggleMember(m.id)}
-                                                        className={styles.checkbox}
-                                                    />
-                                                    <span className={styles.memberName}>
-                                                        {m.name}
-                                                    </span>
-                                                    {m.dogName && (
-                                                        <span className={styles.memberDog}>
-                                                            ({m.dogName})
-                                                        </span>
-                                                    )}
-                                                </label>
-                                            ))}
+                                            {group.members.map((m) => {
+                                                const isObeissance = selectedSession?.sourceType === "obeissance";
+                                                return (
+                                                    <label key={m.id} className={styles.memberRow}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={checkedIds.has(m.id)}
+                                                            onChange={() => toggleMember(m.id)}
+                                                            className={styles.checkbox}
+                                                        />
+                                                        {isObeissance ? (
+                                                            <>
+                                                                <span className={styles.memberName}>
+                                                                    {m.dogName || m.name}
+                                                                </span>
+                                                                {m.dogName && (
+                                                                    <span className={styles.memberDog}>({m.name})</span>
+                                                                )}
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <span className={styles.memberName}>{m.name}</span>
+                                                                {m.dogName && (
+                                                                    <span className={styles.memberDog}>({m.dogName})</span>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </label>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 );
@@ -489,9 +504,7 @@ export default function AttendanceView({
 
                             {/* Save */}
                             <div className={styles.saveBar}>
-                                {saved && (
-                                    <span className={styles.savedMsg}>Enregistré !</span>
-                                )}
+                                {saved && <span className={styles.savedMsg}>Enregistré !</span>}
                                 <button
                                     type="button"
                                     className={styles.saveBtn}
@@ -530,6 +543,19 @@ export default function AttendanceView({
                             </select>
                         </div>
                         <div className={styles.searchField}>
+                            <label className={styles.searchLabel}>Type</label>
+                            <select
+                                value={searchSourceType}
+                                onChange={(e) => { setSearchSourceType(e.target.value as FilterType); setSearchResult(null); }}
+                                className={styles.searchSelect}
+                            >
+                                <option value="all">Toutes les activités</option>
+                                <option value="parcours">Parcours de santé</option>
+                                <option value="obeissance">Obéissance</option>
+                                <option value="event">Événement</option>
+                            </select>
+                        </div>
+                        <div className={styles.searchField}>
                             <label className={styles.searchLabel}>Du</label>
                             <input
                                 type="date"
@@ -565,7 +591,7 @@ export default function AttendanceView({
                                     <span className={styles.searchStatLabel}>séances présentes</span>
                                 </div>
                                 <div className={styles.searchStat}>
-                                    <span className={styles.searchStatNumber}>{searchResult.totalWeekendDays}</span>
+                                    <span className={styles.searchStatNumber}>{searchResult.totalSessions}</span>
                                     <span className={styles.searchStatLabel}>séances possibles</span>
                                 </div>
                                 <div className={`${styles.searchStat} ${styles.searchStatHighlight}`}>
@@ -576,11 +602,11 @@ export default function AttendanceView({
 
                             {searchResult.sessions.length > 0 && (
                                 <div className={styles.searchDates}>
-                                    <h4 className={styles.searchDatesTitle}>Dates de présence</h4>
+                                    <h4 className={styles.searchDatesTitle}>Détail des présences</h4>
                                     <div className={styles.searchDatesList}>
-                                        {searchResult.sessions.map((s) => (
-                                            <span key={s.date} className={styles.searchDateTag}>
-                                                {DAY_LABELS[s.dayOfWeek]} {formatDateDisplay(s.date)}
+                                        {searchResult.sessions.map((s, i) => (
+                                            <span key={i} className={styles.searchDateTag}>
+                                                {SOURCE_LABELS[s.sourceType as AttendanceSourceType] || s.sourceType} — {formatDateDisplay(s.date)}
                                             </span>
                                         ))}
                                     </div>

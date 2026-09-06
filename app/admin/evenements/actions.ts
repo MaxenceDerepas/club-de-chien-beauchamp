@@ -9,6 +9,7 @@ import {
     deleteEventById,
     getEventById,
     updateEvent,
+    type EventVisibility,
 } from "@/lib/events";
 
 function optionalDate(value: string) {
@@ -57,6 +58,7 @@ export async function createEventAction(formData: FormData) {
               ) || 1,
           );
     const isPublished = true;
+    const visibility = (String(formData.get("visibility") || "both")) as EventVisibility;
 
     const imageFile = formData.get("image") as File | null;
 
@@ -80,6 +82,7 @@ export async function createEventAction(formData: FormData) {
         minLevel,
         maxParticipants,
         isPublished,
+        visibility,
         registrations: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -141,6 +144,8 @@ export async function updateEventAction(formData: FormData) {
               ) || 1,
           );
 
+    const visibility = (String(formData.get("visibility") || "both")) as EventVisibility;
+
     if (!title) {
         redirect(
             `/admin/evenements/${id}/modifier?error=` +
@@ -171,6 +176,7 @@ export async function updateEventAction(formData: FormData) {
             imageUrl,
             minLevel,
             maxParticipants,
+            visibility,
         });
     } catch (err) {
         console.error("updateEventAction error:", err);

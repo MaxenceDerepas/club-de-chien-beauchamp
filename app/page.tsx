@@ -2,7 +2,7 @@ import Image from "next/image";
 import styles from "./home.module.css";
 import { getHomepageAnnouncement } from "@/lib/content";
 import { getCurrentMember } from "@/lib/member-auth";
-import { listPublishedUpcomingEvents } from "@/lib/events";
+import { listPublicUpcomingEvents } from "@/lib/events";
 import { getAllCourseImages } from "@/lib/course-images";
 import ImageCluster from "@/components/ImageCluster";
 import CoursesSection from "@/components/CoursesSection";
@@ -56,7 +56,7 @@ export default async function HomePage() {
     const [announcement, member, upcomingEvents, allCourseImages] = await Promise.all([
         getHomepageAnnouncement(),
         getCurrentMember(),
-        listPublishedUpcomingEvents(),
+        listPublicUpcomingEvents(),
         getAllCourseImages(),
     ]);
 

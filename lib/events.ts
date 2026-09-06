@@ -24,6 +24,8 @@ export type EventRegistration = {
     status: EventRegistrationStatus;
 };
 
+export type EventVisibility = "public" | "members" | "both";
+
 export type EventRecord = {
     _id?: ObjectId;
     title: string;
@@ -36,6 +38,8 @@ export type EventRecord = {
     minLevel: EventLevel;
     maxParticipants: number;
     isPublished: boolean;
+    /** "public" = visitor page only, "members" = member page only, "both" = both */
+    visibility: EventVisibility;
     registrations: EventRegistration[];
     createdAt: Date;
     updatedAt: Date;
@@ -72,6 +76,36 @@ export async function listPublishedUpcomingEvents() {
     return collection
         .find({
             isPublished: true,
+            $or: [{ eventDate: null }, { eventDate: { $gte: now } }],
+        })
+        .sort({ eventDate: 1, createdAt: -1 })
+        .toArray();
+}
+
+/** Events visible on the public/visitor page (not "members"-only) */
+export async function listPublicUpcomingEvents() {
+    const collection = await getEventsCollection();
+    const now = new Date();
+    // Exclude events with visibility "members" — shows "public", "both", and legacy (missing field)
+    return collection
+        .find({
+            isPublished: true,
+            visibility: { $ne: "members" },
+            $or: [{ eventDate: null }, { eventDate: { $gte: now } }],
+        })
+        .sort({ eventDate: 1, createdAt: -1 })
+        .toArray();
+}
+
+/** Events visible on the member page (not "public"-only) */
+export async function listMemberUpcomingEvents() {
+    const collection = await getEventsCollection();
+    const now = new Date();
+    // Exclude events with visibility "public" — shows "members", "both", and legacy (missing field)
+    return collection
+        .find({
+            isPublished: true,
+            visibility: { $ne: "public" },
             $or: [{ eventDate: null }, { eventDate: { $gte: now } }],
         })
         .sort({ eventDate: 1, createdAt: -1 })

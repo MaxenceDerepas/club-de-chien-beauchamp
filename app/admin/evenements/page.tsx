@@ -151,15 +151,13 @@ export default async function AdminEventsPage() {
                                                 </td>
                                                 <td>
                                                     <span
-                                                        className={`${styles.status} ${
-                                                            event.isPublished
-                                                                ? styles.statusOn
-                                                                : styles.statusOff
-                                                        }`}
+                                                        className={`${styles.status} ${styles.statusOn}`}
                                                     >
-                                                        {event.isPublished
-                                                            ? "Publié"
-                                                            : "Brouillon"}
+                                                        {(event.visibility || "both") === "both"
+                                                            ? "Visiteur + Adhérent"
+                                                            : (event.visibility || "both") === "public"
+                                                              ? "Visiteur"
+                                                              : "Adhérent"}
                                                     </span>
                                                 </td>
                                                 <td>

@@ -1,0 +1,274 @@
+/* ── New category form ────────────────────────────────────────── */
+
+.addCategoryForm {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    padding: 20px;
+    background: #f4f7f9;
+    border-radius: 16px;
+}
+
+.formField {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.fieldLabel {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #355060;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.fieldInput,
+.fieldSelect {
+    padding: 10px 14px;
+    border: 2px solid #dde4ea;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #163040;
+    background: #fff;
+}
+
+.fieldInput:focus,
+.fieldSelect:focus {
+    outline: none;
+    border-color: #06607b;
+}
+
+.addCategoryBtn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #06607b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.addCategoryBtn:hover {
+    background: #054e64;
+}
+
+/* ── Category card ───────────────────────────────────────────── */
+
+.categoryCard {
+    margin-bottom: 24px;
+    border: 2px solid #e0e8ee;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.categoryHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #f4f7f9;
+    border-bottom: 1px solid #e0e8ee;
+}
+
+.categoryName {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #163040;
+    flex: 1;
+}
+
+.categoryActions {
+    display: flex;
+    gap: 6px;
+}
+
+.iconBtn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid #ccd5dc;
+    background: #fff;
+    color: #355060;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+
+.iconBtn:hover {
+    background: #eef2f5;
+}
+
+.iconBtnDanger:hover {
+    background: #fee;
+    border-color: #c44;
+    color: #c44;
+}
+
+/* ── Document list ───────────────────────────────────────────── */
+
+.docList {
+    padding: 12px 20px;
+}
+
+.docRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f3f5;
+}
+
+.docRow:last-child {
+    border-bottom: none;
+}
+
+.docIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #06607b;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.docInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.docName {
+    font-weight: 700;
+    color: #163040;
+    font-size: 0.92rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.docFilename {
+    font-size: 0.78rem;
+    color: #667;
+}
+
+.docActions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.emptyMsg {
+    padding: 20px;
+    text-align: center;
+    color: #667;
+    font-style: italic;
+    font-size: 0.88rem;
+}
+
+/* ── Upload form ─────────────────────────────────────────────── */
+
+.uploadForm {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    padding: 14px 20px;
+    background: #fafcfd;
+    border-top: 1px solid #e0e8ee;
+}
+
+.uploadBtn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #16713a;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.uploadBtn:hover {
+    background: #125e30;
+}
+
+.uploadBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Edit modal overlay ──────────────────────────────────────── */
+
+.editOverlay {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.editInput {
+    padding: 6px 10px;
+    border: 2px solid #06607b;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: #163040;
+    min-width: 200px;
+}
+
+.editInput:focus {
+    outline: none;
+}
+
+.editSaveBtn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #06607b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.editCancelBtn {
+    padding: 6px 14px;
+    border: 1px solid #ccd5dc;
+    border-radius: 8px;
+    background: #fff;
+    color: #355060;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+    .addCategoryForm {
+        flex-direction: column;
+    }
+
+    .uploadForm {
+        flex-direction: column;
+    }
+
+    .docRow {
+        flex-wrap: wrap;
+    }
+}

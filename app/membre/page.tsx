@@ -12,12 +12,13 @@ import {
     markAbsentObedienceAction,
     markNotificationsReadAction,
 } from "./actions";
-import { listPublishedUpcomingEvents } from "@/lib/events";
+import { listMemberUpcomingEvents } from "@/lib/events";
 import { listHealthCourses } from "@/lib/health-courses";
 import { listObedienceSessions } from "@/lib/obedience";
 import { listMembers } from "@/lib/members";
 import { listAlbums } from "@/lib/gallery";
 import { getMemberAnnouncement } from "@/lib/content";
+import { listDocumentCategories } from "@/lib/documents";
 import { listEvents } from "@/lib/events";
 import MemberGallery from "./MemberGallery";
 import ChangePasswordForm from "./ChangePasswordForm";
@@ -79,65 +80,6 @@ function getNavItems(showHealthCourse: boolean, showObedience: boolean, isAdmin:
     return items;
 }
 
-type DocumentationCategory = {
-    id: string;
-    title: string;
-    icon: "heart" | "education" | "document";
-    documents: { id: string; title: string; fileUrl: string }[];
-};
-
-const documentationCategories: DocumentationCategory[] = [
-    {
-        id: "sante",
-        title: "Santé & bien-être",
-        icon: "heart",
-        documents: [
-            {
-                id: "fortes-temperatures",
-                title: "Conseils pratiques pour gérer les fortes températures",
-                fileUrl: "#",
-            },
-            {
-                id: "tiques",
-                title: "Prévention : les tiques",
-                fileUrl: "#",
-            },
-            {
-                id: "epillet",
-                title: "Le danger de l'épillet",
-                fileUrl: "#",
-            },
-        ],
-    },
-    {
-        id: "education",
-        title: "L'éducation au quotidien",
-        icon: "education",
-        documents: [],
-    },
-    {
-        id: "pv",
-        title: "Procès-verbaux",
-        icon: "document",
-        documents: [
-            {
-                id: "pv-ago-2025",
-                title: "PV Assemblée Générale Ordinaire — 30 novembre 2025",
-                fileUrl: "https://res.cloudinary.com/t2c5ip49/image/upload/v1788111369/12-PV_DE_L_AGO_CBEC_DU_30_11_2025.pdf",
-            },
-            {
-                id: "pv-age-2025",
-                title: "PV Assemblée Générale Extraordinaire — 30 novembre 2025",
-                fileUrl: "https://res.cloudinary.com/t2c5ip49/image/upload/v1788111331/11-PV_DE_L_AGE_CBEC_DU_30_11_2025.pdf",
-            },
-            {
-                id: "pv-ago-2024",
-                title: "PV Assemblée Générale Ordinaire — 15 décembre 2024",
-                fileUrl: "https://res.cloudinary.com/t2c5ip49/image/upload/v1788111353/10-PV_AGO_Beauchamp_15122024.pdf",
-            },
-        ],
-    },
-];
 
 export default async function MembrePage() {
     const member = await requireMemberSession();
@@ -149,11 +91,12 @@ export default async function MembrePage() {
     const hasObedience = isAdmin || (member.obedience ?? false);
     const showFirstLoginModal = !(member.hasChangedPassword ?? false);
 
-    const [allAlbums, allEvents, events, memberAnnouncement] = await Promise.all([
+    const [allAlbums, allEvents, events, memberAnnouncement, docCategories] = await Promise.all([
         listAlbums(),
         listEvents(),
-        listPublishedUpcomingEvents(),
+        listMemberUpcomingEvents(),
         getMemberAnnouncement(),
+        listDocumentCategories(),
     ]);
 
     // Admin notifications
@@ -507,9 +450,9 @@ export default async function MembrePage() {
                                 </h2>
                             </aside>
                             <div className={styles.docMain}>
-                                {documentationCategories.map((category) => (
+                                {docCategories.map((category) => (
                                     <div
-                                        key={category.id}
+                                        key={category._id?.toString()}
                                         className={styles.docCategory}
                                     >
                                         <div className={styles.docCategoryHeader}>
@@ -600,14 +543,14 @@ export default async function MembrePage() {
                                             <h3
                                                 className={styles.docCategoryTitle}
                                             >
-                                                {category.title}
+                                                {category.name}
                                             </h3>
                                         </div>
                                         {category.documents.length > 0 ? (
                                             <ul className={styles.docList}>
                                                 {category.documents.map((doc) => (
                                                     <li
-                                                        key={doc.id}
+                                                        key={doc._id?.toString()}
                                                         className={styles.docItem}
                                                     >
                                                         <a
@@ -615,7 +558,8 @@ export default async function MembrePage() {
                                                             className={
                                                                 styles.docLink
                                                             }
-                                                            download
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
                                                         >
                                                             <span
                                                                 className={
@@ -646,7 +590,7 @@ export default async function MembrePage() {
                                                                     styles.docLabel
                                                                 }
                                                             >
-                                                                {doc.title}
+                                                                {doc.name}
                                                             </span>
                                                         </a>
                                                     </li>
