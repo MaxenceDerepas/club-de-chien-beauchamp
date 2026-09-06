@@ -59,6 +59,7 @@ export async function createEventAction(formData: FormData) {
           );
     const isPublished = true;
     const visibility = (String(formData.get("visibility") || "both")) as EventVisibility;
+    const registrationEnabled = formData.get("registrationEnabled") !== "off";
 
     const imageFile = formData.get("image") as File | null;
 
@@ -83,6 +84,7 @@ export async function createEventAction(formData: FormData) {
         maxParticipants,
         isPublished,
         visibility,
+        registrationEnabled,
         registrations: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -145,6 +147,7 @@ export async function updateEventAction(formData: FormData) {
           );
 
     const visibility = (String(formData.get("visibility") || "both")) as EventVisibility;
+    const registrationEnabled = formData.get("registrationEnabled") !== "off";
 
     if (!title) {
         redirect(
@@ -177,6 +180,7 @@ export async function updateEventAction(formData: FormData) {
             minLevel,
             maxParticipants,
             visibility,
+            registrationEnabled,
         });
     } catch (err) {
         console.error("updateEventAction error:", err);

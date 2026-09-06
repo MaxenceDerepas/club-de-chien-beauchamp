@@ -35,6 +35,7 @@ export default async function EditEventPage({ params }: Props) {
         minLevel: event.minLevel || "chiot",
         maxParticipants: event.maxParticipants,
         visibility: event.visibility || "both",
+        registrationEnabled: event.registrationEnabled !== false,
     };
 
     return (

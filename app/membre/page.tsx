@@ -217,6 +217,7 @@ export default async function MembrePage() {
         imageUrl: e.imageUrl || "",
         minLevel: e.minLevel,
         maxParticipants: e.maxParticipants,
+        registrationEnabled: e.registrationEnabled !== false,
         registrations: e.registrations.map((r) => ({
             memberId: r.memberId,
             memberName: r.memberName,

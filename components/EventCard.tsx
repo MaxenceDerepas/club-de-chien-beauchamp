@@ -21,6 +21,7 @@ export type EventCardData = {
     imageUrl?: string;
     minLevel: MemberLevel;
     maxParticipants: number;
+    registrationEnabled: boolean;
     registrations: EventCardRegistration[];
 };
 
@@ -205,7 +206,11 @@ export default function EventCard({
                                     </p>
                                 )}
 
-                                {myRegistration ? (
+                                {!event.registrationEnabled ? (
+                                    <div className={styles.disabledBadge}>
+                                        Inscription sur place auprès des administrateurs
+                                    </div>
+                                ) : myRegistration ? (
                                     <div
                                         className={`${styles.statusBadge} ${
                                             myRegistration.status === "approved"

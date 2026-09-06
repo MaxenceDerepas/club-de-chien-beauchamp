@@ -18,6 +18,7 @@ type EventData = {
     minLevel: string;
     maxParticipants: number;
     visibility: string;
+    registrationEnabled: boolean;
 };
 
 type Props = {
@@ -32,6 +33,7 @@ export default function EditEventForm({ event }: Props) {
     );
     const [removeImage, setRemoveImage] = useState(false);
     const [unlimited, setUnlimited] = useState(event.maxParticipants === 0);
+    const [registrationDisabled, setRegistrationDisabled] = useState(!event.registrationEnabled);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const [newFileSelected, setNewFileSelected] = useState(false);
 
@@ -178,7 +180,18 @@ export default function EditEventForm({ event }: Props) {
                 <h2 className={styles.sectionTitle}>
                     Paramètres d&apos;inscription
                 </h2>
+                <input type="hidden" name="registrationEnabled" value={registrationDisabled ? "off" : "on"} />
                 <div className={styles.gridTwo}>
+                    <div className={`${styles.field} ${styles.fieldFull}`}>
+                        <label className={styles.checkboxRow}>
+                            <input
+                                type="checkbox"
+                                checked={registrationDisabled}
+                                onChange={(e) => setRegistrationDisabled(e.target.checked)}
+                            />
+                            Désactiver l&apos;inscription en ligne (inscription gérée par les administrateurs uniquement)
+                        </label>
+                    </div>
                     <div className={styles.field}>
                         <label className={styles.label} htmlFor="minLevel">
                             Niveau minimum requis

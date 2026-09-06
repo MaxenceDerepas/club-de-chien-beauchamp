@@ -40,6 +40,8 @@ export type EventRecord = {
     isPublished: boolean;
     /** "public" = visitor page only, "members" = member page only, "both" = both */
     visibility: EventVisibility;
+    /** Whether members can register online (default true). When false, registration is handled by admins in person. */
+    registrationEnabled: boolean;
     registrations: EventRegistration[];
     createdAt: Date;
     updatedAt: Date;
@@ -125,6 +127,7 @@ export async function requestEventRegistration(
     const event = await collection.findOne({ _id });
     if (!event) throw new Error("Événement introuvable.");
     if (!event.isPublished) throw new Error("Événement non disponible.");
+    if (event.registrationEnabled === false) throw new Error("L'inscription en ligne est désactivée pour cet événement.");
 
     const existing = event.registrations.find(
         (r) => r.memberId === registration.memberId,
