@@ -64,13 +64,19 @@ export default async function AdminPresencesPage() {
 
     const pastSessions: PastSession[] = [];
 
-    // Health courses (parcours) — past sessions with at least one approved registration
+    // Track dates that already have DB sessions to avoid duplicates
+    const existingDateKeys = new Set<string>();
+    function makeDateKey(d: Date, type: string) {
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}:${type}`;
+    }
+
+    // Health courses (parcours) — all past sessions (even without registrations)
     for (const hc of healthCourses) {
         if (!hc.sessionDate || new Date(hc.sessionDate) > now) continue;
         const id = hc._id?.toString() ?? "";
         const approved = hc.registrations.filter((r) => r.status === "approved");
-        if (approved.length === 0) continue;
         const att = attendanceMap.get(`parcours:${id}`);
+        existingDateKeys.add(makeDateKey(new Date(hc.sessionDate), "parcours"));
         pastSessions.push({
             sourceType: "parcours",
             sourceId: id,
@@ -92,15 +98,15 @@ export default async function AdminPresencesPage() {
         });
     }
 
-    // Obedience sessions — past
+    // Obedience sessions — all past (even without registrations)
     for (const ob of obedienceSessions) {
         if (new Date(ob.sessionDate) > now) continue;
         const id = ob._id?.toString() ?? "";
         const approved = ob.registrations.filter(
             (r) => r.status === "approved" || r.status === "absent",
         );
-        if (approved.length === 0) continue;
         const att = attendanceMap.get(`obeissance:${id}`);
+        existingDateKeys.add(makeDateKey(new Date(ob.sessionDate), "obeissance"));
         pastSessions.push({
             sourceType: "obeissance",
             sourceId: id,
@@ -120,6 +126,54 @@ export default async function AdminPresencesPage() {
                 : [],
             guestDogs: att ? att.guestDogs.map((g) => ({ name: g.name, ownerName: g.ownerName })) : [],
         });
+    }
+
+    // ── Auto-generate past Saturday (obedience) & Sunday (parcours) dates ──
+    // Go back ~8 weeks so admins can fill in recent walk-in sessions
+    {
+        const weeksBack = 8;
+        const startDate = new Date(now);
+        startDate.setUTCDate(startDate.getUTCDate() - weeksBack * 7);
+        startDate.setUTCHours(0, 0, 0, 0);
+
+        const cursor = new Date(startDate);
+        while (cursor <= now) {
+            const dow = cursor.getUTCDay();
+
+            // Saturday = obedience 13:15
+            if (dow === 6 && !existingDateKeys.has(makeDateKey(cursor, "obeissance"))) {
+                const d = new Date(cursor);
+                const isoDate = d.toISOString().slice(0, 10);
+                pastSessions.push({
+                    sourceType: "obeissance",
+                    sourceId: `auto-sam-${isoDate}`,
+                    sessionLabel: `Obéissance 13:15 — ${formatDateLabel(d)}`,
+                    sessionDate: d.toISOString(),
+                    registeredMembers: [],
+                    attendanceFilled: false,
+                    presentMembers: [],
+                    guestDogs: [],
+                });
+            }
+
+            // Sunday = parcours de santé
+            if (dow === 0 && !existingDateKeys.has(makeDateKey(cursor, "parcours"))) {
+                const d = new Date(cursor);
+                const isoDate = d.toISOString().slice(0, 10);
+                pastSessions.push({
+                    sourceType: "parcours",
+                    sourceId: `auto-dim-${isoDate}`,
+                    sessionLabel: `Parcours de santé — ${formatDateLabel(d)}`,
+                    sessionDate: d.toISOString(),
+                    registeredMembers: [],
+                    attendanceFilled: false,
+                    presentMembers: [],
+                    guestDogs: [],
+                });
+            }
+
+            cursor.setUTCDate(cursor.getUTCDate() + 1);
+        }
     }
 
     // Events — past published events

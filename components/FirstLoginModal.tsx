@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { changePasswordAction } from "@/app/membre/actions";
+import { changePasswordAction, dismissPasswordModalAction } from "@/app/membre/actions";
 import styles from "./first-login-modal.module.css";
 
 export default function FirstLoginModal() {
@@ -116,7 +116,10 @@ export default function FirstLoginModal() {
                         <button
                             type="button"
                             className={styles.skipBtn}
-                            onClick={() => setOpen(false)}
+                            onClick={() => {
+                                setOpen(false);
+                                dismissPasswordModalAction();
+                            }}
                         >
                             Plus tard
                         </button>

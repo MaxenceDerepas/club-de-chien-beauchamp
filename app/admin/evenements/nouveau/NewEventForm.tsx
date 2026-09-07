@@ -12,6 +12,7 @@ export default function NewEventForm() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [unlimited, setUnlimited] = useState(false);
     const [registrationDisabled, setRegistrationDisabled] = useState(false);
+    const [chatDisabled, setChatDisabled] = useState(false);
     const [isPending, setIsPending] = useState(false);
     const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -136,6 +137,7 @@ export default function NewEventForm() {
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Paramètres d&apos;inscription</h2>
                 <input type="hidden" name="registrationEnabled" value={registrationDisabled ? "off" : "on"} />
+                <input type="hidden" name="chatEnabled" value={chatDisabled ? "off" : "on"} />
                 <div className={styles.gridTwo}>
                     <div className={`${styles.field} ${styles.fieldFull}`}>
                         <label className={styles.checkboxRow}>
@@ -145,6 +147,16 @@ export default function NewEventForm() {
                                 onChange={(e) => setRegistrationDisabled(e.target.checked)}
                             />
                             Désactiver l&apos;inscription en ligne (inscription gérée par les administrateurs uniquement)
+                        </label>
+                    </div>
+                    <div className={`${styles.field} ${styles.fieldFull}`}>
+                        <label className={styles.checkboxRow}>
+                            <input
+                                type="checkbox"
+                                checked={chatDisabled}
+                                onChange={(e) => setChatDisabled(e.target.checked)}
+                            />
+                            Désactiver la discussion pour cet événement
                         </label>
                     </div>
                     <div className={styles.field}>

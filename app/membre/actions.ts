@@ -292,6 +292,13 @@ export async function changePasswordAction(
     return { success: true };
 }
 
+export async function dismissPasswordModalAction() {
+    const member = await requireMemberSession();
+    if (!member._id) return;
+    await updateMember(member._id.toString(), { hasChangedPassword: true });
+    revalidatePath("/membre");
+}
+
 export async function markNotificationsReadAction() {
     const member = await requireMemberSession();
     if (!member._id || !member.isAdmin) return;

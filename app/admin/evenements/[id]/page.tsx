@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { getEventById } from "@/lib/events";
-import EventChat from "@/components/EventChat";
+import { listMembers } from "@/lib/members";
 import {
     approveRegistrationAction,
     rejectRegistrationAction,
@@ -77,8 +77,24 @@ export default async function AdminEventDetailPage({
     const { id } = await params;
     const query = (await searchParams) || {};
 
-    const event = await getEventById(id);
+    const [event, allMembers] = await Promise.all([
+        getEventById(id),
+        listMembers(),
+    ]);
     if (!event) notFound();
+
+    const dogNameByMemberId: Record<string, string> = {};
+    for (const m of allMembers) {
+        if (m._id) {
+            dogNameByMemberId[m._id.toString()] = m.dogName || "";
+        }
+    }
+
+    function displayName(reg: { memberId: string; memberName: string }) {
+        const dog = dogNameByMemberId[reg.memberId];
+        if (dog) return `${dog} (${reg.memberName})`;
+        return reg.memberName;
+    }
 
     const approved = event.registrations.filter(
         (r) => r.status === "approved",
@@ -161,6 +177,12 @@ export default async function AdminEventDetailPage({
                                   ? "Visiteur uniquement"
                                   : "Adhérents uniquement"}
                         </span>
+                        {event.registrationEnabled === false && (
+                            <span>Inscription en ligne désactivée</span>
+                        )}
+                        {event.chatEnabled === false && (
+                            <span>Discussion désactivée</span>
+                        )}
                     </div>
 
                     {deadline ? (
@@ -178,7 +200,7 @@ export default async function AdminEventDetailPage({
                                 </span>
                                 {reg ? (
                                     <span className={styles.slotName}>
-                                        {reg.memberName}
+                                        {displayName(reg)}
                                     </span>
                                 ) : (
                                     <span className={styles.slotEmpty} />
@@ -209,7 +231,7 @@ export default async function AdminEventDetailPage({
                                                     styles.registrationCardInitial
                                                 }
                                             >
-                                                {registration.memberName
+                                                {(dogNameByMemberId[registration.memberId] || registration.memberName)
                                                     ?.charAt(0)
                                                     .toUpperCase() || "?"}
                                             </span>
@@ -219,7 +241,7 @@ export default async function AdminEventDetailPage({
                                                         styles.registrationCardName
                                                     }
                                                 >
-                                                    {registration.memberName}
+                                                    {displayName(registration)}
                                                 </div>
                                                 <div
                                                     className={
@@ -318,7 +340,7 @@ export default async function AdminEventDetailPage({
                                                     styles.registrationCardInitial
                                                 }
                                             >
-                                                {registration.memberName
+                                                {(dogNameByMemberId[registration.memberId] || registration.memberName)
                                                     ?.charAt(0)
                                                     .toUpperCase() || "?"}
                                             </span>
@@ -328,7 +350,7 @@ export default async function AdminEventDetailPage({
                                                         styles.registrationCardName
                                                     }
                                                 >
-                                                    {registration.memberName}
+                                                    {displayName(registration)}
                                                 </div>
                                                 <div
                                                     className={
@@ -356,7 +378,6 @@ export default async function AdminEventDetailPage({
                         </div>
                     )}
 
-                    <EventChat eventId={id} currentUserId="admin" />
                 </section>
             </div>
         </main>

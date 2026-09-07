@@ -42,6 +42,8 @@ export type EventRecord = {
     visibility: EventVisibility;
     /** Whether members can register online (default true). When false, registration is handled by admins in person. */
     registrationEnabled: boolean;
+    /** Whether the chat/discussion is enabled for this event (default true). */
+    chatEnabled: boolean;
     registrations: EventRegistration[];
     createdAt: Date;
     updatedAt: Date;

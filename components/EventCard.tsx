@@ -22,6 +22,7 @@ export type EventCardData = {
     minLevel: MemberLevel;
     maxParticipants: number;
     registrationEnabled: boolean;
+    chatEnabled: boolean;
     registrations: EventCardRegistration[];
 };
 
@@ -314,33 +315,35 @@ export default function EventCard({
                                 </div>
                             </div>
 
-                            {myRegistration?.status === "approved" ? (
-                                <EventChat
-                                    eventId={event.id}
-                                    currentUserId={currentMemberId}
-                                />
-                            ) : (
-                                <div className={styles.chatLocked}>
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        aria-hidden="true"
-                                    >
-                                        <rect x="3" y="11" width="18" height="11" rx="2" />
-                                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                                    </svg>
-                                    <span>
-                                        {myRegistration?.status === "pending"
-                                            ? "La discussion sera disponible une fois votre inscription validée par l'équipe."
-                                            : myRegistration?.status === "rejected"
-                                              ? "La discussion n'est pas disponible : inscription non validée."
-                                              : "La discussion est réservée aux adhérents inscrits et validés pour cet évènement."}
-                                    </span>
-                                </div>
+                            {event.chatEnabled !== false && (
+                                myRegistration?.status === "approved" ? (
+                                    <EventChat
+                                        eventId={event.id}
+                                        currentUserId={currentMemberId}
+                                    />
+                                ) : (
+                                    <div className={styles.chatLocked}>
+                                        <svg
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            aria-hidden="true"
+                                        >
+                                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                        </svg>
+                                        <span>
+                                            {myRegistration?.status === "pending"
+                                                ? "La discussion sera disponible une fois votre inscription validée par l'équipe."
+                                                : myRegistration?.status === "rejected"
+                                                  ? "La discussion n'est pas disponible : inscription non validée."
+                                                  : "La discussion est réservée aux adhérents inscrits et validés pour cet évènement."}
+                                        </span>
+                                    </div>
+                                )
                             )}
                         </div>
                     </div>

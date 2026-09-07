@@ -10,12 +10,14 @@ import {
     type AttendanceSourceType,
     type GuestDog,
 } from "@/lib/attendance";
+import { getOrCreateObedienceForDate } from "@/lib/obedience";
+import { getOrCreateHealthCourseForDate } from "@/lib/health-courses";
 
 export async function saveAttendanceAction(formData: FormData) {
     await requireAdminSession();
 
     const sourceType = String(formData.get("sourceType") || "") as AttendanceSourceType;
-    const sourceId = String(formData.get("sourceId") || "");
+    let sourceId = String(formData.get("sourceId") || "");
     const sessionLabel = String(formData.get("sessionLabel") || "");
     const dateStr = String(formData.get("sessionDate") || "");
 
@@ -35,6 +37,17 @@ export async function saveAttendanceAction(formData: FormData) {
         guestDogs = JSON.parse(guestsJson);
     } catch {
         return;
+    }
+
+    // Auto-create the actual DB session for auto-generated entries
+    if (sourceId.startsWith("auto-")) {
+        if (sourceType === "obeissance") {
+            const session = await getOrCreateObedienceForDate(sessionDate, 6, "13:15");
+            sourceId = session._id!.toString();
+        } else if (sourceType === "parcours") {
+            const session = await getOrCreateHealthCourseForDate(sessionDate);
+            sourceId = session._id!.toString();
+        }
     }
 
     await saveAttendance(sourceType, sourceId, sessionLabel, sessionDate, presentMembers, guestDogs);

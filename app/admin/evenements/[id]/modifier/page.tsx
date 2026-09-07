@@ -36,6 +36,7 @@ export default async function EditEventPage({ params }: Props) {
         maxParticipants: event.maxParticipants,
         visibility: event.visibility || "both",
         registrationEnabled: event.registrationEnabled !== false,
+        chatEnabled: event.chatEnabled !== false,
     };
 
     return (

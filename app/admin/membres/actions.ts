@@ -253,21 +253,32 @@ export async function updateMemberAction(id: string, formData: FormData) {
             `/admin/membres/${id}?error=${encodeURIComponent("Veuillez remplir tous les champs obligatoires.")}`,
         );
     }
-    const uploadedDogPhotoUrl = await saveDogPhotoFile(dogPhotoFile);
 
-    if (uploadedDogPhotoUrl && existingMember.dogPhotoUrl) {
-        await deletePhotoFile(existingMember.dogPhotoUrl);
-    }
+    let uploadedDogPhotoUrl = "";
+    let additionalDogs: AdditionalDog[] = [];
 
-    const additionalDogs = await parseAdditionalDogs(formData);
+    try {
+        uploadedDogPhotoUrl = await saveDogPhotoFile(dogPhotoFile);
 
-    // Delete photos from removed additional dogs
-    const existingAdditionalDogs: AdditionalDog[] = (existingMember as any).additionalDogs || [];
-    const newPhotoUrls = new Set(additionalDogs.map((d) => d.dogPhotoUrl).filter(Boolean));
-    for (const oldDog of existingAdditionalDogs) {
-        if (oldDog.dogPhotoUrl && !newPhotoUrls.has(oldDog.dogPhotoUrl)) {
-            await deletePhotoFile(oldDog.dogPhotoUrl);
+        if (uploadedDogPhotoUrl && existingMember.dogPhotoUrl) {
+            await deletePhotoFile(existingMember.dogPhotoUrl);
         }
+
+        additionalDogs = await parseAdditionalDogs(formData);
+
+        // Delete photos from removed additional dogs
+        const existingAdditionalDogs: AdditionalDog[] = (existingMember as any).additionalDogs || [];
+        const newPhotoUrls = new Set(additionalDogs.map((d) => d.dogPhotoUrl).filter(Boolean));
+        for (const oldDog of existingAdditionalDogs) {
+            if (oldDog.dogPhotoUrl && !newPhotoUrls.has(oldDog.dogPhotoUrl)) {
+                await deletePhotoFile(oldDog.dogPhotoUrl);
+            }
+        }
+    } catch (uploadError) {
+        console.error("Photo upload/delete error:", uploadError);
+        redirect(
+            `/admin/membres/${id}?error=${encodeURIComponent("Erreur lors de l'upload de la photo. Vérifiez le fichier et réessayez.")}`,
+        );
     }
 
     const updatePayload: Parameters<typeof updateMemberInDb>[1] = {
@@ -345,6 +356,7 @@ export async function updateMemberAction(id: string, formData: FormData) {
         const { hash, salt } = hashMemberPassword(newPassword);
         updatePayload.passwordHash = hash;
         updatePayload.passwordSalt = salt;
+        updatePayload.hasChangedPassword = false;
     }
 
     try {
@@ -404,18 +416,25 @@ export async function deleteMemberAction(formData: FormData) {
     const id = String(formData.get("id") || "");
     if (!id) return;
 
-    const member = await getMemberById(id);
-    if (member?.dogPhotoUrl) {
-        await deletePhotoFile(member.dogPhotoUrl);
-    }
-    const memberAdditionalDogs: AdditionalDog[] = (member as any)?.additionalDogs || [];
-    for (const dog of memberAdditionalDogs) {
-        if (dog.dogPhotoUrl) {
-            await deletePhotoFile(dog.dogPhotoUrl);
+    try {
+        const member = await getMemberById(id);
+        if (member?.dogPhotoUrl) {
+            await deletePhotoFile(member.dogPhotoUrl);
         }
-    }
+        const memberAdditionalDogs: AdditionalDog[] = (member as any)?.additionalDogs || [];
+        for (const dog of memberAdditionalDogs) {
+            if (dog.dogPhotoUrl) {
+                await deletePhotoFile(dog.dogPhotoUrl);
+            }
+        }
 
-    await deleteMemberById(id);
+        await deleteMemberById(id);
+    } catch (error) {
+        console.error("deleteMemberAction error:", error);
+        redirect(
+            `/admin/membres?error=${encodeURIComponent("Erreur lors de la suppression du membre.")}`,
+        );
+    }
     revalidatePath("/admin/membres");
 }
 
@@ -425,14 +444,21 @@ export async function deleteMemberPhotoAction(formData: FormData) {
     const id = String(formData.get("id") || "");
     if (!id) return;
 
-    const member = await getMemberById(id);
-    if (!member) return;
+    try {
+        const member = await getMemberById(id);
+        if (!member) return;
 
-    if (member.dogPhotoUrl) {
-        await deletePhotoFile(member.dogPhotoUrl);
+        if (member.dogPhotoUrl) {
+            await deletePhotoFile(member.dogPhotoUrl);
+        }
+
+        await updateMemberInDb(id, { dogPhotoUrl: "", updatedAt: new Date() });
+    } catch (error) {
+        console.error("deleteMemberPhotoAction error:", error);
+        redirect(
+            `/admin/membres/${id}?error=${encodeURIComponent("Erreur lors de la suppression de la photo.")}`,
+        );
     }
-
-    await updateMemberInDb(id, { dogPhotoUrl: "", updatedAt: new Date() });
 
     revalidatePath("/admin/membres");
     revalidatePath(`/admin/membres/${id}`);

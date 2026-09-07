@@ -218,6 +218,7 @@ export default async function MembrePage() {
         minLevel: e.minLevel,
         maxParticipants: e.maxParticipants,
         registrationEnabled: e.registrationEnabled !== false,
+        chatEnabled: e.chatEnabled !== false,
         registrations: e.registrations.map((r) => ({
             memberId: r.memberId,
             memberName: r.memberName,
@@ -555,7 +556,7 @@ export default async function MembrePage() {
                                                         className={styles.docItem}
                                                     >
                                                         <a
-                                                            href={doc.fileUrl}
+                                                            href={`/api/documents/view?url=${encodeURIComponent(doc.fileUrl)}`}
                                                             className={
                                                                 styles.docLink
                                                             }
