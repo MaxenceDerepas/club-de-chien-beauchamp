@@ -127,17 +127,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     if (member) {
         senderId = member._id?.toString() || "";
-        // For "equipe" level: show first name; for others: show dog name
-        if (member.level === "equipe") {
-            senderName = member.firstName || member.dogName || "Adhérent";
-        } else {
-            senderName = member.dogName ||
-                [member.firstName, member.lastName]
-                    .filter(Boolean)
-                    .join(" ")
-                    .trim() ||
-                "Adhérent";
-        }
+        senderName = member.dogName || member.firstName || "Adhérent";
         senderRole = "member";
     } else {
         senderId = "admin";

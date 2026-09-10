@@ -186,42 +186,61 @@ export default function MemberGallery({ albums }: Props) {
         );
     }
 
-    // Albums grid view
+    // Albums grid view — show first row by default, expand to see more
+    const INITIAL_COUNT = 4; // 4 = one full row on desktop, CSS handles mobile
+    const [expanded, setExpanded] = useState(false);
+    const hasMore = albums.length > INITIAL_COUNT;
+    const visibleAlbums = expanded ? albums : albums.slice(0, INITIAL_COUNT);
+
     return (
-        <div className={styles.galleryGrid}>
-            {albums.map((album) => (
-                <article
-                    key={album.id}
-                    className={styles.galleryCard}
-                    onClick={() => setOpenAlbumId(album.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            setOpenAlbumId(album.id);
-                        }
-                    }}
+        <>
+            <div className={styles.galleryGrid}>
+                {visibleAlbums.map((album) => (
+                    <article
+                        key={album.id}
+                        className={styles.galleryCard}
+                        onClick={() => setOpenAlbumId(album.id)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setOpenAlbumId(album.id);
+                            }
+                        }}
+                    >
+                        <div className={styles.galleryCardHeader}>
+                            <h3 className={styles.galleryCardTitle}>
+                                {album.title}
+                            </h3>
+                            <span className={styles.galleryCategoryTag}>
+                                {album.photoCount} photo
+                                {album.photoCount !== 1 ? "s" : ""}
+                            </span>
+                        </div>
+                        <div className={styles.galleryImageWrap}>
+                            <Image
+                                src={album.coverUrl}
+                                alt={album.title}
+                                fill
+                                className={styles.galleryImage}
+                            />
+                        </div>
+                    </article>
+                ))}
+            </div>
+
+            {hasMore && (
+                <button
+                    type="button"
+                    className={styles.galleryToggleBtn}
+                    onClick={() => setExpanded((prev) => !prev)}
                 >
-                    <div className={styles.galleryCardHeader}>
-                        <h3 className={styles.galleryCardTitle}>
-                            {album.title}
-                        </h3>
-                        <span className={styles.galleryCategoryTag}>
-                            {album.photoCount} photo
-                            {album.photoCount !== 1 ? "s" : ""}
-                        </span>
-                    </div>
-                    <div className={styles.galleryImageWrap}>
-                        <Image
-                            src={album.coverUrl}
-                            alt={album.title}
-                            fill
-                            className={styles.galleryImage}
-                        />
-                    </div>
-                </article>
-            ))}
-        </div>
+                    {expanded
+                        ? "▲ Réduire"
+                        : `▼ Voir tous les albums (${albums.length})`}
+                </button>
+            )}
+        </>
     );
 }

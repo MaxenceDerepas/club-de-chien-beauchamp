@@ -693,4 +693,66 @@
     .eventMeta {
         flex-direction: column;
     }
+
+    .addMemberForm {
+        flex-direction: column;
+    }
+}
+
+/* ── Admin add member ─────────────────────────────────────────── */
+
+.addMemberSection {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 2px solid #e0e8ee;
+}
+
+.addMemberTitle {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #163040;
+}
+
+.addMemberForm {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.addMemberSelect {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #dde4ea;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #163040;
+    background: #fff;
+}
+
+.addMemberSelect:focus {
+    outline: none;
+    border-color: #06607b;
+}
+
+.addMemberBtn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #06607b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.addMemberBtn:hover {
+    background: #054e64;
+}
+
+.addMemberBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

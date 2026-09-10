@@ -7,6 +7,7 @@ import {
     approveRegistrationAction,
     rejectRegistrationAction,
 } from "../actions";
+import AdminAddMember from "./AdminAddMember";
 import styles from "../evenements.module.css";
 
 type Props = {
@@ -92,8 +93,7 @@ export default async function AdminEventDetailPage({
 
     function displayName(reg: { memberId: string; memberName: string }) {
         const dog = dogNameByMemberId[reg.memberId];
-        if (dog) return `${dog} (${reg.memberName})`;
-        return reg.memberName;
+        return dog || reg.memberName;
     }
 
     const approved = event.registrations.filter(
@@ -116,6 +116,22 @@ export default async function AdminEventDetailPage({
         event.registrationDeadline ? new Date(event.registrationDeadline) : null,
         event.eventDate ? new Date(event.eventDate) : null,
     );
+
+    // Members not yet registered (for admin add)
+    const registeredIds = new Set(event.registrations.map((r) => r.memberId));
+    const availableMembers = allMembers
+        .filter((m) => m._id && m.membershipActive !== false && !registeredIds.has(m._id.toString()))
+        .map((m) => ({
+            id: m._id!.toString(),
+            name: [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || m.dogName || "Adhérent",
+            dogName: m.dogName || "",
+            level: m.level || "chiot",
+        }))
+        .sort((a, b) => {
+            const nameA = a.dogName || a.name;
+            const nameB = b.dogName || b.name;
+            return nameA.localeCompare(nameB, "fr");
+        });
 
     return (
         <main className={styles.page}>
@@ -374,9 +390,11 @@ export default async function AdminEventDetailPage({
 
                     {event.registrations.length === 0 && (
                         <div className={styles.empty}>
-                            Aucune demande d'inscription pour le moment.
+                            Aucune inscription pour le moment.
                         </div>
                     )}
+
+                    <AdminAddMember eventId={id} members={availableMembers} />
 
                 </section>
             </div>

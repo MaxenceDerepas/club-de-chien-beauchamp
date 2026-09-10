@@ -233,6 +233,52 @@ export async function approveRegistrationAction(formData: FormData) {
     revalidatePath(`/admin/evenements/${eventId}`);
 }
 
+export async function adminAddMemberToEventAction(formData: FormData) {
+    await requireAdminSession();
+
+    const eventId = String(formData.get("eventId") || "");
+    const memberId = String(formData.get("memberId") || "");
+    const memberName = String(formData.get("memberName") || "");
+    const memberLevel = String(formData.get("memberLevel") || "chiot");
+
+    if (!eventId || !memberId) return;
+
+    const event = await getEventById(eventId);
+    if (!event) return;
+
+    // Already registered?
+    if (event.registrations.some((r) => r.memberId === memberId)) return;
+
+    // Check capacity
+    const approvedCount = event.registrations.filter(
+        (r) => r.status === "approved",
+    ).length;
+    if (event.maxParticipants > 0 && approvedCount >= event.maxParticipants) {
+        redirect(
+            `/admin/evenements/${eventId}?error=${encodeURIComponent(
+                "Le nombre maximum de participants est atteint.",
+            )}`,
+        );
+    }
+
+    const registrations = [
+        ...event.registrations,
+        {
+            memberId,
+            memberName,
+            memberLevel: memberLevel as "chiot" | "premier_cours" | "ruban_violet" | "ruban_bleu" | "ruban_blanc" | "ruban_rouge" | "ruban_noir" | "equipe",
+            requestedAt: new Date(),
+            status: "approved" as const,
+        },
+    ];
+
+    await updateEvent(eventId, { registrations });
+
+    revalidatePath("/admin/evenements");
+    revalidatePath(`/admin/evenements/${eventId}`);
+    revalidatePath("/membre");
+}
+
 export async function rejectRegistrationAction(formData: FormData) {
     await requireAdminSession();
 

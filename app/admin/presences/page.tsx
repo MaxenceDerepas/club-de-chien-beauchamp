@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { listMembers } from "@/lib/members";
-import { listAttendanceRecords, type AttendanceSourceType } from "@/lib/attendance";
+import { listAttendanceRecords, type AttendanceSourceType, type AttendanceRecord } from "@/lib/attendance";
 import { listHealthCourses } from "@/lib/health-courses";
 import { listObedienceSessions } from "@/lib/obedience";
 import { listEvents } from "@/lib/events";
@@ -40,6 +40,17 @@ export type PastSession = {
     attendanceFilled: boolean;
     presentMembers: { memberId: string; memberName: string; level: string }[];
     guestDogs: { name: string; ownerName: string }[];
+};
+
+/** Cours attendance for a given date (calendar view) */
+export type CoursAttendance = {
+    /** YYYY-MM-DD */
+    dateKey: string;
+    /** 0=Dimanche, 6=Samedi */
+    dayOfWeek: number;
+    presentMembers: { memberId: string; memberName: string; level: string }[];
+    guestDogs: { name: string; ownerName: string }[];
+    filled: boolean;
 };
 
 export default async function AdminPresencesPage() {
@@ -229,6 +240,25 @@ export default async function AdminPresencesPage() {
         };
     }
 
+    // ── Cours attendance (calendar view) ──────────────────────────
+    const coursRecords = attendanceRecords.filter((r) => r.sourceType === "cours");
+    const coursAttendanceMap: Record<string, CoursAttendance> = {};
+    for (const rec of coursRecords) {
+        const d = new Date(rec.sessionDate);
+        const dateKey = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+        coursAttendanceMap[dateKey] = {
+            dateKey,
+            dayOfWeek: d.getUTCDay(),
+            presentMembers: rec.presentMembers.map((pm) => ({
+                memberId: pm.memberId,
+                memberName: pm.memberName,
+                level: pm.level,
+            })),
+            guestDogs: rec.guestDogs.map((g) => ({ name: g.name, ownerName: g.ownerName })),
+            filled: true,
+        };
+    }
+
     return (
         <main className={styles.page}>
             <div className={styles.shell}>
@@ -242,6 +272,7 @@ export default async function AdminPresencesPage() {
                     pastSessions={pastSessions}
                     allMembers={allMembersList}
                     memberInfoById={memberInfoById}
+                    coursAttendanceMap={coursAttendanceMap}
                 />
             </div>
         </main>

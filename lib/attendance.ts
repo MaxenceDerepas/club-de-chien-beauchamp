@@ -4,7 +4,7 @@ import type { MemberLevel } from "@/lib/levels";
 
 // ── Types ─────────────────────────────────────────────────────────
 
-export type AttendanceSourceType = "event" | "parcours" | "obeissance";
+export type AttendanceSourceType = "event" | "parcours" | "obeissance" | "cours";
 
 export type AttendanceMember = {
     memberId: string;
@@ -169,6 +169,12 @@ export async function countSessionsInRange(
             .collection("events")
             .countDocuments({ eventDate: dateFilter, isPublished: true });
     }
+    if (!sourceType || sourceType === "cours") {
+        // Count attendance_records of type "cours" in the range as proxy
+        total += await db
+            .collection<AttendanceRecord>("attendance_records")
+            .countDocuments({ sourceType: "cours", sessionDate: dateFilter });
+    }
 
     return total;
 }
@@ -177,4 +183,5 @@ export const SOURCE_LABELS: Record<AttendanceSourceType, string> = {
     event: "Événement",
     parcours: "Parcours de santé",
     obeissance: "Obéissance",
+    cours: "Cours",
 };

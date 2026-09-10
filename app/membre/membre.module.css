@@ -223,6 +223,26 @@
     gap: 20px;
 }
 
+.galleryToggleBtn {
+    display: block;
+    margin: 18px auto 0;
+    padding: 10px 28px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(6px);
+}
+
+.galleryToggleBtn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
 /* Documentation section */
 .docWrapper {
     display: grid;
