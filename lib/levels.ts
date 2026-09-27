@@ -2,6 +2,7 @@ export const MEMBER_LEVELS = [
     "chiot",
     "premier_cours",
     "ruban_violet",
+    "ring",
     "ruban_bleu",
     "ruban_blanc",
     "ruban_rouge",

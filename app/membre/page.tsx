@@ -37,6 +37,7 @@ import FirstLoginModal from "@/components/FirstLoginModal";
 import { getUnreadNotifications } from "@/lib/notifications";
 import MobileNav from "@/components/MobileNav";
 import ScrollToTop from "@/components/ScrollToTop";
+import SeasonCalendar, { type SeasonEvent } from "@/components/SeasonCalendar";
 import homeStyles from "@/app/home.module.css";
 import styles from "./membre.module.css";
 
@@ -227,6 +228,15 @@ export default async function MembrePage() {
         })),
     }));
 
+    // Season calendar events: all published events with a date
+    const seasonEvents: SeasonEvent[] = allEvents
+        .filter((e) => e.isPublished && e.eventDate)
+        .map((e) => ({
+            id: e._id?.toString() ?? "",
+            title: e.title,
+            eventDate: new Date(e.eventDate!).toISOString(),
+        }));
+
     return (
         <main className={styles.pageBlue}>
             {showFirstLoginModal && <FirstLoginModal />}
@@ -352,6 +362,7 @@ export default async function MembrePage() {
                         )}
                     </div>
                     <h2 className={styles.memberName}>{displayName}</h2>
+                    <SeasonCalendar events={seasonEvents} />
                     {isAdmin && (
                         <>
                             <Link href="/admin" className={styles.adminLink}>

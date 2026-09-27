@@ -28,6 +28,7 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     chiot: "#d94f9a",
     premier_cours: "#9ad84c",
     ruban_violet: "#b08fd6",
+    ring: "#f7941d",
     ruban_bleu: "#11b7e5",
     ruban_blanc: "#e6e6e6",
     ruban_rouge: "#ef6b6b",
@@ -215,6 +216,10 @@ export default function AdminObedienceCalendar({
                                 session?.registrations.filter(
                                     (r) => r.status === "absent",
                                 ).length ?? 0;
+                            const pendingCount =
+                                session?.registrations.filter(
+                                    (r) => r.status === "pending",
+                                ).length ?? 0;
 
                             const isSelected = session?.id === selectedSessionId;
                             const approved =
@@ -244,15 +249,20 @@ export default function AdminObedienceCalendar({
                                         {dayDate.date.getDate()}
                                     </div>
 
-                                    {session && (approvedCount > 0 || absentCount > 0) && (
+                                    {session && (approvedCount > 0 || absentCount > 0 || pendingCount > 0) && (
                                         <div style={{ fontSize: "0.75rem", fontWeight: 700, textAlign: "center", color: "#163040" }}>
                                             {approvedCount > 0 && (
                                                 <span style={{ color: "#16713a" }}>
                                                     {approvedCount} inscrit{approvedCount > 1 ? "s" : ""}
                                                 </span>
                                             )}
+                                            {pendingCount > 0 && (
+                                                <span style={{ color: "#e67e22", marginLeft: approvedCount > 0 ? 6 : 0 }}>
+                                                    ⏳ {pendingCount} en attente
+                                                </span>
+                                            )}
                                             {absentCount > 0 && (
-                                                <span style={{ color: "#888", marginLeft: approvedCount > 0 ? 6 : 0 }}>
+                                                <span style={{ color: "#888", marginLeft: (approvedCount > 0 || pendingCount > 0) ? 6 : 0 }}>
                                                     {absentCount} absent{absentCount > 1 ? "s" : ""}
                                                 </span>
                                             )}

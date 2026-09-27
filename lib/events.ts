@@ -5,6 +5,7 @@ export const EVENT_LEVELS = [
     "chiot",
     "premier_cours",
     "ruban_violet",
+    "ring",
     "ruban_bleu",
     "ruban_blanc",
     "ruban_rouge",
@@ -44,6 +45,8 @@ export type EventRecord = {
     registrationEnabled: boolean;
     /** Whether the chat/discussion is enabled for this event (default true). */
     chatEnabled: boolean;
+    /** Custom display order (lower = first). Events without sortOrder default to 0. */
+    sortOrder: number;
     registrations: EventRegistration[];
     createdAt: Date;
     updatedAt: Date;
@@ -71,7 +74,7 @@ export async function getEventsCollection() {
 
 export async function listEvents() {
     const collection = await getEventsCollection();
-    return collection.find({}).sort({ eventDate: 1, createdAt: -1 }).toArray();
+    return collection.find({}).sort({ sortOrder: 1, eventDate: 1, createdAt: -1 }).toArray();
 }
 
 export async function listPublishedUpcomingEvents() {
@@ -82,7 +85,7 @@ export async function listPublishedUpcomingEvents() {
             isPublished: true,
             $or: [{ eventDate: null }, { eventDate: { $gte: now } }],
         })
-        .sort({ eventDate: 1, createdAt: -1 })
+        .sort({ sortOrder: 1, eventDate: 1, createdAt: -1 })
         .toArray();
 }
 
@@ -97,7 +100,7 @@ export async function listPublicUpcomingEvents() {
             visibility: { $ne: "members" },
             $or: [{ eventDate: null }, { eventDate: { $gte: now } }],
         })
-        .sort({ eventDate: 1, createdAt: -1 })
+        .sort({ sortOrder: 1, eventDate: 1, createdAt: -1 })
         .toArray();
 }
 
@@ -112,7 +115,7 @@ export async function listMemberUpcomingEvents() {
             visibility: { $ne: "public" },
             $or: [{ eventDate: null }, { eventDate: { $gte: now } }],
         })
-        .sort({ eventDate: 1, createdAt: -1 })
+        .sort({ sortOrder: 1, eventDate: 1, createdAt: -1 })
         .toArray();
 }
 

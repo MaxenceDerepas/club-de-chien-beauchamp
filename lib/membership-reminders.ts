@@ -3,7 +3,7 @@ import { sendTransactionalMail } from "@/lib/mailer";
 
 /**
  * Find active members whose membership expires in exactly `daysBeforeExpiry` days.
- * Membership = 1 year from registrationDate (rolling).
+ * Membership = 1 year from renewalDate (or registrationDate if no renewal).
  */
 async function getMembersExpiringIn(daysBeforeExpiry: number) {
     const collection = await getMembersCollection();
@@ -11,7 +11,7 @@ async function getMembersExpiringIn(daysBeforeExpiry: number) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Target registration date: members who registered exactly
+    // Target date: members whose reference date is exactly
     // (365 - daysBeforeExpiry) days ago expire in daysBeforeExpiry days.
     const targetDate = new Date(today);
     targetDate.setDate(targetDate.getDate() - (365 - daysBeforeExpiry));
@@ -19,11 +19,23 @@ async function getMembersExpiringIn(daysBeforeExpiry: number) {
     const nextDay = new Date(targetDate);
     nextDay.setDate(nextDay.getDate() + 1);
 
+    // Members with renewalDate set: use renewalDate
+    // Members without renewalDate: fall back to registrationDate
     return collection
         .find({
             membershipActive: true,
             email: { $ne: "" },
-            registrationDate: { $gte: targetDate, $lt: nextDay },
+            $or: [
+                {
+                    renewalDate: { $ne: null, $gte: targetDate, $lt: nextDay },
+                },
+                {
+                    $and: [
+                        { $or: [{ renewalDate: null }, { renewalDate: { $exists: false } }] },
+                        { registrationDate: { $gte: targetDate, $lt: nextDay } },
+                    ],
+                },
+            ],
         })
         .toArray();
 }
@@ -40,7 +52,8 @@ function buildReminderEmail(
     member: MemberRecord,
     daysLeft: number,
 ): { subject: string; text: string } {
-    const expiryDate = new Date(member.registrationDate);
+    const referenceDate = member.renewalDate || member.registrationDate;
+    const expiryDate = new Date(referenceDate);
     expiryDate.setFullYear(expiryDate.getFullYear() + 1);
     const expiryLabel = formatDate(expiryDate);
 

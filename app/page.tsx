@@ -2,6 +2,7 @@ import Image from "next/image";
 import styles from "./home.module.css";
 import { getHomepageAnnouncement } from "@/lib/content";
 import { getCurrentMember } from "@/lib/member-auth";
+import { logoutMemberAction } from "@/app/login/actions";
 import { listPublicUpcomingEvents } from "@/lib/events";
 import { getAllCourseImages } from "@/lib/course-images";
 import ImageCluster from "@/components/ImageCluster";
@@ -142,9 +143,23 @@ export default async function HomePage() {
                                 </span>
                             </a>
                         ))}
+                        {member && (
+                            <form action={logoutMemberAction} style={{ margin: 0 }}>
+                                <button
+                                    type="submit"
+                                    className={styles.navItem}
+                                    style={{ background: "none", border: "none", cursor: "pointer" }}
+                                >
+                                    <span className={`${styles.dot} ${styles.dotWhite}`} />
+                                    <span className={styles.navTextBlock}>
+                                        <span className={styles.navLabel}>Se déconnecter</span>
+                                    </span>
+                                </button>
+                            </form>
+                        )}
                     </nav>
 
-                    <MobileNav items={navItems} />
+                    <MobileNav items={navItems} logoutAction={member ? logoutMemberAction : undefined} />
                 </div>
             </header>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireAdminSession } from "@/lib/admin-auth";
 import { listEvents } from "@/lib/events";
-import { deleteEventAction } from "./actions";
+import { deleteEventAction, reorderEventAction } from "./actions";
 import styles from "./evenements.module.css";
 
 function formatDate(value: Date | null | undefined) {
@@ -24,6 +24,8 @@ function getLevelLabel(level?: string) {
             return "Premier cours";
         case "ruban_violet":
             return "Ruban violet";
+        case "ring":
+            return "Ring";
         case "ruban_bleu":
             return "Ruban bleu";
         case "ruban_blanc":
@@ -85,7 +87,7 @@ export default async function AdminEventsPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {events.map((event) => {
+                                    {events.map((event, index) => {
                                         const id = event._id?.toString() || "";
                                         const approvedCount =
                                             event.registrations.filter(
@@ -95,6 +97,9 @@ export default async function AdminEventsPage() {
                                             event.registrations.filter(
                                                 (r) => r.status === "pending",
                                             ).length;
+
+                                        const isFirst = index === 0;
+                                        const isLast = index === events.length - 1;
 
                                         return (
                                             <tr key={id}>
@@ -166,6 +171,34 @@ export default async function AdminEventsPage() {
                                                             styles.actions
                                                         }
                                                     >
+                                                        <div style={{ display: "flex", gap: 4 }}>
+                                                            <form action={reorderEventAction}>
+                                                                <input type="hidden" name="eventId" value={id} />
+                                                                <input type="hidden" name="direction" value="up" />
+                                                                <button
+                                                                    type="submit"
+                                                                    className={styles.secondaryLink}
+                                                                    disabled={isFirst}
+                                                                    title="Monter"
+                                                                    style={{ opacity: isFirst ? 0.3 : 1, minWidth: 36 }}
+                                                                >
+                                                                    ↑
+                                                                </button>
+                                                            </form>
+                                                            <form action={reorderEventAction}>
+                                                                <input type="hidden" name="eventId" value={id} />
+                                                                <input type="hidden" name="direction" value="down" />
+                                                                <button
+                                                                    type="submit"
+                                                                    className={styles.secondaryLink}
+                                                                    disabled={isLast}
+                                                                    title="Descendre"
+                                                                    style={{ opacity: isLast ? 0.3 : 1, minWidth: 36 }}
+                                                                >
+                                                                    ↓
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                         <Link
                                                             href={`/admin/evenements/${id}`}
                                                             className={

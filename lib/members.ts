@@ -55,6 +55,7 @@ export type MemberRecord = {
     additionalDogs: AdditionalDog[];
 
     registrationDate: Date;
+    renewalDate: Date | null;
     membershipActive: boolean;
     siteAccessEnabled: boolean;
 

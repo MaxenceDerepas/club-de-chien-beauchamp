@@ -654,6 +654,7 @@ export default function NewMemberForm() {
                             <option value="chiot">Chiot</option>
                             <option value="premier_cours">Premier cours</option>
                             <option value="ruban_violet">Ruban violet</option>
+                            <option value="ring">Ring</option>
                             <option value="ruban_bleu">Ruban bleu</option>
                             <option value="ruban_blanc">Ruban blanc</option>
                             <option value="ruban_rouge">Ruban rouge</option>
@@ -699,6 +700,22 @@ export default function NewMemberForm() {
                             type="date"
                             className={styles.input}
                             defaultValue={v.registrationDate}
+                        />
+                    </div>
+
+                    <div className={styles.field}>
+                        <label
+                            className={styles.label}
+                            htmlFor="renewalDate"
+                        >
+                            Date de renouvellement
+                        </label>
+                        <input
+                            id="renewalDate"
+                            name="renewalDate"
+                            type="date"
+                            className={styles.input}
+                            defaultValue={v.renewalDate}
                         />
                     </div>
 

@@ -55,6 +55,7 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
         username: String(formData.get("username") || "").trim(),
         dogPhotoUrl: String(formData.get("dogPhotoUrl") || "").trim(),
         registrationDate: String(formData.get("registrationDate") || "").trim(),
+        renewalDate: String(formData.get("renewalDate") || "").trim(),
         membershipActive: formData.get("membershipActive") === "on",
         siteAccessEnabled: formData.get("siteAccessEnabled") === "on",
         isAdmin: formData.get("isAdmin") === "on",
@@ -67,6 +68,7 @@ function getValues(formData: FormData): CreateMemberFormState["values"] {
             | "chiot"
             | "premier_cours"
             | "ruban_violet"
+            | "ring"
             | "ruban_bleu"
             | "ruban_blanc"
             | "ruban_rouge"
@@ -184,6 +186,7 @@ export async function createMemberAction(
             rabiesBoosterDate: optionalDate(values.rabiesBoosterDate),
 
             registrationDate: optionalDate(values.registrationDate) || now,
+            renewalDate: optionalDate(values.renewalDate),
             membershipActive: values.membershipActive,
             siteAccessEnabled: values.siteAccessEnabled,
             isAdmin: values.isAdmin,
@@ -287,6 +290,7 @@ export async function updateMemberAction(id: string, formData: FormData) {
             | "chiot"
             | "premier_cours"
             | "ruban_violet"
+            | "ring"
             | "ruban_bleu"
             | "ruban_blanc"
             | "ruban_rouge"
@@ -343,6 +347,9 @@ export async function updateMemberAction(id: string, formData: FormData) {
             optionalDate(
                 String(formData.get("registrationDate") || "").trim(),
             ) || existingMember.registrationDate,
+        renewalDate: optionalDate(
+            String(formData.get("renewalDate") || "").trim(),
+        ),
         membershipActive: formData.get("membershipActive") === "on",
         siteAccessEnabled: formData.get("siteAccessEnabled") === "on",
         isAdmin: formData.get("isAdmin") === "on",

@@ -33,6 +33,7 @@ export type CreateMemberFormState = {
             | "chiot"
             | "premier_cours"
             | "ruban_violet"
+            | "ring"
             | "ruban_bleu"
             | "ruban_blanc"
             | "ruban_rouge"
@@ -45,6 +46,7 @@ export type CreateMemberFormState = {
         imageRightsExternal: boolean;
         username: string;
         registrationDate: string;
+        renewalDate: string;
         membershipActive: boolean;
         siteAccessEnabled: boolean;
         isAdmin: boolean;
@@ -91,6 +93,7 @@ export const initialCreateMemberState: CreateMemberFormState = {
 
         username: "",
         registrationDate: "",
+        renewalDate: "",
         membershipActive: true,
         siteAccessEnabled: true,
         isAdmin: false,

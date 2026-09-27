@@ -15,6 +15,7 @@ type MemberLevel =
     | "chiot"
     | "premier_cours"
     | "ruban_violet"
+    | "ring"
     | "ruban_bleu"
     | "ruban_blanc"
     | "ruban_rouge"
@@ -39,6 +40,7 @@ type MemberItem = {
     healthCourse: boolean;
     obedience: boolean;
     registrationDate: string | null;
+    renewalDate: string | null;
 };
 
 type Props = {
@@ -49,6 +51,7 @@ const LEVEL_LABELS: Record<MemberLevel, string> = {
     chiot: "Chiot",
     premier_cours: "Premier cours",
     ruban_violet: "Ruban violet",
+    ring: "Ring",
     ruban_bleu: "Ruban bleu",
     ruban_blanc: "Ruban blanc",
     ruban_rouge: "Ruban rouge",
@@ -60,6 +63,7 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     chiot: "#d94f9a",
     premier_cours: "#9ad84c",
     ruban_violet: "#b08fd6",
+    ring: "#f7941d",
     ruban_bleu: "#11b7e5",
     ruban_blanc: "#e6e6e6",
     ruban_rouge: "#ef6b6b",
@@ -68,9 +72,10 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
 };
 
 function getMembershipStatus(member: MemberItem): "ok" | "expiring" | "expired" {
-    if (!member.membershipActive || !member.registrationDate) return "ok";
-    const regDate = new Date(member.registrationDate);
-    const expiryDate = new Date(regDate);
+    const referenceDate = member.renewalDate || member.registrationDate;
+    if (!member.membershipActive || !referenceDate) return "ok";
+    const refDate = new Date(referenceDate);
+    const expiryDate = new Date(refDate);
     expiryDate.setFullYear(expiryDate.getFullYear() + 1);
     const now = new Date();
     if (now >= expiryDate) return "expired";
@@ -81,10 +86,11 @@ function getMembershipStatus(member: MemberItem): "ok" | "expiring" | "expired" 
     return "ok";
 }
 
-function formatExpiryInfo(registrationDate: string | null): string {
-    if (!registrationDate) return "";
-    const regDate = new Date(registrationDate);
-    const expiryDate = new Date(regDate);
+function formatExpiryInfo(renewalDate: string | null, registrationDate: string | null): string {
+    const referenceDate = renewalDate || registrationDate;
+    if (!referenceDate) return "";
+    const refDate = new Date(referenceDate);
+    const expiryDate = new Date(refDate);
     expiryDate.setFullYear(expiryDate.getFullYear() + 1);
     return expiryDate.toLocaleDateString("fr-FR", {
         day: "numeric",
@@ -381,7 +387,7 @@ export default function MembersTableWithEmail({ members }: Props) {
                                 <td>
                                     {(() => {
                                         const ms = getMembershipStatus(member);
-                                        const expiry = formatExpiryInfo(member.registrationDate);
+                                        const expiry = formatExpiryInfo(member.renewalDate, member.registrationDate);
                                         if (ms === "expired") {
                                             return (
                                                 <>

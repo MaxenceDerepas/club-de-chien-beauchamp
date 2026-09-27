@@ -28,6 +28,9 @@ export default async function AdminMembersPage() {
         registrationDate: member.registrationDate
             ? new Date(member.registrationDate).toISOString()
             : null,
+        renewalDate: member.renewalDate
+            ? new Date(member.renewalDate).toISOString()
+            : null,
     }));
 
     return (

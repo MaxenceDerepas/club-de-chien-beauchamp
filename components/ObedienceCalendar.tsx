@@ -28,6 +28,7 @@ const LEVEL_COLORS: Record<MemberLevel, string> = {
     chiot: "#d94f9a",
     premier_cours: "#9ad84c",
     ruban_violet: "#b08fd6",
+    ring: "#f7941d",
     ruban_bleu: "#11b7e5",
     ruban_blanc: "#e6e6e6",
     ruban_rouge: "#ef6b6b",
@@ -286,14 +287,24 @@ export default function ObedienceCalendar({
                                             Passée
                                         </div>
                                     ) : (
-                                        <form action={preregisterAction}>
-                                            <input type="hidden" name="date" value={dateStr} />
-                                            <input type="hidden" name="dayOfWeek" value={String(dayDate.dayOfWeek)} />
-                                            <input type="hidden" name="time" value={dayDate.time} />
-                                            <button type="submit" className={styles.registerButton}>
-                                                S'inscrire
-                                            </button>
-                                        </form>
+                                        <>
+                                            <form action={preregisterAction}>
+                                                <input type="hidden" name="date" value={dateStr} />
+                                                <input type="hidden" name="dayOfWeek" value={String(dayDate.dayOfWeek)} />
+                                                <input type="hidden" name="time" value={dayDate.time} />
+                                                <button type="submit" className={styles.registerButton}>
+                                                    S&apos;inscrire
+                                                </button>
+                                            </form>
+                                            <form action={absentAction}>
+                                                <input type="hidden" name="date" value={dateStr} />
+                                                <input type="hidden" name="dayOfWeek" value={String(dayDate.dayOfWeek)} />
+                                                <input type="hidden" name="time" value={dayDate.time} />
+                                                <button type="submit" className={styles.absentButton}>
+                                                    Absent(e)
+                                                </button>
+                                            </form>
+                                        </>
                                     )}
 
                                     {approved.length > 0 && (

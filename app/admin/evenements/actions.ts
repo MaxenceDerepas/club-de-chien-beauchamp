@@ -8,6 +8,7 @@ import {
     createEvent,
     deleteEventById,
     getEventById,
+    listEvents,
     updateEvent,
     type EventVisibility,
 } from "@/lib/events";
@@ -42,6 +43,7 @@ export async function createEventAction(formData: FormData) {
         | "chiot"
         | "premier_cours"
         | "ruban_violet"
+        | "ring"
         | "ruban_bleu"
         | "ruban_blanc"
         | "ruban_rouge"
@@ -87,6 +89,7 @@ export async function createEventAction(formData: FormData) {
         visibility,
         registrationEnabled,
         chatEnabled,
+        sortOrder: 0,
         registrations: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -132,6 +135,7 @@ export async function updateEventAction(formData: FormData) {
         | "chiot"
         | "premier_cours"
         | "ruban_violet"
+        | "ring"
         | "ruban_bleu"
         | "ruban_blanc"
         | "ruban_rouge"
@@ -266,7 +270,7 @@ export async function adminAddMemberToEventAction(formData: FormData) {
         {
             memberId,
             memberName,
-            memberLevel: memberLevel as "chiot" | "premier_cours" | "ruban_violet" | "ruban_bleu" | "ruban_blanc" | "ruban_rouge" | "ruban_noir" | "equipe",
+            memberLevel: memberLevel as "chiot" | "premier_cours" | "ruban_violet" | "ring" | "ruban_bleu" | "ruban_blanc" | "ruban_rouge" | "ruban_noir" | "equipe",
             requestedAt: new Date(),
             status: "approved" as const,
         },
@@ -298,4 +302,42 @@ export async function rejectRegistrationAction(formData: FormData) {
 
     revalidatePath("/admin/evenements");
     revalidatePath(`/admin/evenements/${eventId}`);
+}
+
+export async function reorderEventAction(formData: FormData) {
+    await requireAdminSession();
+
+    const eventId = String(formData.get("eventId") || "");
+    const direction = String(formData.get("direction") || ""); // "up" or "down"
+
+    if (!eventId || (direction !== "up" && direction !== "down")) return;
+
+    // Get all events in current order
+    const allEvents = await listEvents();
+    const currentIndex = allEvents.findIndex(
+        (e) => e._id?.toString() === eventId,
+    );
+    if (currentIndex === -1) return;
+
+    const swapIndex =
+        direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (swapIndex < 0 || swapIndex >= allEvents.length) return;
+
+    const currentEvent = allEvents[currentIndex];
+    const swapEvent = allEvents[swapIndex];
+
+    // Assign explicit sortOrder values if they're missing (0 by default)
+    const currentOrder = currentEvent.sortOrder ?? currentIndex;
+    const swapOrder = swapEvent.sortOrder ?? swapIndex;
+
+    // Swap their sortOrder values
+    await updateEvent(currentEvent._id!.toString(), {
+        sortOrder: swapOrder,
+    });
+    await updateEvent(swapEvent._id!.toString(), {
+        sortOrder: currentOrder,
+    });
+
+    revalidatePath("/admin/evenements");
+    revalidatePath("/membre");
 }

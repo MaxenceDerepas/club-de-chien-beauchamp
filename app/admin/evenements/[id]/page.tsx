@@ -23,6 +23,8 @@ function getLevelLabel(level?: string) {
             return "Premier cours";
         case "ruban_violet":
             return "Ruban violet";
+        case "ring":
+            return "Ring";
         case "ruban_bleu":
             return "Ruban bleu";
         case "ruban_blanc":

@@ -578,6 +578,9 @@ export default async function EditMemberPage({ params }: Props) {
                                         <option value="ruban_violet">
                                             Ruban violet
                                         </option>
+                                        <option value="ring">
+                                            Ring
+                                        </option>
                                         <option value="ruban_bleu">
                                             Ruban bleu
                                         </option>
@@ -637,6 +640,24 @@ export default async function EditMemberPage({ params }: Props) {
                                         className={styles.input}
                                         defaultValue={formatDateInput(
                                             member.registrationDate,
+                                        )}
+                                    />
+                                </div>
+
+                                <div className={styles.field}>
+                                    <label
+                                        className={styles.label}
+                                        htmlFor="renewalDate"
+                                    >
+                                        Date de renouvellement
+                                    </label>
+                                    <input
+                                        id="renewalDate"
+                                        name="renewalDate"
+                                        type="date"
+                                        className={styles.input}
+                                        defaultValue={formatDateInput(
+                                            (member as any).renewalDate,
                                         )}
                                     />
                                 </div>
