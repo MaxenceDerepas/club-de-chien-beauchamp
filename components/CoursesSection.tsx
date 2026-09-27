@@ -390,6 +390,9 @@ export default function CoursesSection({ courseImages }: Props) {
                                         fill
                                         className={styles.courseImage}
                                     />
+                                    <span className={styles.courseCardHint}>
+                                        Voir les détails →
+                                    </span>
                                 </div>
                             </article>
                         ))}
