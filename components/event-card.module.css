@@ -44,6 +44,37 @@
     font-weight: 500;
 }
 
+/* Admin indicators */
+.adminStats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    width: 100%;
+}
+
+.adminStatRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.adminStatIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.adminStatValue {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    min-width: 20px;
+}
+
 /* ===== Flip container (inside wrapper, next to sidebar) ===== */
 .flipContainer {
     perspective: 1800px;

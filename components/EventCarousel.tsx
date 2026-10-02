@@ -14,6 +14,7 @@ type Props = {
     currentMemberLevel: MemberLevel;
     memberInfoById: Record<string, EventCardMemberInfo>;
     preregisterAction: (formData: FormData) => void | Promise<void>;
+    isAdmin?: boolean;
 };
 
 export default function EventCarousel({
@@ -22,6 +23,7 @@ export default function EventCarousel({
     currentMemberLevel,
     memberInfoById,
     preregisterAction,
+    isAdmin,
 }: Props) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -36,6 +38,7 @@ export default function EventCarousel({
                 currentMemberLevel={currentMemberLevel}
                 memberInfoById={memberInfoById}
                 preregisterAction={preregisterAction}
+                isAdmin={isAdmin}
             />
         );
     }
@@ -55,6 +58,7 @@ export default function EventCarousel({
                 currentMemberLevel={currentMemberLevel}
                 memberInfoById={memberInfoById}
                 preregisterAction={preregisterAction}
+                isAdmin={isAdmin}
                 navigation={{
                     current: currentIndex + 1,
                     total: events.length,

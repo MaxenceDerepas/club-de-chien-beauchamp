@@ -40,6 +40,7 @@ type Props = {
     currentMemberLevel: MemberLevel;
     memberInfoById: Record<string, EventCardMemberInfo>;
     preregisterAction: (formData: FormData) => void | Promise<void>;
+    isAdmin?: boolean;
     navigation?: {
         current: number;
         total: number;
@@ -95,11 +96,13 @@ export default function EventCard({
     currentMemberLevel,
     memberInfoById,
     preregisterAction,
+    isAdmin,
     navigation,
 }: Props) {
     const memberCanRegister =
         MEMBER_LEVELS.indexOf(currentMemberLevel) >=
         MEMBER_LEVELS.indexOf(event.minLevel);
+    const pending = event.registrations.filter((r) => r.status === "pending");
     const approved = event.registrations.filter((r) => r.status === "approved");
     const myRegistration = event.registrations.find(
         (r) => r.memberId === currentMemberId,
@@ -140,6 +143,33 @@ export default function EventCard({
                         Cliquez sur l&apos;affiche pour voir les détails et
                         vous inscrire.
                     </p>
+                )}
+
+                {isAdmin && (
+                    <div className={styles.adminStats}>
+                        <div className={styles.adminStatRow} title="En attente">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#e6a817" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.adminStatIcon}>
+                                <path d="M5 22h14M5 2h14M12 17.5V22M12 2v4.5M17 17.5H7l5-5 5-5H7" />
+                            </svg>
+                            <span className={styles.adminStatValue}>{pending.length}</span>
+                        </div>
+                        <div className={styles.adminStatRow} title="Confirmés">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc40" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.adminStatIcon}>
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span className={styles.adminStatValue}>{approved.length}</span>
+                        </div>
+                        <div className={styles.adminStatRow} title="Total places">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.adminStatIcon}>
+                                <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+                                <rect x="8" y="2" width="8" height="4" rx="1" />
+                                <line x1="8" y1="10" x2="16" y2="10" />
+                                <line x1="8" y1="14" x2="16" y2="14" />
+                                <line x1="8" y1="18" x2="12" y2="18" />
+                            </svg>
+                            <span className={styles.adminStatValue}>{event.maxParticipants === 0 ? "∞" : event.maxParticipants}</span>
+                        </div>
+                    </div>
                 )}
             </aside>
 

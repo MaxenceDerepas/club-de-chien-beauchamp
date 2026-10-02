@@ -409,6 +409,7 @@ export default async function MembrePage() {
                                 currentMemberLevel={member.level}
                                 memberInfoById={eventMemberInfoById}
                                 preregisterAction={preregisterForEventAction}
+                                isAdmin={isAdmin}
                             />
                         )}
                     </section>
