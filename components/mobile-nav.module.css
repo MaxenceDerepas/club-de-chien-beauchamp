@@ -20,14 +20,16 @@
 .burgerLine {
     display: block;
     width: 22px;
-    height: 2.5px;
+    height: 3px;
     background: #ffffff;
-    border-radius: 2px;
+    border-radius: 1.5px;
     transition: transform 0.3s ease, opacity 0.3s ease;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .burgerLineOpen1 {
-    transform: translateY(7.5px) rotate(45deg);
+    transform: translateY(8px) rotate(45deg);
 }
 
 .burgerLineOpen2 {
@@ -35,7 +37,7 @@
 }
 
 .burgerLineOpen3 {
-    transform: translateY(-7.5px) rotate(-45deg);
+    transform: translateY(-8px) rotate(-45deg);
 }
 
 /* Backdrop */

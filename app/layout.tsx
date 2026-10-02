@@ -1,5 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Carlito } from "next/font/google";
 import "./globals.css";
+
+const carlito = Carlito({
+    weight: ["400", "700"],
+    subsets: ["latin"],
+    display: "swap",
+    fallback: ["Calibri", "Gill Sans", "Trebuchet MS", "sans-serif"],
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.clubcaninbeauchamp.fr";
 
@@ -70,7 +78,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="fr">
-            <body suppressHydrationWarning>{children}</body>
+            <body className={carlito.className} suppressHydrationWarning>{children}</body>
         </html>
     );
 }
