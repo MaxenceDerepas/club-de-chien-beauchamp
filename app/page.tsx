@@ -175,9 +175,9 @@ export default async function HomePage() {
 
                 <div className={styles.heroContent}>
                     <div className={styles.heroText}>
-                        <h1>Club Beauchampois d’Éducation Canine</h1>
-                        <p>49 Chaussée Jules César</p>
-                        <p>95250 Beauchamp</p>
+                        <h1>Club Beauchampois d&apos;Éducation Canine</h1>
+                        <p>49 Chaussée Jules César.</p>
+                        <p>95250 Beauchamp.</p>
                     </div>
 
                     {announcement.enabled && announcement.text.trim() && (

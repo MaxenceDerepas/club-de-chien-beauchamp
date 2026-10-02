@@ -38,6 +38,7 @@ import { getUnreadNotifications } from "@/lib/notifications";
 import MobileNav from "@/components/MobileNav";
 import ScrollToTop from "@/components/ScrollToTop";
 import SeasonCalendar, { type SeasonEvent } from "@/components/SeasonCalendar";
+import CourseSchedule from "@/components/CourseSchedule";
 import homeStyles from "@/app/home.module.css";
 import styles from "./membre.module.css";
 
@@ -363,6 +364,7 @@ export default async function MembrePage() {
                     </div>
                     <h2 className={styles.memberName}>{displayName}</h2>
                     <SeasonCalendar events={seasonEvents} />
+                    <CourseSchedule />
                     {isAdmin && (
                         <>
                             <Link href="/admin" className={styles.adminLink}>

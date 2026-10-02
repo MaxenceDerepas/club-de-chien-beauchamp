@@ -27,8 +27,6 @@
     font-size: 1.7rem;
     font-weight: 800;
     line-height: 1.1;
-    text-decoration: underline;
-    text-underline-offset: 4px;
     letter-spacing: 0.02em;
 }
 
@@ -85,8 +83,6 @@
     font-size: 1.5rem;
     font-weight: 800;
     color: #ffffff;
-    text-decoration: underline;
-    text-underline-offset: 4px;
     letter-spacing: 0.04em;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }

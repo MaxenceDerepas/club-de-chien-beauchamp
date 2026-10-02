@@ -89,8 +89,8 @@
 .courseCardTitle {
     margin: 0;
     color: #ffffff;
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: 1.15rem;
+    font-weight: 600;
     text-align: center;
     text-decoration: underline;
     text-underline-offset: 4px;
@@ -348,15 +348,11 @@
     }
 
     .courseCardTitle {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
     .coursesGrid {
         grid-template-columns: 1fr;
         gap: 18px;
-    }
-
-    .courseCardTitle {
-        font-size: 1rem;
     }
 
     .courseCardHeader {

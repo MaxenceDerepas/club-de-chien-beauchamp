@@ -382,7 +382,7 @@ export default async function AdminEventDetailPage({
                                             </div>
                                         </div>
                                         <span className={styles.rejectedLabel}>
-                                            Non validé(e)
+                                            Non sélectionné(e)
                                         </span>
                                     </div>
                                 ))}

@@ -40,6 +40,12 @@ type Props = {
     currentMemberLevel: MemberLevel;
     memberInfoById: Record<string, EventCardMemberInfo>;
     preregisterAction: (formData: FormData) => void | Promise<void>;
+    navigation?: {
+        current: number;
+        total: number;
+        onPrev: () => void;
+        onNext: () => void;
+    };
 };
 
 const LEVEL_COLORS: Record<MemberLevel, string> = {
@@ -89,6 +95,7 @@ export default function EventCard({
     currentMemberLevel,
     memberInfoById,
     preregisterAction,
+    navigation,
 }: Props) {
     const memberCanRegister =
         MEMBER_LEVELS.indexOf(currentMemberLevel) >=
@@ -153,6 +160,36 @@ export default function EventCard({
                                 }
                             }}
                         >
+                            {navigation && (
+                                <div
+                                    className={styles.inlineNav}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <button
+                                        type="button"
+                                        className={styles.inlineNavArrow}
+                                        onClick={navigation.onPrev}
+                                        aria-label="Événement précédent"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="15 18 9 12 15 6" />
+                                        </svg>
+                                    </button>
+                                    <span className={styles.inlineNavCounter}>
+                                        {navigation.current} / {navigation.total}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        className={styles.inlineNavArrow}
+                                        onClick={navigation.onNext}
+                                        aria-label="Événement suivant"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="9 18 15 12 9 6" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            )}
                             <h3 className={styles.frontTitle}>{event.title}</h3>
 
                             {event.imageUrl ? (
@@ -208,6 +245,12 @@ export default function EventCard({
                                     </p>
                                 )}
 
+                                {event.description && (
+                                    <p className={styles.eventDescription}>
+                                        {event.description}
+                                    </p>
+                                )}
+
                                 {!event.registrationEnabled ? (
                                     <div className={styles.disabledBadge}>
                                         Inscription sur place auprès des administrateurs
@@ -223,9 +266,9 @@ export default function EventCard({
                                         }`}
                                     >
                                         {myRegistration.status === "approved"
-                                            ? "Validé(e)"
+                                            ? "Sélectionné(e)"
                                             : myRegistration.status === "rejected"
-                                              ? "Non validé(e)"
+                                              ? "Non sélectionné(e)"
                                               : "⏳ Préinscrit(e)"}
                                     </div>
                                 ) : memberCanRegister ? (

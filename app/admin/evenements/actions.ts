@@ -323,18 +323,28 @@ export async function reorderEventAction(formData: FormData) {
         direction === "up" ? currentIndex - 1 : currentIndex + 1;
     if (swapIndex < 0 || swapIndex >= allEvents.length) return;
 
-    const currentEvent = allEvents[currentIndex];
-    const swapEvent = allEvents[swapIndex];
+    // Check if sortOrders need normalizing (all same value or not sequential)
+    const needsNormalization = allEvents.every(
+        (e) => (e.sortOrder ?? 0) === (allEvents[0].sortOrder ?? 0),
+    );
 
-    // Assign explicit sortOrder values if they're missing (0 by default)
-    const currentOrder = currentEvent.sortOrder ?? currentIndex;
-    const swapOrder = swapEvent.sortOrder ?? swapIndex;
+    if (needsNormalization) {
+        // Assign sequential sortOrder based on current position
+        for (let i = 0; i < allEvents.length; i++) {
+            await updateEvent(allEvents[i]._id!.toString(), {
+                sortOrder: i,
+            });
+        }
+    }
 
-    // Swap their sortOrder values
-    await updateEvent(currentEvent._id!.toString(), {
+    // Now swap the two positions
+    const currentOrder = needsNormalization ? currentIndex : (allEvents[currentIndex].sortOrder ?? currentIndex);
+    const swapOrder = needsNormalization ? swapIndex : (allEvents[swapIndex].sortOrder ?? swapIndex);
+
+    await updateEvent(allEvents[currentIndex]._id!.toString(), {
         sortOrder: swapOrder,
     });
-    await updateEvent(swapEvent._id!.toString(), {
+    await updateEvent(allEvents[swapIndex]._id!.toString(), {
         sortOrder: currentOrder,
     });
 

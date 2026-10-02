@@ -20,6 +20,7 @@
     .headerInnerNoLogo {
         padding-left: 18px !important;
         padding-right: 18px;
+        justify-content: flex-end;
     }
 }
 
@@ -211,9 +212,7 @@
     font-weight: 800;
     letter-spacing: 0.03em;
     color: #1f1f1f;
-    text-decoration: underline;
-    text-underline-offset: 6px;
-    text-decoration-thickness: 3px;
+    text-align: center;
 }
 
 /* Gallery */
@@ -270,8 +269,6 @@
     font-size: 1.1rem;
     font-weight: 800;
     line-height: 1.1;
-    text-decoration: underline;
-    text-underline-offset: 4px;
     letter-spacing: 0;
     text-align: center;
     white-space: nowrap;
@@ -318,8 +315,6 @@
     color: #ffffff;
     font-size: 1.25rem;
     font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 4px;
 }
 
 .docList {

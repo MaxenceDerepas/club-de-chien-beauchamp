@@ -31,8 +31,6 @@
     font-size: 1.7rem;
     font-weight: 800;
     line-height: 1.1;
-    text-decoration: underline;
-    text-underline-offset: 4px;
     letter-spacing: 0.02em;
 }
 
@@ -89,8 +87,6 @@
     font-size: 1.5rem;
     font-weight: 800;
     color: #163040;
-    text-decoration: underline;
-    text-underline-offset: 4px;
     letter-spacing: 0.04em;
 }
 
@@ -331,6 +327,11 @@
 .avatarTagObedience {
     bottom: -2px;
     left: -2px;
+}
+
+.avatarPending {
+    filter: grayscale(1);
+    opacity: 0.5;
 }
 
 .avatarTagHealth img,

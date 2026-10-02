@@ -181,6 +181,10 @@ export default function HealthCourseCalendar({
                                 session?.registrations.filter(
                                     (r) => r.status === "approved",
                                 ) ?? [];
+                            const pending =
+                                session?.registrations.filter(
+                                    (r) => r.status === "pending",
+                                ) ?? [];
                             const today = new Date(new Date().setHours(0, 0, 0, 0));
                             const isPast = sunday < today;
                             const sevenDaysBefore = new Date(sunday);
@@ -214,9 +218,9 @@ export default function HealthCourseCalendar({
                                                     }`}
                                                 >
                                                     {myReg.status === "approved"
-                                                        ? "Validé(e)"
+                                                        ? "Sélectionné(e)"
                                                         : myReg.status === "rejected"
-                                                          ? "Non validé(e)"
+                                                          ? "Non sélectionné(e)"
                                                           : "⏳ Préinscrit(e)"}
                                                 </div>
                                                 {(myReg.status === "pending" ||
@@ -316,6 +320,42 @@ export default function HealthCourseCalendar({
                                                                         src="/images/Tag-Obeissance.png"
                                                                         alt="Obéissance"
                                                                     />
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            {pending.map((reg) => {
+                                                const info = memberInfoById[reg.memberId];
+                                                const dogName = info?.dogName || reg.memberName;
+                                                return (
+                                                    <div
+                                                        key={reg.memberId}
+                                                        className={`${styles.avatarItem} ${styles.avatarPending}`}
+                                                    >
+                                                        <span className={styles.avatarName}>
+                                                            {dogName}
+                                                        </span>
+                                                        <div className={styles.avatarWrap}>
+                                                            {info?.dogPhotoUrl ? (
+                                                                // eslint-disable-next-line @next/next/no-img-element
+                                                                <img
+                                                                    src={info.dogPhotoUrl}
+                                                                    alt={dogName}
+                                                                    className={styles.avatarImg}
+                                                                    style={{
+                                                                        borderColor: "#b0b0b0",
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <span
+                                                                    className={styles.avatarFallback}
+                                                                    style={{
+                                                                        borderColor: "#b0b0b0",
+                                                                    }}
+                                                                >
+                                                                    {dogName.charAt(0).toUpperCase()}
                                                                 </span>
                                                             )}
                                                         </div>

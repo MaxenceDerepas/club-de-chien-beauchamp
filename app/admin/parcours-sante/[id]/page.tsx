@@ -249,7 +249,7 @@ export default async function AdminHealthCourseDetailPage({
                                             </div>
                                         </div>
                                         <span className={styles.rejectedLabel}>
-                                            Non validé(e)
+                                            Non sélectionné(e)
                                         </span>
                                     </div>
                                 ))}

@@ -26,8 +26,6 @@
     font-size: 1.6rem;
     font-weight: 800;
     line-height: 1.1;
-    text-decoration: underline;
-    text-underline-offset: 4px;
     letter-spacing: 0.02em;
 }
 
@@ -109,6 +107,49 @@
 
 .frontMain:hover {
     background: rgba(255, 255, 255, 0.06);
+}
+
+/* ===== Inline navigation (inside card) ===== */
+.inlineNav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.inlineNavArrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.inlineNavArrow:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+}
+
+.inlineNavArrow svg {
+    width: 18px;
+    height: 18px;
+}
+
+.inlineNavCounter {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+    min-width: 50px;
+    text-align: center;
 }
 
 .frontTitle {
@@ -226,6 +267,16 @@
     color: #ffffff;
 }
 
+.eventDescription {
+    margin: 4px 0 8px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 500;
+    max-width: 480px;
+    white-space: pre-line;
+}
+
 .registerButton {
     min-height: 40px;
     padding: 8px 22px;
@@ -288,8 +339,6 @@
     margin: 6px 0 0;
     font-size: 0.95rem;
     color: #fdf2c4;
-    text-decoration: underline;
-    text-underline-offset: 3px;
 }
 
 /* ===== Slots ===== */

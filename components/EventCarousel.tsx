@@ -48,34 +48,6 @@ export default function EventCarousel({
 
     return (
         <div className={styles.carousel}>
-            <div className={styles.nav}>
-                <button
-                    type="button"
-                    className={styles.arrow}
-                    onClick={() => goTo(currentIndex - 1)}
-                    aria-label="Événement précédent"
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </button>
-
-                <div className={styles.counter}>
-                    {currentIndex + 1} / {events.length}
-                </div>
-
-                <button
-                    type="button"
-                    className={styles.arrow}
-                    onClick={() => goTo(currentIndex + 1)}
-                    aria-label="Événement suivant"
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                </button>
-            </div>
-
             <EventCard
                 key={events[currentIndex].id}
                 event={events[currentIndex]}
@@ -83,6 +55,12 @@ export default function EventCarousel({
                 currentMemberLevel={currentMemberLevel}
                 memberInfoById={memberInfoById}
                 preregisterAction={preregisterAction}
+                navigation={{
+                    current: currentIndex + 1,
+                    total: events.length,
+                    onPrev: () => goTo(currentIndex - 1),
+                    onNext: () => goTo(currentIndex + 1),
+                }}
             />
 
             <div className={styles.dots}>

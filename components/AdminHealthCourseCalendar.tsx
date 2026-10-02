@@ -175,10 +175,11 @@ export default function AdminHealthCourseCalendar({
                                 session?.registrations.filter(
                                     (r) => r.status === "approved",
                                 ) ?? [];
-                            const pendingCount =
+                            const pending =
                                 session?.registrations.filter(
                                     (r) => r.status === "pending",
-                                ).length ?? 0;
+                                ) ?? [];
+                            const pendingCount = pending.length;
                             const isSelected =
                                 session && session.id === selectedSessionId;
                             const hasRegistrations =
@@ -337,6 +338,76 @@ export default function AdminHealthCourseCalendar({
                                                                         src="/images/Tag-Obeissance.png"
                                                                         alt="Obéissance"
                                                                     />
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            {pending.map((reg) => {
+                                                const info =
+                                                    memberInfoById[
+                                                        reg.memberId
+                                                    ];
+                                                const dogName =
+                                                    info?.dogName ||
+                                                    reg.memberName;
+                                                return (
+                                                    <div
+                                                        key={reg.memberId}
+                                                        className={`${styles.avatarItem} ${styles.avatarPending}`}
+                                                        onClick={() => {
+                                                            if (session && onSelectSession) {
+                                                                onSelectSession(session.id);
+                                                            }
+                                                        }}
+                                                        style={{ cursor: "pointer" }}
+                                                        title={`${dogName} — En attente (cliquer pour gérer)`}
+                                                    >
+                                                        <span
+                                                            className={
+                                                                styles.avatarName
+                                                            }
+                                                        >
+                                                            {dogName}
+                                                        </span>
+                                                        <div
+                                                            className={
+                                                                styles.avatarWrap
+                                                            }
+                                                        >
+                                                            {info?.dogPhotoUrl ? (
+                                                                // eslint-disable-next-line @next/next/no-img-element
+                                                                <img
+                                                                    src={
+                                                                        info.dogPhotoUrl
+                                                                    }
+                                                                    alt={
+                                                                        dogName
+                                                                    }
+                                                                    className={
+                                                                        styles.avatarImg
+                                                                    }
+                                                                    style={{
+                                                                        borderColor:
+                                                                            "#b0b0b0",
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <span
+                                                                    className={
+                                                                        styles.avatarFallback
+                                                                    }
+                                                                    style={{
+                                                                        borderColor:
+                                                                            "#b0b0b0",
+                                                                    }}
+                                                                >
+                                                                    {dogName
+                                                                        .charAt(
+                                                                            0,
+                                                                        )
+                                                                        .toUpperCase()}
                                                                 </span>
                                                             )}
                                                         </div>
