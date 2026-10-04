@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     },
     manifest: "/manifest.json",
     alternates: {
-        canonical: "/",
+        canonical: "https://www.clubcaninbeauchamp.fr/",
     },
 };
 
