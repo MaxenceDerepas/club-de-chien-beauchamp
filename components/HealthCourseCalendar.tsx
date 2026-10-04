@@ -226,7 +226,6 @@ export default function HealthCourseCalendar({
                                                 {(myReg.status === "pending" ||
                                                     myReg.status === "approved") &&
                                                     !isPast &&
-                                                    (myReg.status === "approved" || !isClosedForRegistration) &&
                                                     session && (
                                                     <form action={cancelAction}>
                                                         <input

@@ -2,40 +2,26 @@ import { getMembersCollection, type MemberRecord } from "@/lib/members";
 import { sendTransactionalMail } from "@/lib/mailer";
 
 /**
- * Find active members whose membership expires in exactly `daysBeforeExpiry` days.
- * Membership = 1 year from renewalDate (or registrationDate if no renewal).
+ * Find active members whose renewalDate is exactly 30 days from now.
+ * renewalDate IS the expiry date (not registrationDate + 1 year).
  */
-async function getMembersExpiringIn(daysBeforeExpiry: number) {
+async function getMembersRenewingIn30Days() {
     const collection = await getMembersCollection();
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Target date: members whose reference date is exactly
-    // (365 - daysBeforeExpiry) days ago expire in daysBeforeExpiry days.
-    const targetDate = new Date(today);
-    targetDate.setDate(targetDate.getDate() - (365 - daysBeforeExpiry));
+    const target = new Date(today);
+    target.setDate(target.getDate() + 30);
 
-    const nextDay = new Date(targetDate);
+    const nextDay = new Date(target);
     nextDay.setDate(nextDay.getDate() + 1);
 
-    // Members with renewalDate set: use renewalDate
-    // Members without renewalDate: fall back to registrationDate
     return collection
         .find({
             membershipActive: true,
             email: { $ne: "" },
-            $or: [
-                {
-                    renewalDate: { $ne: null, $gte: targetDate, $lt: nextDay },
-                },
-                {
-                    $and: [
-                        { $or: [{ renewalDate: null }, { renewalDate: { $exists: false } }] },
-                        { registrationDate: { $gte: targetDate, $lt: nextDay } },
-                    ],
-                },
-            ],
+            renewalDate: { $ne: null, $gte: target, $lt: nextDay },
         })
         .toArray();
 }
@@ -48,87 +34,93 @@ function formatDate(date: Date): string {
     });
 }
 
-function buildReminderEmail(
-    member: MemberRecord,
-    daysLeft: number,
-): { subject: string; text: string } {
-    const referenceDate = member.renewalDate || member.registrationDate;
-    const expiryDate = new Date(referenceDate);
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-    const expiryLabel = formatDate(expiryDate);
+function buildRenewalEmail(member: MemberRecord): {
+    subject: string;
+    text: string;
+} {
+    const renewalDate = member.renewalDate!;
+    const renewalLabel = formatDate(renewalDate);
 
-    if (daysLeft <= 7) {
+    // Date limite = renewalDate + 1 mois
+    const deadline = new Date(renewalDate);
+    deadline.setMonth(deadline.getMonth() + 1);
+    const deadlineLabel = formatDate(deadline);
+
+    const dogName = member.dogName || "votre chien";
+    const isRing = member.level === "ring";
+
+    const subject = `CLUB CANIN : renouvellement adhésion ${member.dogName || ""}`.trim();
+
+    if (isRing) {
         return {
-            subject: `Rappel : votre adhésion expire le ${expiryLabel}`,
+            subject,
             text: [
-                `Bonjour ${member.firstName},`,
+                "Bonjour,",
                 "",
-                `Votre adhésion au Club Beauchampois d'Éducation Canine expire le ${expiryLabel}, soit dans ${daysLeft} jour${daysLeft > 1 ? "s" : ""}.`,
+                `Comme voté lors de l'Assemblée Générale de 2024, l'adhésion de ${dogName} arrivant à terme le ${renewalLabel}, nous vous informons que vous pouvez d'ores et déjà régler le renouvellement (100€) si vous le souhaitez ; et au plus tard le ${deadlineLabel}.`,
                 "",
-                "Pensez à renouveler votre inscription auprès du club pour continuer à profiter des activités.",
+                "Lors de votre renouvellement, pensez à apporter votre carte d'adhérent, l'attestation d'assurance à jour et également les copies des dernières vaccinations de votre chien.",
                 "",
-                "À bientôt sur le terrain !",
-                "Club Beauchampois d'Éducation Canine",
+                "Bonne journée à vous.",
+                "",
+                "Cordialement,",
+                "Hervé",
             ].join("\n"),
         };
     }
 
     return {
-        subject: `Votre adhésion expire bientôt (${expiryLabel})`,
+        subject,
         text: [
-            `Bonjour ${member.firstName},`,
+            "Bonjour,",
             "",
-            `Votre adhésion au Club Beauchampois d'Éducation Canine arrive à échéance le ${expiryLabel}, soit dans environ ${daysLeft} jours.`,
+            `Comme voté lors de l'Assemblée Générale de 2024, l'adhésion de ${dogName} arrivant à terme le ${renewalLabel}, nous vous informons que vous pouvez d'ores et déjà régler le renouvellement (190€) si vous le souhaitez ; et au plus tard le ${deadlineLabel}.`,
             "",
-            "N'hésitez pas à venir renouveler votre inscription lors de votre prochaine visite au club.",
+            "Après cette date, il s'agira d'une nouvelle inscription (au tarif de 230€) et non plus d'un renouvellement.",
             "",
-            "À bientôt !",
-            "Club Beauchampois d'Éducation Canine",
+            "Lors de votre renouvellement, pensez à apporter votre carte d'adhérent, l'attestation d'assurance à jour et également les copies des dernières vaccinations de votre chien.",
+            "",
+            "Bonne journée à vous.",
+            "",
+            "Cordialement,",
+            "Hervé",
         ].join("\n"),
     };
 }
 
 export type ReminderResult = {
-    sent30: string[];
-    sent7: string[];
+    sent: string[];
     errors: string[];
 };
 
 /**
- * Send membership expiry reminders:
- * - 30 days before expiry
- * - 7 days before expiry
+ * Send membership renewal reminders:
+ * - Single email, 30 days before renewalDate
+ * - Different content for Ring-level members (100€ vs 190€)
  */
 export async function sendMembershipReminders(): Promise<ReminderResult> {
-    const result: ReminderResult = { sent30: [], sent7: [], errors: [] };
+    const result: ReminderResult = { sent: [], errors: [] };
 
-    const batches: { days: number; key: "sent30" | "sent7" }[] = [
-        { days: 30, key: "sent30" },
-        { days: 7, key: "sent7" },
-    ];
+    const members = await getMembersRenewingIn30Days();
 
-    for (const { days, key } of batches) {
-        const members = await getMembersExpiringIn(days);
+    for (const member of members) {
+        const name =
+            [member.firstName, member.lastName]
+                .filter(Boolean)
+                .join(" ")
+                .trim() || "Adhérent";
+        const { subject, text } = buildRenewalEmail(member);
 
-        for (const member of members) {
-            const name =
-                [member.firstName, member.lastName]
-                    .filter(Boolean)
-                    .join(" ")
-                    .trim() || "Adhérent";
-            const { subject, text } = buildReminderEmail(member, days);
-
-            try {
-                await sendTransactionalMail({
-                    to: { email: member.email, name },
-                    subject,
-                    text,
-                });
-                result[key].push(`${name} <${member.email}>`);
-            } catch (err) {
-                const msg = err instanceof Error ? err.message : String(err);
-                result.errors.push(`${name} <${member.email}>: ${msg}`);
-            }
+        try {
+            await sendTransactionalMail({
+                to: { email: member.email, name },
+                subject,
+                text,
+            });
+            result.sent.push(`${name} <${member.email}>`);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            result.errors.push(`${name} <${member.email}>: ${msg}`);
         }
     }
 

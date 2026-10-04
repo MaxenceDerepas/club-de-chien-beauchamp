@@ -17,8 +17,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({
             ok: true,
-            sent30days: result.sent30,
-            sent7days: result.sent7,
+            sent: result.sent,
             errors: result.errors,
         });
     } catch (err) {
