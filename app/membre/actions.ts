@@ -13,6 +13,7 @@ import {
     cancelHealthCourseRegistration,
     getHealthCourseById,
     getOrCreateHealthCourseForDate,
+    updateHealthCourse,
 } from "@/lib/health-courses";
 import { meetsMinLevel } from "@/lib/members";
 import {
@@ -304,4 +305,68 @@ export async function markNotificationsReadAction() {
     if (!member._id || !member.isAdmin) return;
     await markAllNotificationsRead(member._id.toString());
     revalidatePath("/membre");
+}
+
+// ── Admin actions for health course (from member page) ──────────
+
+export async function adminApproveHealthCourseAction(
+    formData: FormData,
+): Promise<{ success: boolean; error?: string }> {
+    const member = await requireMemberSession();
+    if (!member._id || !member.isAdmin) return { success: false, error: "Non autorisé." };
+
+    const courseId = String(formData.get("courseId") || "");
+    const memberId = String(formData.get("memberId") || "");
+    if (!courseId || !memberId) return { success: false, error: "Données manquantes." };
+
+    const course = await getHealthCourseById(courseId);
+    if (!course) return { success: false, error: "Séance introuvable." };
+
+    const approvedCount = course.registrations.filter(
+        (r) => r.status === "approved",
+    ).length;
+
+    if (course.maxParticipants > 0 && approvedCount >= course.maxParticipants) {
+        return { success: false, error: "Nombre maximum de participants atteint." };
+    }
+
+    const registrations = course.registrations.map((registration) =>
+        registration.memberId === memberId
+            ? { ...registration, status: "approved" as const }
+            : registration,
+    );
+
+    await updateHealthCourse(courseId, { registrations });
+
+    revalidatePath("/membre");
+    revalidatePath("/admin/parcours-sante");
+    revalidatePath(`/admin/parcours-sante/${courseId}`);
+    return { success: true };
+}
+
+export async function adminRejectHealthCourseAction(
+    formData: FormData,
+): Promise<{ success: boolean; error?: string }> {
+    const member = await requireMemberSession();
+    if (!member._id || !member.isAdmin) return { success: false, error: "Non autorisé." };
+
+    const courseId = String(formData.get("courseId") || "");
+    const memberId = String(formData.get("memberId") || "");
+    if (!courseId || !memberId) return { success: false, error: "Données manquantes." };
+
+    const course = await getHealthCourseById(courseId);
+    if (!course) return { success: false, error: "Séance introuvable." };
+
+    const registrations = course.registrations.map((registration) =>
+        registration.memberId === memberId
+            ? { ...registration, status: "rejected" as const }
+            : registration,
+    );
+
+    await updateHealthCourse(courseId, { registrations });
+
+    revalidatePath("/membre");
+    revalidatePath("/admin/parcours-sante");
+    revalidatePath(`/admin/parcours-sante/${courseId}`);
+    return { success: true };
 }

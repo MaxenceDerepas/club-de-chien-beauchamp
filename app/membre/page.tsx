@@ -11,6 +11,8 @@ import {
     cancelObedienceRegistrationAction,
     markAbsentObedienceAction,
     markNotificationsReadAction,
+    adminApproveHealthCourseAction,
+    adminRejectHealthCourseAction,
 } from "./actions";
 import { listMemberUpcomingEvents } from "@/lib/events";
 import { listHealthCourses } from "@/lib/health-courses";
@@ -429,6 +431,9 @@ export default async function MembrePage() {
                                 cancelAction={
                                     cancelHealthCourseRegistrationAction
                                 }
+                                isAdmin={isAdmin}
+                                adminApproveAction={isAdmin ? adminApproveHealthCourseAction : undefined}
+                                adminRejectAction={isAdmin ? adminRejectHealthCourseAction : undefined}
                             />
                         </section>
                     )}
@@ -459,12 +464,8 @@ export default async function MembrePage() {
                         id="documentation"
                         className={styles.eventSection}
                     >
+                        <h1 className={styles.sectionTitle}>DOCUMENTATION</h1>
                         <div className={styles.docWrapper}>
-                            <aside className={styles.docSidebar}>
-                                <h2 className={styles.docSidebarTitle}>
-                                    DOCUMENTATION
-                                </h2>
-                            </aside>
                             <div className={styles.docMain}>
                                 {docCategories.map((category) => (
                                     <div

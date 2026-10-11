@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import type { MemberLevel } from "@/lib/levels";
 import styles from "./health-course-calendar.module.css";
 
@@ -42,6 +42,9 @@ type Props = {
     memberInfoById: Record<string, CalendarMemberInfo>;
     preregisterAction: (formData: FormData) => void | Promise<void>;
     cancelAction: (formData: FormData) => void | Promise<void>;
+    isAdmin?: boolean;
+    adminApproveAction?: (formData: FormData) => Promise<{ success: boolean; error?: string }>;
+    adminRejectAction?: (formData: FormData) => Promise<{ success: boolean; error?: string }>;
 };
 
 const MONTH_NAMES = [
@@ -77,10 +80,20 @@ export default function HealthCourseCalendar({
     memberInfoById,
     preregisterAction,
     cancelAction,
+    isAdmin,
+    adminApproveAction,
+    adminRejectAction,
 }: Props) {
     const now = new Date();
     const [viewYear, setViewYear] = useState(now.getFullYear());
     const [viewMonth, setViewMonth] = useState(now.getMonth());
+    const [adminPopup, setAdminPopup] = useState<{
+        sessionId: string;
+        memberId: string;
+        dogName: string;
+    } | null>(null);
+    const [isPending, startTransition] = useTransition();
+    const [adminError, setAdminError] = useState<string | null>(null);
 
     const sundays = useMemo(
         () => getSundaysOfMonth(viewYear, viewMonth),
@@ -328,10 +341,22 @@ export default function HealthCourseCalendar({
                                             {pending.map((reg) => {
                                                 const info = memberInfoById[reg.memberId];
                                                 const dogName = info?.dogName || reg.memberName;
+                                                const isClickable = isAdmin && session;
                                                 return (
                                                     <div
                                                         key={reg.memberId}
-                                                        className={`${styles.avatarItem} ${styles.avatarPending}`}
+                                                        className={`${styles.avatarItem} ${styles.avatarPending} ${isClickable ? styles.avatarClickable : ""}`}
+                                                        onClick={isClickable ? () => {
+                                                            setAdminError(null);
+                                                            setAdminPopup({
+                                                                sessionId: session!.id,
+                                                                memberId: reg.memberId,
+                                                                dogName,
+                                                            });
+                                                        } : undefined}
+                                                        role={isClickable ? "button" : undefined}
+                                                        tabIndex={isClickable ? 0 : undefined}
+                                                        title={isClickable ? `Gérer ${dogName}` : undefined}
                                                     >
                                                         <span className={styles.avatarName}>
                                                             {dogName}
@@ -369,6 +394,75 @@ export default function HealthCourseCalendar({
                     </div>
                 )}
             </div>
+
+            {/* Admin popup for approve/reject */}
+            {adminPopup && isAdmin && adminApproveAction && adminRejectAction && (
+                <>
+                    <div
+                        className={styles.adminPopupBackdrop}
+                        onClick={() => setAdminPopup(null)}
+                    />
+                    <div className={styles.adminPopup}>
+                        <p className={styles.adminPopupTitle}>
+                            {adminPopup.dogName}
+                        </p>
+                        {adminError && (
+                            <p className={styles.adminPopupError}>{adminError}</p>
+                        )}
+                        <div className={styles.adminPopupButtons}>
+                            <button
+                                type="button"
+                                className={styles.adminApproveBtn}
+                                disabled={isPending}
+                                onClick={() => {
+                                    startTransition(async () => {
+                                        const fd = new FormData();
+                                        fd.set("courseId", adminPopup.sessionId);
+                                        fd.set("memberId", adminPopup.memberId);
+                                        const result = await adminApproveAction(fd);
+                                        if (result.success) {
+                                            setAdminPopup(null);
+                                            setAdminError(null);
+                                        } else {
+                                            setAdminError(result.error || "Erreur");
+                                        }
+                                    });
+                                }}
+                            >
+                                ✅ Valider
+                            </button>
+                            <button
+                                type="button"
+                                className={styles.adminRejectBtn}
+                                disabled={isPending}
+                                onClick={() => {
+                                    startTransition(async () => {
+                                        const fd = new FormData();
+                                        fd.set("courseId", adminPopup.sessionId);
+                                        fd.set("memberId", adminPopup.memberId);
+                                        const result = await adminRejectAction(fd);
+                                        if (result.success) {
+                                            setAdminPopup(null);
+                                            setAdminError(null);
+                                        } else {
+                                            setAdminError(result.error || "Erreur");
+                                        }
+                                    });
+                                }}
+                            >
+                                ❌ Refuser
+                            </button>
+                        </div>
+                        <button
+                            type="button"
+                            className={styles.adminPopupClose}
+                            onClick={() => setAdminPopup(null)}
+                        >
+                            Fermer
+                        </button>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

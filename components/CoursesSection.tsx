@@ -247,7 +247,7 @@ const courses = [
 
                 <p className={styles.courseDetailDescription}>
                     <span className={styles.courseHighlight}>
-                        Toutes les places sont actuellement réservées
+                        Toutes les places sont actuellement réservées.
                     </span>
                 </p>
             </>
@@ -297,7 +297,7 @@ const courses = [
 
                 <p className={styles.courseDetailDescription}>
                     <span className={styles.courseHighlight}>
-                        Toutes les places sont actuellement réservées
+                        Toutes les places sont actuellement réservées.
                     </span>
                 </p>
             </>
