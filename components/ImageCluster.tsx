@@ -162,7 +162,7 @@ export default function ImageCluster() {
                             équipe de bénévoles accueille
                         </span>{" "}
                         les chiens de tout âge et de toute race les samedis
-                        après-midi et dimanches matins
+                        après-midi et dimanches matins.
                     </p>
                     <p>
                         Lors de{" "}
@@ -171,13 +171,14 @@ export default function ImageCluster() {
                         </span>
                         , notre objectif est de vous aider à mieux comprendre
                         votre compagnon tout en développant une relation
-                        harmonieuse
+                        harmonieuse.
                     </p>
                     <p>
                         Nous vous invitons à venir nous rencontrer le{" "}
                         <span className={styles.messagePanelInfo}>
                             samedi à 14h
                         </span>
+                        .
                     </p>
                 </div>
             </div>

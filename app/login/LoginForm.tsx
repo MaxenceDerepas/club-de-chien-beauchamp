@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link";
 import { loginMemberAction, type LoginState } from "./actions";
 import styles from "./login.module.css";
 
@@ -63,6 +64,25 @@ export default function LoginForm() {
             ) : null}
 
             <SubmitButton />
+
+            <p
+                style={{
+                    textAlign: "center",
+                    marginTop: 4,
+                    fontSize: "0.88rem",
+                }}
+            >
+                <Link
+                    href="/login/mot-de-passe-oublie"
+                    style={{
+                        color: "white",
+                        textDecoration: "underline",
+                        opacity: 0.85,
+                    }}
+                >
+                    Mot de passe oublié ?
+                </Link>
+            </p>
         </form>
     );
 }

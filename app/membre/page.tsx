@@ -681,7 +681,7 @@ export default async function MembrePage() {
                                             Adresse
                                         </span>
                                         <span className={homeStyles.contactValue}>
-                                            49 Chaussée Jules César
+                                            45 Chaussée Jules César
                                         </span>
                                         <span className={homeStyles.contactHint}>
                                             95250 Beauchamp · Voir l&apos;itinéraire

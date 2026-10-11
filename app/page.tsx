@@ -24,7 +24,7 @@ const jsonLd = {
     email: "clubcaninbeauchamp@hotmail.com",
     address: {
         "@type": "PostalAddress",
-        streetAddress: "49 Chaussée Jules César",
+        streetAddress: "45 Chaussée Jules César",
         addressLocality: "Beauchamp",
         postalCode: "95250",
         addressRegion: "Val-d'Oise",
@@ -176,7 +176,7 @@ export default async function HomePage() {
                 <div className={styles.heroContent}>
                     <div className={styles.heroText}>
                         <h1>Club Beauchampois d&apos;Éducation Canine</h1>
-                        <p>49 Chaussée Jules César.</p>
+                        <p>45 Chaussée Jules César.</p>
                         <p>95250 Beauchamp.</p>
                     </div>
 
@@ -443,7 +443,7 @@ export default async function HomePage() {
                                     Adresse
                                 </span>
                                 <span className={styles.contactValue}>
-                                    49 Chaussée Jules César
+                                    45 Chaussée Jules César
                                 </span>
                                 <span className={styles.contactHint}>
                                     95250 Beauchamp · Voir l’itinéraire
