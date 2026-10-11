@@ -45,6 +45,8 @@ export type EventRecord = {
     registrationEnabled: boolean;
     /** Whether the chat/discussion is enabled for this event (default true). */
     chatEnabled: boolean;
+    /** Whether to show the participants grid and registration section on the member page (default true). When false, only the event poster/description is shown — useful for informational events. */
+    showParticipants: boolean;
     /** Custom display order (lower = first). Events without sortOrder default to 0. */
     sortOrder: number;
     registrations: EventRegistration[];

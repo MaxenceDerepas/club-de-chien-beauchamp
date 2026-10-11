@@ -223,6 +223,7 @@ export default async function MembrePage() {
         maxParticipants: e.maxParticipants,
         registrationEnabled: e.registrationEnabled !== false,
         chatEnabled: e.chatEnabled !== false,
+        showParticipants: e.showParticipants !== false,
         registrations: e.registrations.map((r) => ({
             memberId: r.memberId,
             memberName: r.memberName,

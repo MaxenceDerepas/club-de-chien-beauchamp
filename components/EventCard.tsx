@@ -23,6 +23,7 @@ export type EventCardData = {
     maxParticipants: number;
     registrationEnabled: boolean;
     chatEnabled: boolean;
+    showParticipants: boolean;
     registrations: EventCardRegistration[];
 };
 
@@ -128,20 +129,25 @@ export default function EventCard({
                 <h2 className={styles.sidebarTitle}>ÉVÈNEMENT</h2>
                 <div className={styles.sidebarWave} />
                 {flipped ? (
-                    <>
+                    event.showParticipants !== false ? (
+                        <>
+                            <p className={styles.sidebarText}>
+                                L&apos;équipe d&apos;éducation doit valider votre
+                                inscription pour confirmer votre participation.
+                            </p>
+                            <p className={styles.sidebarText}>
+                                Une fois faite, votre avatar apparaîtra sur la
+                                liste (à droite).
+                            </p>
+                        </>
+                    ) : (
                         <p className={styles.sidebarText}>
-                            L&apos;équipe d&apos;éducation doit valider votre
-                            inscription pour confirmer votre participation.
+                            Cet événement est à titre informatif.
                         </p>
-                        <p className={styles.sidebarText}>
-                            Une fois faite, votre avatar apparaîtra sur la
-                            liste (à droite).
-                        </p>
-                    </>
+                    )
                 ) : (
                     <p className={styles.sidebarText}>
-                        Cliquez sur l&apos;affiche pour voir les détails et
-                        vous inscrire.
+                        Cliquez sur l&apos;affiche pour voir les détails{event.showParticipants !== false ? " et vous inscrire" : ""}.
                     </p>
                 )}
 
@@ -271,115 +277,121 @@ export default function EventCard({
                                     </p>
                                 )}
 
-                                {!event.registrationEnabled ? (
-                                    <div className={styles.disabledBadge}>
-                                        Inscription sur place auprès des administrateurs
-                                    </div>
-                                ) : myRegistration ? (
-                                    <div
-                                        className={`${styles.statusBadge} ${
-                                            myRegistration.status === "approved"
-                                                ? styles.statusApproved
-                                                : myRegistration.status === "rejected"
-                                                  ? styles.statusRejected
-                                                  : styles.statusPending
-                                        }`}
-                                    >
-                                        {myRegistration.status === "approved"
-                                            ? "Sélectionné(e)"
-                                            : myRegistration.status === "rejected"
-                                              ? "Non sélectionné(e)"
-                                              : "⏳ Préinscrit(e)"}
-                                    </div>
-                                ) : memberCanRegister ? (
-                                    <form action={preregisterAction}>
-                                        <input
-                                            type="hidden"
-                                            name="eventId"
-                                            value={event.id}
-                                        />
-                                        <button
-                                            type="submit"
-                                            className={styles.registerButton}
-                                        >
-                                            Se préinscrire
-                                        </button>
-                                    </form>
-                                ) : (
-                                    <div className={styles.disabledBadge}>
-                                        Inscription non disponible pour votre niveau
-                                    </div>
-                                )}
-
-                                {deadline ? (
-                                    <p className={styles.deadline}>
-                                        Date de clôture des inscriptions : {deadline}.
-                                    </p>
-                                ) : null}
-                            </div>
-
-                            <div className={styles.slotsSection}>
-                                <div className={styles.slotsGrid}>
-                                    {slots.map((reg, idx) => {
-                                        const info = reg
-                                            ? memberInfoById[reg.memberId]
-                                            : null;
-                                        const dogName =
-                                            info?.dogName || reg?.memberName || "";
-                                        const levelColor =
-                                            info?.level &&
-                                            LEVEL_COLORS[info.level]
-                                                ? LEVEL_COLORS[info.level]
-                                                : "#ef6b6b";
-                                        return (
-                                            <div key={idx} className={styles.slot}>
-                                                <span className={styles.slotNumber}>
-                                                    {idx + 1})
-                                                </span>
-                                                {reg ? (
-                                                    <div className={styles.slotAvatar}>
-                                                        <span className={styles.slotName}>
-                                                            {dogName}
-                                                        </span>
-                                                        <div className={styles.avatarWrap}>
-                                                            {info?.dogPhotoUrl ? (
-                                                                // eslint-disable-next-line @next/next/no-img-element
-                                                                <img
-                                                                    src={info.dogPhotoUrl}
-                                                                    alt={dogName}
-                                                                    className={styles.avatarImg}
-                                                                    style={{ borderColor: levelColor }}
-                                                                />
-                                                            ) : (
-                                                                <span
-                                                                    className={styles.avatarFallback}
-                                                                    style={{ borderColor: levelColor }}
-                                                                >
-                                                                    {dogName.charAt(0).toUpperCase() || "?"}
-                                                                </span>
-                                                            )}
-                                                            {info?.healthCourse && (
-                                                                <span className={styles.tagHealth}>
-                                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                                    <img src="/images/Tag-Parcours-de-sante.png" alt="Parcours de santé" />
-                                                                </span>
-                                                            )}
-                                                            {info?.obedience && (
-                                                                <span className={styles.tagObedience}>
-                                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                                    <img src="/images/Tag-Obeissance.png" alt="Obéissance" />
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ) : null}
+                                {event.showParticipants !== false && (
+                                    <>
+                                        {!event.registrationEnabled ? (
+                                            <div className={styles.disabledBadge}>
+                                                Inscription sur place auprès des administrateurs
                                             </div>
-                                        );
-                                    })}
-                                </div>
+                                        ) : myRegistration ? (
+                                            <div
+                                                className={`${styles.statusBadge} ${
+                                                    myRegistration.status === "approved"
+                                                        ? styles.statusApproved
+                                                        : myRegistration.status === "rejected"
+                                                          ? styles.statusRejected
+                                                          : styles.statusPending
+                                                }`}
+                                            >
+                                                {myRegistration.status === "approved"
+                                                    ? "Sélectionné(e)"
+                                                    : myRegistration.status === "rejected"
+                                                      ? "Non sélectionné(e)"
+                                                      : "⏳ Préinscrit(e)"}
+                                            </div>
+                                        ) : memberCanRegister ? (
+                                            <form action={preregisterAction}>
+                                                <input
+                                                    type="hidden"
+                                                    name="eventId"
+                                                    value={event.id}
+                                                />
+                                                <button
+                                                    type="submit"
+                                                    className={styles.registerButton}
+                                                >
+                                                    Se préinscrire
+                                                </button>
+                                            </form>
+                                        ) : (
+                                            <div className={styles.disabledBadge}>
+                                                Inscription non disponible pour votre niveau
+                                            </div>
+                                        )}
+
+                                        {deadline ? (
+                                            <p className={styles.deadline}>
+                                                Date de clôture des inscriptions : {deadline}.
+                                            </p>
+                                        ) : null}
+                                    </>
+                                )}
                             </div>
 
-                            {event.chatEnabled !== false && (
+                            {event.showParticipants !== false && (
+                                <div className={styles.slotsSection}>
+                                    <div className={styles.slotsGrid}>
+                                        {slots.map((reg, idx) => {
+                                            const info = reg
+                                                ? memberInfoById[reg.memberId]
+                                                : null;
+                                            const dogName =
+                                                info?.dogName || reg?.memberName || "";
+                                            const levelColor =
+                                                info?.level &&
+                                                LEVEL_COLORS[info.level]
+                                                    ? LEVEL_COLORS[info.level]
+                                                    : "#ef6b6b";
+                                            return (
+                                                <div key={idx} className={styles.slot}>
+                                                    <span className={styles.slotNumber}>
+                                                        {idx + 1})
+                                                    </span>
+                                                    {reg ? (
+                                                        <div className={styles.slotAvatar}>
+                                                            <span className={styles.slotName}>
+                                                                {dogName}
+                                                            </span>
+                                                            <div className={styles.avatarWrap}>
+                                                                {info?.dogPhotoUrl ? (
+                                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                                    <img
+                                                                        src={info.dogPhotoUrl}
+                                                                        alt={dogName}
+                                                                        className={styles.avatarImg}
+                                                                        style={{ borderColor: levelColor }}
+                                                                    />
+                                                                ) : (
+                                                                    <span
+                                                                        className={styles.avatarFallback}
+                                                                        style={{ borderColor: levelColor }}
+                                                                    >
+                                                                        {dogName.charAt(0).toUpperCase() || "?"}
+                                                                    </span>
+                                                                )}
+                                                                {info?.healthCourse && (
+                                                                    <span className={styles.tagHealth}>
+                                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                                        <img src="/images/Tag-Parcours-de-sante.png" alt="Parcours de santé" />
+                                                                    </span>
+                                                                )}
+                                                                {info?.obedience && (
+                                                                    <span className={styles.tagObedience}>
+                                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                                        <img src="/images/Tag-Obeissance.png" alt="Obéissance" />
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {event.showParticipants !== false && event.chatEnabled !== false && (
                                 myRegistration?.status === "approved" ? (
                                     <EventChat
                                         eventId={event.id}

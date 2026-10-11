@@ -63,6 +63,7 @@ export async function createEventAction(formData: FormData) {
     const visibility = (String(formData.get("visibility") || "both")) as EventVisibility;
     const registrationEnabled = formData.get("registrationEnabled") !== "off";
     const chatEnabled = formData.get("chatEnabled") !== "off";
+    const showParticipants = formData.get("showParticipants") !== "off";
 
     const imageFile = formData.get("image") as File | null;
 
@@ -89,6 +90,7 @@ export async function createEventAction(formData: FormData) {
         visibility,
         registrationEnabled,
         chatEnabled,
+        showParticipants,
         sortOrder: 0,
         registrations: [],
         createdAt: new Date(),
@@ -155,6 +157,7 @@ export async function updateEventAction(formData: FormData) {
     const visibility = (String(formData.get("visibility") || "both")) as EventVisibility;
     const registrationEnabled = formData.get("registrationEnabled") !== "off";
     const chatEnabled = formData.get("chatEnabled") !== "off";
+    const showParticipants = formData.get("showParticipants") !== "off";
 
     if (!title) {
         redirect(
@@ -189,6 +192,7 @@ export async function updateEventAction(formData: FormData) {
             visibility,
             registrationEnabled,
             chatEnabled,
+            showParticipants,
         });
     } catch (err) {
         console.error("updateEventAction error:", err);
