@@ -39,7 +39,8 @@ import FirstLoginModal from "@/components/FirstLoginModal";
 import { getUnreadNotifications } from "@/lib/notifications";
 import MobileNav from "@/components/MobileNav";
 import ScrollToTop from "@/components/ScrollToTop";
-import SeasonCalendar, { type SeasonEvent } from "@/components/SeasonCalendar";
+import SeasonCalendar, { type SeasonEvent, type SeasonCalendarDate } from "@/components/SeasonCalendar";
+import { listCalendarDates } from "@/lib/calendar-dates";
 import CourseSchedule from "@/components/CourseSchedule";
 import homeStyles from "@/app/home.module.css";
 import styles from "./membre.module.css";
@@ -95,12 +96,13 @@ export default async function MembrePage() {
     const hasObedience = isAdmin || (member.obedience ?? false);
     const showFirstLoginModal = !(member.hasChangedPassword ?? false);
 
-    const [allAlbums, allEvents, events, memberAnnouncement, docCategories] = await Promise.all([
+    const [allAlbums, allEvents, events, memberAnnouncement, docCategories, calDates] = await Promise.all([
         listAlbums(),
         listEvents(),
         listMemberUpcomingEvents(),
         getMemberAnnouncement(),
         listDocumentCategories(),
+        listCalendarDates(),
     ]);
 
     // Admin notifications
@@ -241,6 +243,14 @@ export default async function MembrePage() {
             eventDate: new Date(e.eventDate!).toISOString(),
         }));
 
+    // Calendar dates (informational, from admin)
+    const seasonCalendarDates: SeasonCalendarDate[] = calDates.map((d) => ({
+        id: d._id?.toString() ?? "",
+        title: d.title,
+        date: d.date,
+        description: d.description,
+    }));
+
     return (
         <main className={styles.pageBlue}>
             {showFirstLoginModal && <FirstLoginModal />}
@@ -366,7 +376,7 @@ export default async function MembrePage() {
                         )}
                     </div>
                     <h2 className={styles.memberName}>{displayName}</h2>
-                    <SeasonCalendar events={seasonEvents} />
+                    <SeasonCalendar events={seasonEvents} calendarDates={seasonCalendarDates} />
                     <CourseSchedule />
                     {isAdmin && (
                         <>

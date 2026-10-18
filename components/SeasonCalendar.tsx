@@ -9,8 +9,16 @@ export type SeasonEvent = {
     eventDate: string; // ISO string
 };
 
+export type SeasonCalendarDate = {
+    id: string;
+    title: string;
+    date: string; // YYYY-MM-DD
+    description?: string;
+};
+
 type Props = {
     events: SeasonEvent[];
+    calendarDates?: SeasonCalendarDate[];
 };
 
 const MONTH_NAMES = [
@@ -70,7 +78,7 @@ function isSameDay(d1: Date, d2Year: number, d2Month: number, d2Day: number): bo
     );
 }
 
-export default function SeasonCalendar({ events }: Props) {
+export default function SeasonCalendar({ events, calendarDates = [] }: Props) {
     const [open, setOpen] = useState(false);
     const { startYear, endYear } = getSeasonYear();
 
@@ -80,9 +88,20 @@ export default function SeasonCalendar({ events }: Props) {
         date: new Date(e.eventDate),
     }));
 
+    // Parse calendar dates into Date objects
+    const parsedCalendarDates = calendarDates.map((d) => ({
+        ...d,
+        dateObj: new Date(d.date + "T12:00:00"),
+    }));
+
     // Find events for a specific day
     function getEventsForDay(year: number, month: number, day: number) {
         return parsedEvents.filter((e) => isSameDay(e.date, year, month, day));
+    }
+
+    // Find calendar dates for a specific day
+    function getCalendarDatesForDay(year: number, month: number, day: number) {
+        return parsedCalendarDates.filter((d) => isSameDay(d.dateObj, year, month, day));
     }
 
     const seasonLabel = `Saison ${startYear}-${endYear}`;
@@ -167,15 +186,26 @@ export default function SeasonCalendar({ events }: Props) {
                                         const isWeekend = dayOfWeek >= 5;
                                         const isToday = isCurrentMonth && day === todayDate;
                                         const dayEvents = getEventsForDay(year, actualMonth, day);
+                                        const dayCalDates = getCalendarDatesForDay(year, actualMonth, day);
                                         const hasEvent = dayEvents.length > 0;
+                                        const hasCalDate = dayCalDates.length > 0;
+                                        const hasAny = hasEvent || hasCalDate;
+
+                                        const titleParts: string[] = [];
+                                        if (hasEvent) titleParts.push(...dayEvents.map((e) => e.title));
+                                        if (hasCalDate) {
+                                            dayCalDates.forEach((d) => {
+                                                titleParts.push(d.description ? `${d.title} — ${d.description}` : d.title);
+                                            });
+                                        }
 
                                         return (
                                             <span
                                                 key={i}
-                                                className={`${styles.dayCell} ${isWeekend ? styles.weekendDay : ""} ${isToday ? styles.today : ""} ${hasEvent ? styles.eventDay : ""}`}
+                                                className={`${styles.dayCell} ${isWeekend ? styles.weekendDay : ""} ${isToday ? styles.today : ""} ${hasAny ? styles.eventDay : ""}`}
                                                 title={
-                                                    hasEvent
-                                                        ? dayEvents.map((e) => e.title).join(", ")
+                                                    hasAny
+                                                        ? titleParts.join(", ")
                                                         : undefined
                                                 }
                                             >
@@ -183,24 +213,40 @@ export default function SeasonCalendar({ events }: Props) {
                                                 {hasEvent && (
                                                     <span className={styles.eventDot} />
                                                 )}
+                                                {hasCalDate && !hasEvent && (
+                                                    <span className={styles.calendarDateDot} />
+                                                )}
+                                                {hasCalDate && hasEvent && (
+                                                    <span className={styles.calendarDateDotSecond} />
+                                                )}
                                             </span>
                                         );
                                     })}
                                 </div>
 
-                                {/* Event labels for this month */}
+                                {/* Event & calendar date labels for this month */}
                                 {(() => {
                                     const monthEvents = parsedEvents.filter(
                                         (e) =>
                                             e.date.getFullYear() === year &&
                                             e.date.getMonth() === actualMonth,
                                     );
-                                    if (monthEvents.length === 0) return null;
+                                    const monthCalDates = parsedCalendarDates.filter(
+                                        (d) =>
+                                            d.dateObj.getFullYear() === year &&
+                                            d.dateObj.getMonth() === actualMonth,
+                                    );
+                                    if (monthEvents.length === 0 && monthCalDates.length === 0) return null;
                                     return (
                                         <div className={styles.monthEvents}>
                                             {monthEvents.map((e) => (
                                                 <span key={e.id} className={styles.eventLabel}>
                                                     {e.date.getDate()} - {e.title}
+                                                </span>
+                                            ))}
+                                            {monthCalDates.map((d) => (
+                                                <span key={d.id} className={styles.calendarDateLabel}>
+                                                    {d.dateObj.getDate()} - {d.title}
                                                 </span>
                                             ))}
                                         </div>

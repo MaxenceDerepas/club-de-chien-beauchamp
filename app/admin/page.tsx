@@ -323,6 +323,19 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                                 l&apos;espace membre (PV, guides, formulaires…).
                             </p>
                         </Link>
+
+                        <Link
+                            href="/admin/calendrier"
+                            className={styles.featureCard}
+                        >
+                            <h2 className={styles.featureTitle}>
+                                Dates du calendrier
+                            </h2>
+                            <p className={styles.text}>
+                                Ajouter des dates informatives sur le
+                                calendrier de l&apos;espace adhérent.
+                            </p>
+                        </Link>
                     </div>
 
                     <AnnouncementEditor

@@ -195,6 +195,28 @@
     border-radius: 50%;
 }
 
+.calendarDateDot {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: #06607b;
+    border-radius: 50%;
+}
+
+.calendarDateDotSecond {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% + 4px);
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: #06607b;
+    border-radius: 50%;
+}
+
 /* ── Event labels under months ── */
 
 .monthEvents {
@@ -210,6 +232,17 @@
     font-size: 0.65rem;
     font-weight: 600;
     background: rgba(255, 255, 255, 0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendarDateLabel {
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: rgba(6, 96, 123, 0.15);
     padding: 2px 6px;
     border-radius: 4px;
     white-space: nowrap;
