@@ -2,7 +2,6 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
-import Link from "next/link";
 import { loginMemberAction, type LoginState } from "./actions";
 import styles from "./login.module.css";
 
@@ -68,21 +67,23 @@ export default function LoginForm() {
             <p
                 style={{
                     textAlign: "center",
-                    marginTop: 4,
-                    fontSize: "0.88rem",
+                    marginTop: 12,
+                    fontSize: "0.85rem",
+                    color: "rgba(255,255,255,0.8)",
+                    lineHeight: 1.5,
                 }}
             >
-                <Link
-                    href="/login/mot-de-passe-oublie"
-                    style={{
-                        color: "white",
-                        textDecoration: "underline",
-                        opacity: 0.85,
-                    }}
+                Mot de passe oublié ? Envoyez un mail à{" "}
+                <a
+                    href="mailto:clubcaninbeauchamp@hotmail.com"
+                    style={{ color: "white", textDecoration: "underline" }}
                 >
-                    Mot de passe oublié ?
-                </Link>
+                    clubcaninbeauchamp@hotmail.com
+                </a>
+                , un administrateur répondra à votre demande dans les plus brefs
+                délais.
             </p>
+
         </form>
     );
 }
