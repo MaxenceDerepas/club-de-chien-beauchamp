@@ -73,11 +73,11 @@ export async function preregisterForHealthCourseAction(formData: FormData) {
     const sundayDate = new Date(dateStr + "T12:00:00.000Z");
     if (Number.isNaN(sundayDate.getTime())) return;
 
-    // Check 7-day cutoff (use UTC to stay consistent)
-    const sevenDaysBefore = new Date(sundayDate);
-    sevenDaysBefore.setUTCDate(sevenDaysBefore.getUTCDate() - 7);
-    sevenDaysBefore.setUTCHours(23, 59, 59, 999);
-    if (new Date() > sevenDaysBefore) return;
+    // Check cutoff: Tuesday evening before the Sunday session (= Wednesday 00:00 UTC = Sunday - 4 days)
+    const cutoffDate = new Date(sundayDate);
+    cutoffDate.setUTCDate(cutoffDate.getUTCDate() - 4);
+    cutoffDate.setUTCHours(0, 0, 0, 0);
+    if (new Date() > cutoffDate) return;
 
     // Auto-create session if it doesn't exist
     const session = await getOrCreateHealthCourseForDate(sundayDate);

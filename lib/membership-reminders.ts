@@ -65,6 +65,10 @@ function buildRenewalEmail(member: MemberRecord): {
                 "",
                 "Cordialement,",
                 "Hervé",
+                "",
+                "---",
+                "Ceci est un message automatique. Ne répondez pas à ce courrier.",
+                "Si vous avez des questions ou des remarques, merci de prendre contact avec l'équipe à l'adresse suivante : clubcaninbeauchamp@hotmail.com",
             ].join("\n"),
         };
     }
@@ -84,6 +88,10 @@ function buildRenewalEmail(member: MemberRecord): {
             "",
             "Cordialement,",
             "Hervé",
+            "",
+            "---",
+            "Ceci est un message automatique. Ne répondez pas à ce courrier.",
+            "Si vous avez des questions ou des remarques, merci de prendre contact avec l'équipe à l'adresse suivante : clubcaninbeauchamp@hotmail.com",
         ].join("\n"),
     };
 }

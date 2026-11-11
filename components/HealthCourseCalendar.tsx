@@ -150,7 +150,7 @@ export default function HealthCourseCalendar({
                     L&apos;équipe d&apos;éducation validera votre inscription.
                 </p>
                 <p className={styles.sidebarText}>
-                    Les préinscriptions ferment 7 jours avant la date de la séance.
+                    Les préinscriptions ferment le mardi soir précédant la séance.
                 </p>
             </aside>
 
@@ -200,10 +200,10 @@ export default function HealthCourseCalendar({
                                 ) ?? [];
                             const today = new Date(new Date().setHours(0, 0, 0, 0));
                             const isPast = sunday < today;
-                            const sevenDaysBefore = new Date(sunday);
-                            sevenDaysBefore.setDate(sevenDaysBefore.getDate() - 7);
-                            sevenDaysBefore.setHours(23, 59, 59, 999);
-                            const isClosedForRegistration = !isPast && new Date() > sevenDaysBefore;
+                            const cutoffDate = new Date(sunday);
+                            cutoffDate.setDate(cutoffDate.getDate() - 4);
+                            cutoffDate.setHours(0, 0, 0, 0);
+                            const isClosedForRegistration = !isPast && new Date() > cutoffDate;
 
                             // Send date as YYYY-MM-DD to avoid timezone shift
                             const sundayDateStr = `${sunday.getFullYear()}-${String(sunday.getMonth() + 1).padStart(2, "0")}-${String(sunday.getDate()).padStart(2, "0")}`;

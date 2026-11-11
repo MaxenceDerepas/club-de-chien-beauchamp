@@ -212,8 +212,8 @@ export async function createMemberAction(
             sendTransactionalMail({
                 to: { email: values.email, name: `${values.firstName} ${values.lastName}` },
                 subject: "Bienvenue au Club Beauchampois d'Éducation Canine",
-                text: `Bonjour ${values.firstName},\n\nBienvenue au Club Beauchampois d'Éducation Canine !\n\nVotre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :\n\n  Identifiant : ${values.username}\n  Mot de passe : ${password}\n\nConnectez-vous ici : https://www.clubcaninbeauchamp.fr/login\n\nNous vous conseillons de changer votre mot de passe lors de votre première connexion.\n\nÀ bientôt sur le terrain !\nClub Beauchampois d'Éducation Canine`,
-                html: `<p>Bonjour ${values.firstName},</p><p>Bienvenue au Club Beauchampois d'Éducation Canine !</p><p>Votre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :</p><p><strong>Identifiant :</strong> ${values.username}<br/><strong>Mot de passe :</strong> ${password}</p><p><a href="https://www.clubcaninbeauchamp.fr/login" style="display:inline-block;padding:12px 28px;background:#06607b;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;">Se connecter</a></p><p>Nous vous conseillons de changer votre mot de passe lors de votre première connexion.</p><p>À bientôt sur le terrain !<br/>Club Beauchampois d'Éducation Canine</p>`,
+                text: `Bonjour ${values.firstName},\n\nBienvenue au Club Beauchampois d'Éducation Canine !\n\nVotre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :\n\n  Identifiant : ${values.username}\n  Mot de passe : ${password}\n\nConnectez-vous ici : https://www.clubcaninbeauchamp.fr/login\n\nNous vous conseillons de changer votre mot de passe lors de votre première connexion.\n\nÀ bientôt sur le terrain !\nClub Beauchampois d'Éducation Canine\n\n---\nCeci est un message automatique. Ne répondez pas à ce courrier.\nSi vous avez des questions ou des remarques, merci de prendre contact avec l'équipe à l'adresse suivante : clubcaninbeauchamp@hotmail.com`,
+                html: `<p>Bonjour ${values.firstName},</p><p>Bienvenue au Club Beauchampois d'Éducation Canine !</p><p>Votre compte adhérent a été créé. Vous pouvez vous connecter à votre espace membre avec :</p><p><strong>Identifiant :</strong> ${values.username}<br/><strong>Mot de passe :</strong> ${password}</p><p><a href="https://www.clubcaninbeauchamp.fr/login" style="display:inline-block;padding:12px 28px;background:#06607b;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:bold;">Se connecter</a></p><p>Nous vous conseillons de changer votre mot de passe lors de votre première connexion.</p><p>À bientôt sur le terrain !<br/>Club Beauchampois d'Éducation Canine</p><hr style="margin:24px 0;border:none;border-top:1px solid #ddd;"/><p style="font-size:12px;color:#999;">Ceci est un message automatique. Ne répondez pas à ce courrier.<br/>Si vous avez des questions ou des remarques, merci de prendre contact avec l'équipe à l'adresse suivante : <a href="mailto:clubcaninbeauchamp@hotmail.com" style="color:#06607b;">clubcaninbeauchamp@hotmail.com</a></p>`,
             }).catch((err) =>
                 console.error("Welcome email error", err),
             );
@@ -376,7 +376,7 @@ export async function updateMemberAction(id: string, formData: FormData) {
             sendTransactionalMail({
                 to: { email, name },
                 subject: "Votre mot de passe a été modifié",
-                text: `Bonjour ${firstName},\n\nVotre mot de passe pour l'espace membre du Club Beauchampois d'Éducation Canine a été modifié.\n\nVos identifiants de connexion :\n\n  Identifiant : ${username}\n  Nouveau mot de passe : ${newPassword}\n\nConnectez-vous ici : https://www.clubcaninbeauchamp.fr/login\n\nNous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.\n\nÀ bientôt !\nClub Beauchampois d'Éducation Canine`,
+                text: `Bonjour ${firstName},\n\nVotre mot de passe pour l'espace membre du Club Beauchampois d'Éducation Canine a été modifié.\n\nVos identifiants de connexion :\n\n  Identifiant : ${username}\n  Nouveau mot de passe : ${newPassword}\n\nConnectez-vous ici : https://www.clubcaninbeauchamp.fr/login\n\nNous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.\n\nÀ bientôt !\nClub Beauchampois d'Éducation Canine\n\n---\nCeci est un message automatique. Ne répondez pas à ce courrier.\nSi vous avez des questions ou des remarques, merci de prendre contact avec l'équipe à l'adresse suivante : clubcaninbeauchamp@hotmail.com`,
                 html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
 <h2 style="color:#06607b;">Club Beauchampois d'Éducation Canine</h2>
 <p>Bonjour ${firstName},</p>
@@ -391,6 +391,8 @@ export async function updateMemberAction(id: string, formData: FormData) {
 </p>
 <p style="color:#888;font-size:13px;">Nous vous conseillons de changer votre mot de passe lors de votre prochaine connexion.</p>
 <p>À bientôt !<br/>Club Beauchampois d'Éducation Canine</p>
+<hr style="margin:24px 0;border:none;border-top:1px solid #ddd;"/>
+<p style="font-size:12px;color:#999;">Ceci est un message automatique. Ne répondez pas à ce courrier.<br/>Si vous avez des questions ou des remarques, merci de prendre contact avec l'équipe à l'adresse suivante : <a href="mailto:clubcaninbeauchamp@hotmail.com" style="color:#06607b;">clubcaninbeauchamp@hotmail.com</a></p>
 </div>`,
             }).catch((err) =>
                 console.error("Password change email error", err),
